@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 public class Var {
-    enum Type {
+    private enum Type {
         INT, FLOAT, BOOLEAN
     }
     Type type;
