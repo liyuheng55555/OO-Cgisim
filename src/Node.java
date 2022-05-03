@@ -93,7 +93,9 @@ abstract class Node {
 
     // ----------------运行使用的属性和方法----------------- //
     String expression;
-    static Node startAt = null;
+    static Node start = null;
+    static Node now = null;
+    static boolean running = false;
 }
 
 class Circle extends Node {
