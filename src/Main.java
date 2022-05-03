@@ -19,9 +19,9 @@ public class Main extends Application {
         Menu menu = new Menu();
         Scene scene = menu.createScene();
         primaryStage.setScene(scene);
-        primaryStage.setTitle("CLogisim");
+        primaryStage.setTitle("Cgisim");
 //        primaryStage.getIcons().add(new Image("chrome.png"));
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
 //        primaryStage.initStyle(StageStyle.UTILITY);
         primaryStage.show();
 
