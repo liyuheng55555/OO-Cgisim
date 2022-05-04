@@ -95,7 +95,6 @@ abstract class Node {
     String expression;
     static Node start = null;
     static Node now = null;
-    static boolean running = false;
 }
 
 class Circle extends Node {

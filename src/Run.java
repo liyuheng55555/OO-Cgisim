@@ -1,11 +1,12 @@
 public class Run {
     private Run() {}
+    static boolean isRunning = false;
     public void stepRun() throws Exception {
         // 如果当前不在运行
-        if (Node.running==false) {
+        if (!isRunning) {
             if (Node.start==null)
                 throw new Exception("没有起始节点，无法开始运行");
-            Node.running = true;
+            isRunning = true;
             Node.now = Node.start;
             return;
         }
@@ -17,7 +18,7 @@ public class Run {
         return;
     }
     public void reset() {
-        Node.running = false;
+        isRunning = false;
         Node.now = null;
     }
     public void continuousRun() {
