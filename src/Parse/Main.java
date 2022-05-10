@@ -48,7 +48,7 @@ public class Main {
         help("a+2+3",map);
         help("a+2+3\n",map);
         help("g && g || g\n",map);
-        help("g && a != b\n",map);
+        help("g&&a!=b\n",map);
         help("g && a == b\n",map);
         help("g && a || b\n",map);
         help("a+a-a*a*(a*a/a+b)*b%a\n",map);
