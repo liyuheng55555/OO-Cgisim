@@ -8,35 +8,35 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Var {
-    public Var(String name, String type, String val) throws Exception {
-        if (initMap.containsKey(name))
-            throw new Exception("变量名 "+name+" 已经被定义过");
-        if (!namePat.matcher(name).find())
-            throw new Exception("变量名 "+name+" 有格式问题");
-//        Var var = new Var(name);
-        Object value;
-        switch (type) {
-            case "int":
-                value = new Integer(val);
-                break;
-            case "float":
-                value = new Float(val);
-                break;
-            case "bool":
-//                var.type = Type.BOOLEAN;
-                if (!boolPat.matcher(val).find())
-                    throw new Exception("bool类型变量值"+val+"无效");
-                value = Boolean.valueOf(val);
-                break;
-            default:
-                throw new Exception("类型无效");
-        }
-        this.name = new SimpleStringProperty(name);
-        this.type = new SimpleStringProperty(type);
-        this.val = value;
-        this.valStr = new SimpleStringProperty(val);
-        initMap.put(name, value);
-    }
+//    public Var(String name, String type, String val) throws Exception {
+//        if (initMap.containsKey(name))
+//            throw new Exception("变量名 "+name+" 已经被定义过");
+//        if (!namePat.matcher(name).find())
+//            throw new Exception("变量名 "+name+" 有格式问题");
+////        Var var = new Var(name);
+//        Object value;
+//        switch (type) {
+//            case "int":
+//                value = new Integer(val);
+//                break;
+//            case "float":
+//                value = new Float(val);
+//                break;
+//            case "bool":
+////                var.type = Type.BOOLEAN;
+//                if (!boolPat.matcher(val).find())
+//                    throw new Exception("bool类型变量值"+val+"无效");
+//                value = Boolean.valueOf(val);
+//                break;
+//            default:
+//                throw new Exception("类型无效");
+//        }
+//        this.name = new SimpleStringProperty(name);
+//        this.type = new SimpleStringProperty(type);
+//        this.val = value;
+//        this.valStr = new SimpleStringProperty(val);
+//        initMap.put(name, value);
+//    }
     static private Pattern namePat = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*$");
 //    static private Pattern intPat = Pattern.compile("^-?[0-9]+$");
 //    static private Pattern floatPat = Pattern.compile("^-?[0-9]+(.[0-9]*)$");
@@ -61,7 +61,6 @@ public class Var {
             throw new Exception("变量名"+name+"已经被定义过");
         if (!namePat.matcher(name).find())
             throw new Exception("变量名无效");
-//        Var var = new Var(name);
         Object value;
         switch (type) {
             case "int":
@@ -71,7 +70,6 @@ public class Var {
                 value = new Float(val);
                 break;
             case "bool":
-//                var.type = Type.BOOLEAN;
                 if (!boolPat.matcher(val).find())
                     throw new Exception("bool类型变量值"+val+"无效");
                 value = Boolean.valueOf(val);
@@ -80,6 +78,37 @@ public class Var {
                 throw new Exception("类型无效");
         }
         initMap.put(name, value);
+    }
+    static public void edit(String oldName, String newName, String newType, String newVal) throws Exception{
+        // 变量名检查
+        if (!initMap.containsKey(oldName))
+            throw new Exception("变量名 "+oldName+" 不存在");
+        if (!namePat.matcher(newName).find())
+            throw new Exception("变量名 "+newName+" 无效");
+        // 类型检查，变量值检查
+        Object value;
+        switch (newType) {
+            case "int":
+                value = new Integer(newVal);
+                break;
+            case "float":
+                value = new Float(newVal);
+                break;
+            case "bool":
+                if (!boolPat.matcher(newVal).find())
+                    throw new Exception("bool类型变量值 "+newVal+" 无效");
+                value = Boolean.valueOf(newVal);
+                break;
+            default:
+                throw new Exception("类型无效");
+        }
+        // 通过检查，执行更改
+        if (oldName.equals(newName))
+            initMap.put(oldName, value);
+        else {
+            initMap.remove(oldName);
+            initMap.put(newName, value);
+        }
     }
     // 删除一个变量
     static public void remove(String name) {
@@ -93,41 +122,20 @@ public class Var {
     }
     // 获取变量列表
     // 运行状态下提供runMap，非运行状态下提供initMap
-//    static public ArrayList<String[]> getVarList() {
-////        ArrayList<Var> arr;
-//        HashMap<String,Object> map;
-//        if (Run.isRunning)
-//            map = runMap;
-//        else
-//            map = initMap;
+    static public HashMap<String,String> getAll() {
+//        ArrayList<Var> arr;
+        HashMap<String,Object> map;
+        if (Run.isRunning)
+            map = runMap;
+        else
+            map = initMap;
 //        ArrayList<String[]> as = new ArrayList<>();
-//        for (Map.Entry<String,Object> entry: map.entrySet()) {
-//            String[] ss = new String[3];
-//            ss[0] = entry.getKey();
-//            ss[1] = entry.getValue().getClass().getName();
-//            ss[2] = javaTypeToCType.get(entry.getValue().toString());
-//            as.add(ss);
-//        }
-//        return as;
-//    }
-
-    final StringProperty type;
-    final StringProperty name;
-    Object val;
-    final StringProperty valStr;
-
-    public String getName() {
-        return name.get();
+        HashMap<String, String> map1 = new HashMap<>();
+        for (Map.Entry<String,Object> entry: map.entrySet()) {
+            map1.put(entry.getKey(),entry.getValue().toString());
+        }
+        return map1;
     }
-
-    public String getType() {
-        return type.get();
-    }
-
-    public String getValStr() {
-        return valStr.get();
-    }
-
 
 
     private static class Test {

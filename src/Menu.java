@@ -1,5 +1,6 @@
 //package com.example.javafx;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Map;
+
+
 
 public class Menu{
     // Menu(){}
@@ -56,28 +61,28 @@ public class Menu{
         return hBox;
     }
     public VBox createTable(){
-        final ObservableList<Var> data = FXCollections.observableArrayList();
+        final ObservableList<TableVar> data = FXCollections.observableArrayList();
         //创建数据源
         try {
-            data.add(new Var("a", "int", "1"));
-            data.add(new Var("b", "double", "2.3"));
-            data.add(new Var("c", "char", "c"));
-            data.add(new Var("d", "", "abc"));
+            data.add(new TableVar("a", "int", "1"));
+            data.add(new TableVar("b", "double", "2.3"));
+            data.add(new TableVar("c", "char", "c"));
+            data.add(new TableVar("d", "", "abc"));
         } catch (Exception e) {
             System.out.println(e.getMessage());
             // 等你补充
         }
 
         //创建表格
-        TableView<Var> tableView = new TableView<>();
+        TableView<TableVar> tableView = new TableView<>();
         tableView.setMaxWidth(300);
         tableView.setStyle("-fx-padding: 0 5px 0 5px;-fx-background-color:#4f4f4f;");
-        TableColumn<Var, String> VarName  = new TableColumn<>("变量");
-        TableColumn<Var, String> VarType  = new TableColumn<>("变量类型");
-        TableColumn<Var, String> VarValue  = new TableColumn<>("变量值");
-        VarName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        VarType.setCellValueFactory(new PropertyValueFactory<>("type"));
-        VarValue.setCellValueFactory(new PropertyValueFactory<>("valStr"));
+        TableColumn<TableVar, String> VarName  = new TableColumn<>("变量");
+        TableColumn<TableVar, String> VarType  = new TableColumn<>("变量类型");
+        TableColumn<TableVar, String> VarValue  = new TableColumn<>("变量值");
+        VarName.setCellValueFactory(new PropertyValueFactory<>("varName"));
+        VarType.setCellValueFactory(new PropertyValueFactory<>("varType"));
+        VarValue.setCellValueFactory(new PropertyValueFactory<>("varValue"));
         tableView.setEditable(true);
         VarName.setCellFactory(TextFieldTableCell.forTableColumn());
         VarType.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -98,7 +103,7 @@ public class Menu{
                 return;
             }
             try {
-                data.add(new Var(txtName.getText(), txtType.getText(), txtValue.getText()));
+                data.add(new TableVar(txtName.getText(), txtType.getText(), txtValue.getText()));
             } catch (Exception excp) {
                 System.out.println(excp.getMessage());
                 // 等你补充
@@ -116,7 +121,7 @@ public class Menu{
             System.out.println(moveIndex);
             //删除对应行
             data.remove(moveIndex);
-            Var.remove();  // 等你补充，填入被删除的变量名
+//            Var.remove();  // 等你补充，填入被删除的变量名
         });
         VBox vBox = new VBox();
         HBox hBox = new HBox();
