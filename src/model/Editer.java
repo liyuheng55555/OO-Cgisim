@@ -38,8 +38,7 @@ public class Editer {
         this.width = width + 10;
         initLine(x, y); //初始化线
         initCircle(x, y);   //初始化圆
-        disapperCircle();   //初始化时隐藏圆
-        disapperLine();    //初始化时隐藏线
+        disapperAll();
     }
 
     /**
@@ -202,7 +201,7 @@ public class Editer {
     /**
      * 设置编辑框消失
      */
-    public void disapper() {
+    public void disapperAll() {
         disapperCircle();
         disapperLine();
     }

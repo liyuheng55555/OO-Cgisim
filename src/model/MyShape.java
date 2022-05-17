@@ -92,27 +92,27 @@ public abstract class MyShape {
         addListener();                   // 添加监听
     }
 
+//todo: 连接点的形式如何设置？
 
-    /**
-     * add connection info to the shape
-     * @param info 连接信息
-     */
-    public void addConnectionInfo(ConnectionInfo info) {
-        connectionInfos.add(info);
-    }
-
-
-    public void delConnectionInfo(MyLine line) {
-        ConnectionInfo delInfo = null;
-        for (ConnectionInfo info : connectionInfos) {
-            if (info.getLine() == line) {
-                System.out.println("delOK");
-                delInfo = info;
-            }
-        }
-        if (delInfo != null)
-            connectionInfos.remove(delInfo);
-    }
+//    /**
+//     * add connection info to the shape
+//     * @param info 连接信息
+//     */
+//    public void addConnectionInfo(ConnectionInfo info) {
+//        connectionInfos.add(info);
+//    }
+//
+//    public void delConnectionInfo(MyLine line) {
+//        ConnectionInfo delInfo = null;
+//        for (ConnectionInfo info : connectionInfos) {
+//            if (info.getLine() == line) {
+//                System.out.println("delOK");
+//                delInfo = info;
+//            }
+//        }
+//        if (delInfo != null)
+//            connectionInfos.remove(delInfo);
+//    }
 
     /**
      * 添加监听
@@ -173,6 +173,22 @@ public abstract class MyShape {
     }
 
     /**
+     * 默认的图形-线条连接点 默认为上下左右四个点
+     * 可以自定义,通过子类重写该方法来改变连接点位置
+     */
+    public void createDrawPoints() {
+        double leftMidX = this.x - width;
+        double leftMidY = this.y;
+        double upMidX = this.x;
+        double upMidY = this.y - height;
+        double rightMidX = this.x + width;
+        double rightMidY = this.y;
+        double downMidX = this.x;
+        double downMidY = this.y + height;
+        drawPoints.updateLocation(leftMidX, leftMidY, upMidX, upMidY, rightMidX, rightMidY, downMidX, downMidY);
+    }
+
+    /**
      * 当图形位置发生改变的时候，更新图形中的文字显示位置
      */
     public void update() {
@@ -206,7 +222,7 @@ public abstract class MyShape {
      */
     public void setOnRealse() {
         shape.setOnMouseReleased(e -> {
-            this.setToTop();
+            this.setToTop();    // 重绘图形 将当前图形置顶
             this.booleanProperty.setValue(false);
             if (!isSelected) {
                 drawController.clearAllOnEdit();
@@ -290,6 +306,48 @@ public abstract class MyShape {
         }
     }
 
+    protected void resizeShape(int posId, double dx, double dy) {
+        if (width + dx >= 0 && height + dy >= 0) {
+            // ??????ε?任
+            this.width = width + dx;
+            this.height = height + dy;
+            if (posId <= 1) {
+                this.x = rightX - width;
+                this.y = rightY - height;
+            } else {
+                if (posId == 2) {
+                    this.x = rightX - width;
+                    this.y = leftY + height;
+                } else {
+                    if (posId == 3) {
+                        this.x = rightX - width;
+                        this.y = rightY - height;
+                    } else {
+                        if (posId == 6) {
+                            this.x = leftX + width;
+                            this.y = rightY - height;
+                        } else {
+                            this.x = leftX + width;
+                            this.y = leftY + height;
+                        }
+                    }
+                }
+            }
+            // 更新信息
+            updateLocation(this.x, this.y);
+            getEditer().setHeight(height + 10);
+            getEditer().setWidth(width + 10);
+            // 设置属性
+            this.setX(x);
+            this.setY(y);
+            this.setWidth(width);
+            this.setHeight(height);
+            updateLocation(this.x, this.y);
+            // 通知改变
+            booleanProperty.setValue(true);
+        }
+    }
+
     /**
      * 设置shape的相关鼠标样式
      */
@@ -297,6 +355,19 @@ public abstract class MyShape {
         this.getShape().setCursor(Cursor.MOVE);
     }
 
+
+    /**
+     * 设置change监听器,当booleanProperty发生改变的时候响应
+     */
+    public void changeListener() {
+        booleanProperty.addListener(e -> {
+            if (!booleanProperty.getValue()) {
+                drawController.getPropertyController().setWorkShape(this);
+                drawController.getPropertyController().update();
+                drawController.saveChange();
+            }
+        });
+    }
 
     public int getFactoryID() {
         return factoryID;
