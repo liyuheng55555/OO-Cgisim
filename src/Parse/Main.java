@@ -7,7 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
-    public static void run(String expr, Map<String,Object> map) throws Exception {
+    /**
+     * 对给定的表达式和变量表执行运算.
+     *
+     * @param expr          表达式
+     * @param map           变量表
+     * @throws Exception    可能抛出无法解析的异常，或者运行时异常
+     */
+    public static Object run(String expr, Map<String,Object> map) throws Exception {
         CodePointCharStream cpcs = CharStreams.fromString(expr);
         CgisimLexer lexer = new CgisimLexer(cpcs);
         lexer.removeErrorListeners();
@@ -18,7 +25,7 @@ public class Main {
         parser.addErrorListener(ThrowingErrorListener.INSTANCE);
         CgisimParser.ProgContext pContext = parser.prog();
         Eval eval = new Eval(map);
-        eval.visit(pContext);
+        return eval.visit(pContext);
     }
 
     static private void help(String expr, HashMap<String,Object> map) {
@@ -32,15 +39,6 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-//        try {
-//            run("a=5\n" +
-//                    "b =3\n" +
-//                    "c=a*b+3\n" +
-//                    " (cc)\n" +
-//                    "c*c\n",null);
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
         HashMap<String,Object> map = new HashMap<>();
         map.put("a",2);
         map.put("b",3);

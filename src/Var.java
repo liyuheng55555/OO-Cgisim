@@ -7,36 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ *
+ */
 public class Var {
-//    public Var(String name, String type, String val) throws Exception {
-//        if (initMap.containsKey(name))
-//            throw new Exception("变量名 "+name+" 已经被定义过");
-//        if (!namePat.matcher(name).find())
-//            throw new Exception("变量名 "+name+" 有格式问题");
-////        Var var = new Var(name);
-//        Object value;
-//        switch (type) {
-//            case "int":
-//                value = new Integer(val);
-//                break;
-//            case "float":
-//                value = new Float(val);
-//                break;
-//            case "bool":
-////                var.type = Type.BOOLEAN;
-//                if (!boolPat.matcher(val).find())
-//                    throw new Exception("bool类型变量值"+val+"无效");
-//                value = Boolean.valueOf(val);
-//                break;
-//            default:
-//                throw new Exception("类型无效");
-//        }
-//        this.name = new SimpleStringProperty(name);
-//        this.type = new SimpleStringProperty(type);
-//        this.val = value;
-//        this.valStr = new SimpleStringProperty(val);
-//        initMap.put(name, value);
-//    }
     static private Pattern namePat = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*$");
 //    static private Pattern intPat = Pattern.compile("^-?[0-9]+$");
 //    static private Pattern floatPat = Pattern.compile("^-?[0-9]+(.[0-9]*)$");
@@ -125,7 +99,7 @@ public class Var {
     static public HashMap<String,String> getAll() {
 //        ArrayList<Var> arr;
         HashMap<String,Object> map;
-        if (Run.isRunning)
+        if (Run.isRunning())
             map = runMap;
         else
             map = initMap;

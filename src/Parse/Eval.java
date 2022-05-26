@@ -8,9 +8,15 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import java.util.HashMap;
 import java.util.Map;
 
-//import ;
-
+/**
+ * Eval类，在语法树上进行运算操作.
+ */
 public class Eval extends CgisimBaseVisitor<Object> {
+    /**
+     * 构造函数.
+     * @param map   包含所有变量的map，
+     *              运算过程中会从中读取变量，也会修改其中的变量
+     */
     public Eval(Map<String,Object> map) {
         memory = map;
     }
@@ -18,10 +24,21 @@ public class Eval extends CgisimBaseVisitor<Object> {
 
 //    public boolean algorithmCheck()
 
+    /**
+     * 把换行符替换成空格，用于提供更美观的报错信息.
+     * @param s     待处理字符串
+     * @return      美化后字符串
+     */
     private String beaut(String s) {
         return s.replace('\n', ' ');
     }
 
+    /**
+     * 访问赋值语句.
+     *
+     * @param ctx   该语句本身
+     * @return      本语法认为赋值语句本身的值==左侧变量被赋的值
+     */
     @Override
     public Object visitAssign(CgisimParser.AssignContext ctx) {
         String id = ctx.ID().getText();
@@ -34,6 +51,12 @@ public class Eval extends CgisimBaseVisitor<Object> {
         return value;
     }
 
+    /**
+     * 访问打印语句.
+     *
+     * @param ctx
+     * @return
+     */
     @Override
     public Object visitPrintExpr(CgisimParser.PrintExprContext ctx) {
         System.out.println(visit(ctx.expr()));
@@ -53,6 +76,12 @@ public class Eval extends CgisimBaseVisitor<Object> {
         throw new RuntimeException(beaut(ctx.getText())+": 变量 "+id+" 不存在");
     }
 
+    /**
+     * 访问乘除余语句.
+     *
+     * @param ctx
+     * @return
+     */
     @Override
     public Object visitMulDiv(CgisimParser.MulDivContext ctx) {
         Object left = visit(ctx.expr(0));
@@ -69,6 +98,12 @@ public class Eval extends CgisimBaseVisitor<Object> {
         throw new RuntimeException("未知的错误");
     }
 
+    /**
+     * 访问加减语句.
+     *
+     * @param ctx
+     * @return
+     */
     @Override
     public Object visitAddSub(CgisimParser.AddSubContext ctx) {
         Object left = visit(ctx.expr(0));
@@ -153,12 +188,20 @@ public class Eval extends CgisimBaseVisitor<Object> {
     }
 }
 
+/**
+ * 自定义的运行时异常监听器.
+ * <p>
+ *     如果没有它的话，发生异常会只打印异常信息，而无法被外界catch到.
+ *     因为是抄的所以不知道该写什么.
+ * </p>
+ * @author lyh
+ * @since 0.1
+ */
 class ThrowingErrorListener extends BaseErrorListener {
     public static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
         throw new ParseCancellationException("line " + line + ":" + charPositionInLine + " " + msg);
     }
-
 }
 

@@ -18,6 +18,8 @@ import java.util.Map;
 
 
 public class Menu{
+    ObservableList<TableVar> data;
+    TableView<TableVar> tableView;
     // Menu(){}
     //顶部布局
     public Button createButton(String name, String color) {
@@ -54,14 +56,39 @@ public class Menu{
         Button pauseButton = createButton("暂停", "#844200");
         Button debugButton = createButton("DeBug", "#2f4f4f");
         Button nextStepButton = createButton("下一步", "#004B97");
+        Alert alert =new Alert(Alert.AlertType.INFORMATION);
+        nextStepButton.setOnAction(event -> {
+            try {
+                Run.stepRun();
+            } catch (Exception e) {  // 出现运行错误，显示弹窗
+                alert.setContentText(e.getMessage());
+                alert.show();
+                return;
+            }
+            Map<String,String> varMap = Var.getAll();
+            for (TableVar var: data) {
+                if (varMap.containsKey(var.getVarName()))
+                    var.setVarValue(varMap.get(var.getVarName()));
+            }
+            tableView.refresh();
+        });
         Button stopButton = createButton("停止", "#8b0000");
+        stopButton.setOnAction(event -> {
+            Run.reset();
+            Map<String,String> varMap = Var.getAll();
+            for (TableVar var: data) {
+                if (varMap.containsKey(var.getVarName()))
+                    var.setVarValue(varMap.get(var.getVarName()));
+            }
+            tableView.refresh();
+        });
         hBox.setStyle("-fx-padding: 0 5px 0 5px; -fx-background-color: " + _message_bg + ";");
         hBox.getChildren().addAll(saveButton, openButton, aboutButton, runButton, pauseButton
                 , debugButton, nextStepButton, stopButton);
         return hBox;
     }
     public VBox createTable(){
-        final ObservableList<TableVar> data = FXCollections.observableArrayList();
+        data = FXCollections.observableArrayList();
         //创建数据源
         try {
             data.add(new TableVar("a", "int", "1"));
@@ -74,7 +101,7 @@ public class Menu{
         }
 
         //创建表格
-        TableView<TableVar> tableView = new TableView<>();
+        tableView = new TableView<>();
         tableView.setMaxWidth(300);
         tableView.setStyle("-fx-padding: 0 5px 0 5px;-fx-background-color:#4f4f4f;");
         TableColumn<TableVar, String> VarName  = new TableColumn<>("变量");
