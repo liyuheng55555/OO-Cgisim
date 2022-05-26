@@ -167,8 +167,9 @@ public abstract class MyShape {
         createDrawPoints();
         this.getEditer().setHeight(height + 10);
         this.getEditer().setWidth(width + 10);
-        if (isSelected)
+        if (isSelected) {
             editer.show(x, y);
+        }
         update();
     }
 
