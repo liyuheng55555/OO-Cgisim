@@ -1,3 +1,5 @@
+package controller;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -37,7 +39,7 @@ public class TableVar {
     }
 
     // 对表格某处进行编辑的时候，先定位到具体的TableVar对象，然后调用此方法
-    // Var.edit()会检查此更改是否可行，不可行则会抛出异常
+    // controller.Var.edit()会检查此更改是否可行，不可行则会抛出异常
     public void tryEdit(String varName, String varType, String varValue) throws Exception {
         Var.edit(this.varName.getValue(), varName, varType, varValue);
         this.varName.set(varName);

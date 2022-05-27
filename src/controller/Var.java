@@ -1,8 +1,5 @@
-import javafx.beans.binding.ObjectExpression;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+package controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -28,7 +25,7 @@ public class Var {
     static public Object name2val(String name) {
         return runMap.get(name);
     }
-    // Var.add()用于添加一个变量，传过来3个参数，变量名、类型、值
+    // controller.Var.add()用于添加一个变量，传过来3个参数，变量名、类型、值
     // 进行了格式判断，格式错误会抛出异常
     static public void add(String name, String type, String val) throws Exception {
         if (initMap.containsKey(name))
@@ -97,7 +94,7 @@ public class Var {
     // 获取变量列表
     // 运行状态下提供runMap，非运行状态下提供initMap
     static public HashMap<String,String> getAll() {
-//        ArrayList<Var> arr;
+//        ArrayList<controller.Var> arr;
         HashMap<String,Object> map;
         if (Run.isRunning())
             map = runMap;

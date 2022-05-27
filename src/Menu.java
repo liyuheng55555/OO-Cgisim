@@ -1,18 +1,17 @@
 //package com.example.javafx;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import controller.Run;
+import controller.TableVar;
+import controller.Var;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -89,16 +88,6 @@ public class Menu{
     }
     public VBox createTable(){
         data = FXCollections.observableArrayList();
-        //创建数据源
-        try {
-            data.add(new TableVar("a", "int", "1"));
-            data.add(new TableVar("b", "double", "2.3"));
-            data.add(new TableVar("c", "char", "c"));
-            data.add(new TableVar("d", "", "abc"));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            // 等你补充
-        }
 
         //创建表格
         tableView = new TableView<>();
@@ -148,7 +137,7 @@ public class Menu{
             System.out.println(moveIndex);
             //删除对应行
             data.remove(moveIndex);
-//            Var.remove();  // 等你补充，填入被删除的变量名
+//            controller.Var.remove();  // 等你补充，填入被删除的变量名
         });
         VBox vBox = new VBox();
         HBox hBox = new HBox();

@@ -1,11 +1,16 @@
+package controller;
+
+import jdk.nashorn.internal.runtime.regexp.joni.ast.StateNode;
+import model.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Run {
-    private Run() {}
+    Run() {}
 //    static boolean isRunning = false;
     static int nowID = -1;
-    static DrawController drawController = new DrawController();
+    static DrawController drawController;
     static public void stepRun() throws Exception {
         if (nowID == -1) {
             nowID = drawController.getStartID();
@@ -19,14 +24,14 @@ public class Run {
             throw new Exception(nowID+"号节点没有对应的MyShape对象");
         }
         if (now instanceof StartNode) {
-            nowID = ((StartNode) now).nxtID;
+            nowID = ((StartNode) now).getNxtID();
         }
         else if (now instanceof EndNode) {
             throw new Exception("程序已经到达终点");
         }
         else if (now instanceof IfNode) {
             IfNode ifNode = (IfNode) now;
-            String expression = ifNode.text.getText();
+            String expression = ifNode.getText().getText();
             Object result = Parse.Main.run(expression, Var.runMap);
             if (!(result instanceof Boolean))
                 throw new Exception(
@@ -36,15 +41,15 @@ public class Run {
                         "，值为"+result.toString()
                 );
             if ((Boolean)result)
-                nowID = ifNode.trueID;
+                nowID = ifNode.getTrueID();
             else
-                nowID = ifNode.falseID;
+                nowID = ifNode.getFalseID();
         }
-        else if (now instanceof StateNode) {
-            StateNode stateNode = (StateNode) now;
-            String expression = stateNode.text.getText();
+        else if (now instanceof StatementNode) {
+            StatementNode stateNode = (StatementNode) now;
+            String expression = stateNode.getText().getText();
             Parse.Main.run(expression, Var.runMap);
-            nowID = stateNode.nxtID;
+            nowID = stateNode.getNxtID();
         }
         else {
             throw new Exception(nowID+"号节点类型未知，也许是"+now.getClass().toString());
@@ -63,5 +68,8 @@ public class Run {
     }
     static public void continuousRun() {
 
+    }
+    static public void setDrawController(DrawController dc){
+        drawController = dc;
     }
 }
