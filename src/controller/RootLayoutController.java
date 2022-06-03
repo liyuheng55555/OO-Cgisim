@@ -43,13 +43,16 @@ public class RootLayoutController implements Initializable {
     private ImageView shadow;
     private ImageView imageView;
 
+    static final int viewH = 100;
+    static final int viewW = 150;
+
+    static final int connectorSize = 5;
+
+
 
     /*
     inConnector记录每种节点的输入点，outConnector记录输出点
-    1：上方
-    2：下方
-    3：左侧
-    4：右侧
+    1：上方    2：下方    3：左侧    4：右侧
      */
     static Map<String, List<Integer>> inConnector = new HashMap<>();
     static Map<String, List<Integer>> outConnector = new HashMap<>();
@@ -69,6 +72,37 @@ public class RootLayoutController implements Initializable {
         outConnector.put("statement", Collections.singletonList(2));
         outConnector.put("print", Collections.singletonList(2));
         outConnector.put("merge", Collections.singletonList(2));
+    }
+    // 各个点相对于基点的偏移量，[3][0]表示左侧点的纵坐标，[3][1]表示横坐标
+    static double[][] connectorPos = new double[5][2];
+    static {
+        connectorPos[1][0] = (double) viewH / 10;
+        connectorPos[1][1] = (double) viewW / 2;
+        connectorPos[2][0] = (double) viewH / 10 * 9;
+        connectorPos[2][1] = (double) viewW / 2;
+        connectorPos[3][0] = (double) viewH / 2;
+        connectorPos[3][1] = (double) viewW / 10;
+        connectorPos[4][0] = (double) viewH / 2;
+        connectorPos[4][1] = (double) viewW / 10 * 9;
+    }
+
+    int touchConnector(MyNode node, double x, double y) {
+        String name = node.name;
+        double baseX = node.imageView.getX();
+        double baseY = node.imageView.getY();
+        for (int i : inConnector.get(name)) {
+            double ny = baseY + connectorPos[i][0];
+            double nx = baseX + connectorPos[i][1];
+            if (distance(x,y,nx,ny)<connectorSize)
+                return i;
+        }
+        for (int i : outConnector.get(name)) {
+            double ny = baseY + connectorPos[i][0];
+            double nx = baseX + connectorPos[i][1];
+            if (distance(x,y,nx,ny)<connectorSize)
+                return i;
+        }
+        return -1;
     }
 
     /**
@@ -140,8 +174,7 @@ public class RootLayoutController implements Initializable {
 //        return null;
 //    }
 
-    final int viewH = 100;
-    final int viewW = 150;
+
 
     MyNode produceNode(String selectShape) {
         String shape = selectShape.split("_")[2];
@@ -160,6 +193,12 @@ public class RootLayoutController implements Initializable {
         my.name = shape;
         return my;
     }
+
+    double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+    }
+
+
 
 //    ImageView produceView(String selectShape) {
 //        String shape = selectShape.split("_")[2];
@@ -192,23 +231,31 @@ public class RootLayoutController implements Initializable {
         shadow.setX(-1000);
         shadow.setY(-1000);
 
-        drawingArea.getChildren().addAll(shadow);
+        ImageView connector = new ImageView();
+        connector.setFitWidth(2*connectorSize);
+        connector.setFitHeight(2*connectorSize);
+        connector.setImage(new Image("resources/img/co.png"));
+        connector.setX(-1000);
+        connector.setY(-1000);
+
+        drawingArea.getChildren().addAll(shadow, connector);
 
         // 点击，创建图形
 //        drawingArea.;
 
 //        drawingArea.setOnMouseClicked(event -> {
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (isDragging) {
+                isDragging = false;
+                return;
+            }
             keyBoardPane.requestFocus();
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectShape != null) {
                     double x, y;
                     x = event.getX();
                     y = event.getY();
-//                drawingArea
-//                imageView.setImage();
                     MyNode node = produceNode(selectShape);
-//                    ImageView view = produceView(selectShape);
                     ImageView view = node.imageView;
                     int xx = (int) x;
                     int yy = (int) y;
@@ -219,7 +266,6 @@ public class RootLayoutController implements Initializable {
                     putInTable(node);
                     drawingArea.getChildren().add(view);
                     System.out.println(drawingArea.getChildren().size());
-//                selectShape = null;
                 }
                 if (event.getClickCount() == 1) {
                     drawController.getPropertyController().update();
@@ -248,7 +294,34 @@ public class RootLayoutController implements Initializable {
                     }
                 }
             }
+        });
 
+        drawingArea.setOnMouseMoved(event -> {
+            if (isDragging)
+                return;
+//            System.out.println("moved");
+            boolean found = false;
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+            MyNode node = viewTable[x/viewW][y/viewH];
+            if (node!=null) {
+                int c = touchConnector(node, event.getX(), event.getY());
+                System.out.println(c);
+                if (c!=-1) {
+                    connector.setX(node.imageView.getX()+connectorPos[c][1]-connectorSize);
+                    connector.setY(node.imageView.getY()+connectorPos[c][0]-connectorSize);
+                    // 这样刷一下能把connector的显示拉到最上面
+                    drawingArea.getChildren().remove(connector);
+                    drawingArea.getChildren().add(connector);
+                    found = true;
+                }
+            }
+            else
+                System.out.println("null");
+            if (!found) {
+                connector.setX(-1000);
+                connector.setY(-1000);
+            }
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
@@ -273,7 +346,7 @@ public class RootLayoutController implements Initializable {
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
-//        drawingArea.setOnMouseDragExited(event -> {
+
             if (selection!=null) {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
