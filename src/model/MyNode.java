@@ -1,7 +1,7 @@
 package model;
 
 import controller.DrawController;
-import javafx.scene.Group;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
@@ -18,5 +18,11 @@ public class MyNode {
         this.drawController = drawController;
     }
 
-//    String
+    public MyNode(AnchorPane drawingArea, DrawController drawController){
+        this.drawingArea = drawingArea;
+        this.drawController = drawController;
+    }
+
+    public ImageView imageView;
+    public String name;
 }

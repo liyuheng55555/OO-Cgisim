@@ -14,7 +14,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
+import model.MyNode;
 
 
 public class RootLayoutController implements Initializable {
@@ -39,7 +39,7 @@ public class RootLayoutController implements Initializable {
     private ImageView choose_print;
     @FXML
     private TextField messageBox;
-//    @FXML
+    //    @FXML
     private ImageView shadow;
     private ImageView imageView;
 
@@ -55,20 +55,20 @@ public class RootLayoutController implements Initializable {
     static Map<String, List<Integer>> outConnector = new HashMap<>();
     static {
         inConnector.put("start", Collections.emptyList());
-        inConnector.put("end", Arrays.asList(1));
-        inConnector.put("if", Arrays.asList(1));
-        inConnector.put("loop", Arrays.asList(1));
-        inConnector.put("statement", Arrays.asList(1));
-        inConnector.put("print", Arrays.asList(1));
+        inConnector.put("end", Collections.singletonList(1));
+        inConnector.put("if", Collections.singletonList(1));
+        inConnector.put("loop", Collections.singletonList(1));
+        inConnector.put("statement", Collections.singletonList(1));
+        inConnector.put("print", Collections.singletonList(1));
         inConnector.put("merge", Arrays.asList(1,4));
 
-        outConnector.put("start", Arrays.asList(2));
+        outConnector.put("start", Collections.singletonList(2));
         outConnector.put("end", Collections.emptyList());
         outConnector.put("if", Arrays.asList(2,4));
-        outConnector.put("loop", Arrays.asList(2));
-        outConnector.put("statement", Arrays.asList(2));
-        outConnector.put("print", Arrays.asList(2));
-        outConnector.put("merge", Arrays.asList(2));
+        outConnector.put("loop", Collections.singletonList(2));
+        outConnector.put("statement", Collections.singletonList(2));
+        outConnector.put("print", Collections.singletonList(2));
+        outConnector.put("merge", Collections.singletonList(2));
     }
 
     /**
@@ -80,9 +80,9 @@ public class RootLayoutController implements Initializable {
      * @param ey 结束y
      * @param ed 最终输入点
      */
-//    void drawLine(int sx, int sy, int sd, int ex, int ey, int ed) {
+    void drawLine(int sx, int sy, int sd, int ex, int ey, int ed) {
 //        if
-//    }
+    }
 
 
 
@@ -91,26 +91,27 @@ public class RootLayoutController implements Initializable {
     private ShapeFactory shapeFactory;
     private PropertyController propertyController;
     private String selectShape = null;
-    private ImageView selection = null;
+    private MyNode selection = null;
     private double relativeX = -1;
     private double relativeY = -1;
 
-    ImageView[][] viewTable = new ImageView[20][10];
+    MyNode[][] viewTable = new MyNode[20][10];
     ArrayList<Point2D> connectorList = new ArrayList<>();
 
     /**
      * 向viewTable中加入一个ImageView
-     * @param image 待加入的imageview
+     * @param node 待加入的imageview
      */
-    void putInTable(ImageView image) {
+    void putInTable(MyNode node) {
+        ImageView image = node.imageView;
         int x = (int) image.getX();
         int y = (int) image.getY();
         int xi = x / viewW;
         int yi = y / viewH;
         if (viewTable[xi][yi]!=null) {
-            drawingArea.getChildren().remove(viewTable[xi][yi]);
+            drawingArea.getChildren().remove(viewTable[xi][yi].imageView);
         }
-        viewTable[xi][yi] = image;
+        viewTable[xi][yi] = node;
     }
 
 //    // 将image的输入输出链接点记录到connectorList之中
@@ -142,26 +143,41 @@ public class RootLayoutController implements Initializable {
     final int viewH = 100;
     final int viewW = 150;
 
-    ImageView produceView(String selectShape) {
+    MyNode produceNode(String selectShape) {
         String shape = selectShape.split("_")[2];
-        ImageView view = new ImageView();
-        view.setFitHeight(viewH);
-        view.setFitWidth (viewW);
         Image image = null;
         try {
             image = new Image("resources/img/draw_node_"+shape+".png");
         } catch (Exception e) {
             System.out.println("!!!!!!!! 打开文件失败：resources/img/draw_node_"+shape+".png !!!!!!!!!");
+            return null;
         }
-        if (image!=null)
-            view.setImage(image);
-//        switch (shape) {
-//            case "start": view.setImage();
-//            case "end": view.setImage(new Image("resources/img/draw_node_end.png")); break;
-//            case "if" : view.setImage(new Image("resources/img/draw_node_if.png")); break;
-//        }
-        return view;
+        MyNode my = new MyNode(drawingArea, drawController);
+        my.imageView = new ImageView();
+        my.imageView.setImage(image);
+        my.imageView.setFitHeight(viewH);
+        my.imageView.setFitWidth(viewW);
+        my.name = shape;
+        return my;
     }
+
+//    ImageView produceView(String selectShape) {
+//        String shape = selectShape.split("_")[2];
+//        ImageView view = new ImageView();
+//        view.setFitHeight(viewH);
+//        view.setFitWidth (viewW);
+//        Image image = null;
+//        try {
+//            image = new Image("resources/img/draw_node_"+shape+".png");
+//        } catch (Exception e) {
+//            System.out.println("!!!!!!!! 打开文件失败：resources/img/draw_node_"+shape+".png !!!!!!!!!");
+//        }
+//        if (image!=null)
+//            view.setImage(image);
+//        return view;
+//    }
+
+    boolean isDragging = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -176,12 +192,6 @@ public class RootLayoutController implements Initializable {
         shadow.setX(-1000);
         shadow.setY(-1000);
 
-//        imageView = new ImageView();
-//        imageView.setFitHeight(viewH);
-//        imageView.setFitWidth (viewW);
-//        imageView.setImage(new Image("resources/img/choose_node_end.png"));
-//        imageView.setX(100);
-
         drawingArea.getChildren().addAll(shadow);
 
         // 点击，创建图形
@@ -190,7 +200,6 @@ public class RootLayoutController implements Initializable {
 //        drawingArea.setOnMouseClicked(event -> {
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             keyBoardPane.requestFocus();
-            System.out.println(event.getButton());
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectShape != null) {
                     double x, y;
@@ -198,15 +207,18 @@ public class RootLayoutController implements Initializable {
                     y = event.getY();
 //                drawingArea
 //                imageView.setImage();
-                    ImageView view = produceView(selectShape);
+                    MyNode node = produceNode(selectShape);
+//                    ImageView view = produceView(selectShape);
+                    ImageView view = node.imageView;
                     int xx = (int) x;
                     int yy = (int) y;
                     yy -= yy%viewH;
                     xx -= xx%viewW;
                     view.setX(xx);
                     view.setY(yy);
-                    putInTable(view);
+                    putInTable(node);
                     drawingArea.getChildren().add(view);
+                    System.out.println(drawingArea.getChildren().size());
 //                selectShape = null;
                 }
                 if (event.getClickCount() == 1) {
@@ -222,14 +234,15 @@ public class RootLayoutController implements Initializable {
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_PRESSED, event -> {
 //        drawingArea.setOnMouseDragEntered(event -> {
             selection = null;
+            System.out.println("MOUSE_PRESSED");
             loop:
             for (int i=0; i<20; i++) {
                 for (int j=0; j<10; j++) {
-                    if (viewTable[i][j]!=null && viewTable[i][j].contains(event.getX(), event.getY())) {
+                    if (viewTable[i][j]!=null && viewTable[i][j].imageView.contains(event.getX(), event.getY())) {
                         selection = viewTable[i][j];
 //                        selectShape = null;
-                        relativeX = event.getX()-viewTable[i][j].getX();
-                        relativeY = event.getY()-viewTable[i][j].getY();
+                        relativeX = event.getX()-viewTable[i][j].imageView.getX();
+                        relativeY = event.getY()-viewTable[i][j].imageView.getY();
                         removeFromTable(event.getX(), event.getY());
                         break loop;
                     }
@@ -240,6 +253,7 @@ public class RootLayoutController implements Initializable {
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
 //        drawingArea.setOnMouseDragged(event -> {
+            isDragging = true;
             if (event.isPrimaryButtonDown() && selection!=null) {
                 int xx = (int) event.getX();
                 int yy = (int) event.getY();
@@ -251,9 +265,10 @@ public class RootLayoutController implements Initializable {
 
                 double x = event.getX();
                 double y = event.getY();
-                selection.setX(x-relativeX);
-                selection.setY(y-relativeY);
+                selection.imageView.setX(x-relativeX);
+                selection.imageView.setY(y-relativeY);
 
+//                drawingArea
             }
         });
 
@@ -266,9 +281,10 @@ public class RootLayoutController implements Initializable {
                 x -= x%viewW;
                 System.out.println(x+" "+y);
 //                viewTable[x/viewW][y/viewH] = selection;
-                selection.setX(x);
-                selection.setY(y);
+                selection.imageView.setX(x);
+                selection.imageView.setY(y);
                 putInTable(selection);
+                selection = null;
                 shadow.setX(-1000);
                 shadow.setY(-1000);
             }
