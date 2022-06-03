@@ -1,15 +1,17 @@
 package controller;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -42,6 +44,49 @@ public class RootLayoutController implements Initializable {
     private ImageView imageView;
 
 
+    /*
+    inConnector记录每种节点的输入点，outConnector记录输出点
+    1：上方
+    2：下方
+    3：左侧
+    4：右侧
+     */
+    static Map<String, List<Integer>> inConnector = new HashMap<>();
+    static Map<String, List<Integer>> outConnector = new HashMap<>();
+    static {
+        inConnector.put("start", Collections.emptyList());
+        inConnector.put("end", Arrays.asList(1));
+        inConnector.put("if", Arrays.asList(1));
+        inConnector.put("loop", Arrays.asList(1));
+        inConnector.put("statement", Arrays.asList(1));
+        inConnector.put("print", Arrays.asList(1));
+        inConnector.put("merge", Arrays.asList(1,4));
+
+        outConnector.put("start", Arrays.asList(2));
+        outConnector.put("end", Collections.emptyList());
+        outConnector.put("if", Arrays.asList(2,4));
+        outConnector.put("loop", Arrays.asList(2));
+        outConnector.put("statement", Arrays.asList(2));
+        outConnector.put("print", Arrays.asList(2));
+        outConnector.put("merge", Arrays.asList(2));
+    }
+
+    /**
+     * 尝试绘制连线，x、y均为viewTable中的索引
+     * @param sx 起始x
+     * @param sy 起始y
+     * @param sd 起始输出点
+     * @param ex 结束x
+     * @param ey 结束y
+     * @param ed 最终输入点
+     */
+//    void drawLine(int sx, int sy, int sd, int ex, int ey, int ed) {
+//        if
+//    }
+
+
+
+
     private DrawController drawController;
     private ShapeFactory shapeFactory;
     private PropertyController propertyController;
@@ -51,6 +96,7 @@ public class RootLayoutController implements Initializable {
     private double relativeY = -1;
 
     ImageView[][] viewTable = new ImageView[20][10];
+    ArrayList<Point2D> connectorList = new ArrayList<>();
 
     /**
      * 向viewTable中加入一个ImageView
@@ -67,13 +113,17 @@ public class RootLayoutController implements Initializable {
         viewTable[xi][yi] = image;
     }
 
+//    // 将image的输入输出链接点记录到connectorList之中
+//    void putInConnectorList(ImageView image) {
+//        int x = (int) image.getX();
+//        int y = (int) image.getY();
+//        for (int c : )
+//    }
+
     void removeFromTable(double x, double y) {
         int xi = (int) (x / viewW);
         int yi = (int) (y / viewH);
         viewTable[xi][yi] = null;
-//        if (viewTable[xi][yi]!=null) {
-//            drawingArea.getChildren().remove(viewTable[xi][yi]);
-//        }
     }
 
 //    ArrayList<Integer> tableFindFree() {
@@ -97,10 +147,19 @@ public class RootLayoutController implements Initializable {
         ImageView view = new ImageView();
         view.setFitHeight(viewH);
         view.setFitWidth (viewW);
-        switch (shape) {
-            case "end": view.setImage(new Image("resources/img/draw_node_end.png")); break;
-            case "if" : view.setImage(new Image("resources/img/draw_node_if.png")); break;
+        Image image = null;
+        try {
+            image = new Image("resources/img/draw_node_"+shape+".png");
+        } catch (Exception e) {
+            System.out.println("!!!!!!!! 打开文件失败：resources/img/draw_node_"+shape+".png !!!!!!!!!");
         }
+        if (image!=null)
+            view.setImage(image);
+//        switch (shape) {
+//            case "start": view.setImage();
+//            case "end": view.setImage(new Image("resources/img/draw_node_end.png")); break;
+//            case "if" : view.setImage(new Image("resources/img/draw_node_if.png")); break;
+//        }
         return view;
     }
 
@@ -126,38 +185,49 @@ public class RootLayoutController implements Initializable {
         drawingArea.getChildren().addAll(shadow);
 
         // 点击，创建图形
-        drawingArea.setOnMouseClicked(event -> {
+//        drawingArea.;
+
+//        drawingArea.setOnMouseClicked(event -> {
+        drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             keyBoardPane.requestFocus();
-            if (event.getClickCount() == 1 && selectShape != null) {
-                double x, y;
-                x = event.getX();
-                y = event.getY();
+            System.out.println(event.getButton());
+            if (event.getButton().name().equals("PRIMARY")) {
+                if (event.getClickCount() == 1 && selectShape != null) {
+                    double x, y;
+                    x = event.getX();
+                    y = event.getY();
 //                drawingArea
 //                imageView.setImage();
-                ImageView view = produceView(selectShape);
-                int xx = (int) x;
-                int yy = (int) y;
-                yy -= yy%viewH;
-                xx -= xx%viewW;
-                view.setX(xx);
-                view.setY(yy);
-                putInTable(view);
-                drawingArea.getChildren().add(view);
+                    ImageView view = produceView(selectShape);
+                    int xx = (int) x;
+                    int yy = (int) y;
+                    yy -= yy%viewH;
+                    xx -= xx%viewW;
+                    view.setX(xx);
+                    view.setY(yy);
+                    putInTable(view);
+                    drawingArea.getChildren().add(view);
 //                selectShape = null;
+                }
+                if (event.getClickCount() == 1) {
+                    drawController.getPropertyController().update();
+                }
             }
-            if (event.getClickCount() == 1) {
-                drawController.getPropertyController().update();
+            else if (event.isSecondaryButtonDown()) {
+
             }
         });
 
         // ---------------------- 拖动响应，分为按下鼠标、拖动、松开鼠标，三个阶段 ---------------------------
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_PRESSED, event -> {
+//        drawingArea.setOnMouseDragEntered(event -> {
             selection = null;
             loop:
             for (int i=0; i<20; i++) {
                 for (int j=0; j<10; j++) {
                     if (viewTable[i][j]!=null && viewTable[i][j].contains(event.getX(), event.getY())) {
                         selection = viewTable[i][j];
+//                        selectShape = null;
                         relativeX = event.getX()-viewTable[i][j].getX();
                         relativeY = event.getY()-viewTable[i][j].getY();
                         removeFromTable(event.getX(), event.getY());
@@ -169,6 +239,7 @@ public class RootLayoutController implements Initializable {
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
+//        drawingArea.setOnMouseDragged(event -> {
             if (event.isPrimaryButtonDown() && selection!=null) {
                 int xx = (int) event.getX();
                 int yy = (int) event.getY();
@@ -187,6 +258,7 @@ public class RootLayoutController implements Initializable {
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
+//        drawingArea.setOnMouseDragExited(event -> {
             if (selection!=null) {
                 int x = (int) event.getX();
                 int y = (int) event.getY();

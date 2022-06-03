@@ -18,5 +18,5 @@ public class MyNode {
         this.drawController = drawController;
     }
 
-
+//    String
 }

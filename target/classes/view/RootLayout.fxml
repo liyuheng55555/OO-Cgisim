@@ -40,7 +40,7 @@
         <ScrollPane id="scrollPane" prefHeight="868.0" stylesheets="@../resources/css/style.css"
                     BorderPane.alignment="CENTER">
             <AnchorPane fx:id="drawingArea" minHeight="0.0" minWidth="0.0" prefHeight="3000.0" prefWidth="3000.0"
-                        style="-fx-background-color: #ECECFF;">
+                        style="-fx-background-color: #ffffff;">
                 <AnchorPane fx:id="keyBoardPane" layoutX="500.0" layoutY="750.0" prefHeight="200.0" prefWidth="200.0"/>
                 <effect>
                     <Blend/>
@@ -50,7 +50,7 @@
     </center>
     <left>
         <AnchorPane fx:id="ChooseArea" prefHeight="200.0" prefWidth="200.0"
-                    style="-fx-background-color: #ECF5FF;" BorderPane.alignment="CENTER">
+                    style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
             <VBox fx:id="Nodes" alignment="TOP_CENTER" prefHeight="824.0" prefWidth="221.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                 <ImageView fx:id="choose_start" id="choose_node_start" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
