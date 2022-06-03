@@ -305,8 +305,14 @@ public class RootLayoutController implements Initializable {
                     drawController.getPropertyController().update();
                 }
             }
-            else if (event.isSecondaryButtonDown()) {
-
+            else if (event.getButton().name().equals("SECONDARY")) {
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                MyNode node = viewTable[x/viewW][y/viewH];
+                if (node!=null) {
+                    drawingArea.getChildren().remove(node.imageView);
+                    viewTable[x/viewW][y/viewH] = null;
+                }
             }
         });
 
