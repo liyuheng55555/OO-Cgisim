@@ -16,6 +16,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.MyNode;
 
+enum Status {
+    normal, dragging, connecting, selected
+}
+
 
 public class RootLayoutController implements Initializable {
 
@@ -48,6 +52,7 @@ public class RootLayoutController implements Initializable {
 
     static final int connectorSize = 5;
 
+    Status status = Status.normal;
 
 
     /*
@@ -129,7 +134,9 @@ public class RootLayoutController implements Initializable {
     private double relativeX = -1;
     private double relativeY = -1;
 
-    MyNode[][] viewTable = new MyNode[20][10];
+    final int tableH = 20;
+    final int tableW = 10;
+    MyNode[][] viewTable = new MyNode[tableH][tableW];
     ArrayList<Point2D> connectorList = new ArrayList<>();
 
     /**
@@ -148,6 +155,30 @@ public class RootLayoutController implements Initializable {
         viewTable[xi][yi] = node;
     }
 
+    /**
+     * 将viewTable转换为Dijkstra所需的费用矩阵（有向图）
+     * 每个位置都是一个图上的节点，向上的边费用为无穷大，其它边费用均为1
+     * @return  费用矩阵cost
+     */
+    int[][] tableToCost() {
+        int[][] cost = new int[200][200];
+        for (int i=0; i<tableH; i++) {
+            for (int j=0; j<tableW; j++) {
+                int s = i*tableW+j;
+                for (int k=0; k<tableH; k++) {
+                    for (int l=0; l<tableW; l++) {
+                        int e = k*tableW+l;
+                        if (i<=k  &&  (i==k && Math.abs(j-l)==1 || j==l && Math.abs(i-k)==1))
+                            cost[s][e] = 1;
+                        else
+                            cost[s][e] = 999999;
+                    }
+                }
+            }
+        }
+        return cost;
+    }
+
 //    // 将image的输入输出链接点记录到connectorList之中
 //    void putInConnectorList(ImageView image) {
 //        int x = (int) image.getX();
@@ -162,8 +193,8 @@ public class RootLayoutController implements Initializable {
     }
 
 //    ArrayList<Integer> tableFindFree() {
-//        for (int h=0; h<20; h++) {
-//            for (int w=0; w<10; w++) {
+//        for (int h=0; h<tableH; h++) {
+//            for (int w=0; w<tableW; w++) {
 //                if (viewTable[h][w]==null) {
 //                    ArrayList<Integer> arr = new ArrayList<>();
 //                    arr.add(w,h);
@@ -245,8 +276,11 @@ public class RootLayoutController implements Initializable {
 
 //        drawingArea.setOnMouseClicked(event -> {
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (isDragging) {
-                isDragging = false;
+            if (status == Status.normal) {
+
+            }
+            if (status == Status.dragging) {
+                status = Status.normal;
                 return;
             }
             keyBoardPane.requestFocus();
@@ -276,14 +310,45 @@ public class RootLayoutController implements Initializable {
             }
         });
 
+        drawingArea.setOnMouseMoved(event -> {
+            if (status == Status.normal) {
+                boolean found = false;
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                MyNode node = viewTable[x/viewW][y/viewH];
+                if (node!=null) {
+                    int c = touchConnector(node, event.getX(), event.getY());
+                    System.out.println(c);
+                    if (c!=-1) {
+                        connector.setX(node.imageView.getX()+connectorPos[c][1]-connectorSize);
+                        connector.setY(node.imageView.getY()+connectorPos[c][0]-connectorSize);
+                        // 这样刷一下能把connector的显示拉到最上面
+                        drawingArea.getChildren().remove(connector);
+                        drawingArea.getChildren().add(connector);
+                        found = true;
+                    }
+                }
+                else
+                    System.out.println("null");
+                if (!found) {
+                    connector.setX(-1000);
+                    connector.setY(-1000);
+                }
+            }
+            else {
+                connector.setX(-1000);
+                connector.setY(-1000);
+            }
+        });
+
         // ---------------------- 拖动响应，分为按下鼠标、拖动、松开鼠标，三个阶段 ---------------------------
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_PRESSED, event -> {
 //        drawingArea.setOnMouseDragEntered(event -> {
             selection = null;
             System.out.println("MOUSE_PRESSED");
             loop:
-            for (int i=0; i<20; i++) {
-                for (int j=0; j<10; j++) {
+            for (int i=0; i<tableH; i++) {
+                for (int j=0; j<tableW; j++) {
                     if (viewTable[i][j]!=null && viewTable[i][j].imageView.contains(event.getX(), event.getY())) {
                         selection = viewTable[i][j];
 //                        selectShape = null;
@@ -296,37 +361,12 @@ public class RootLayoutController implements Initializable {
             }
         });
 
-        drawingArea.setOnMouseMoved(event -> {
-            if (isDragging)
-                return;
-//            System.out.println("moved");
-            boolean found = false;
-            int x = (int) event.getX();
-            int y = (int) event.getY();
-            MyNode node = viewTable[x/viewW][y/viewH];
-            if (node!=null) {
-                int c = touchConnector(node, event.getX(), event.getY());
-                System.out.println(c);
-                if (c!=-1) {
-                    connector.setX(node.imageView.getX()+connectorPos[c][1]-connectorSize);
-                    connector.setY(node.imageView.getY()+connectorPos[c][0]-connectorSize);
-                    // 这样刷一下能把connector的显示拉到最上面
-                    drawingArea.getChildren().remove(connector);
-                    drawingArea.getChildren().add(connector);
-                    found = true;
-                }
-            }
-            else
-                System.out.println("null");
-            if (!found) {
-                connector.setX(-1000);
-                connector.setY(-1000);
-            }
-        });
+
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
 //        drawingArea.setOnMouseDragged(event -> {
-            isDragging = true;
+//            isDragging = true;
+            status = Status.dragging;
             if (event.isPrimaryButtonDown() && selection!=null) {
                 int xx = (int) event.getX();
                 int yy = (int) event.getY();
@@ -346,7 +386,7 @@ public class RootLayoutController implements Initializable {
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
-
+//            status = Status.normal;
             if (selection!=null) {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
