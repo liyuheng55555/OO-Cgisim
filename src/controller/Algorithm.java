@@ -9,7 +9,7 @@ public class Algorithm {
      * @param end   终止位置
      * @return      前驱数组path
      */
-    int[] dijkstra(int[][] cost, int n, int beg, int end) {
+    static int[] dijkstra(int[][] cost, int n, int beg, int end) {
         final int inf = 0x3f3f3f3f;
         int[] path = new int[n];
         int[] vis = new int[n];

@@ -95,18 +95,20 @@ public class RootLayoutController implements Initializable {
         String name = node.name;
         double baseX = node.imageView.getX();
         double baseY = node.imageView.getY();
-        for (int i : inConnector.get(name)) {
-            double ny = baseY + connectorPos[i][0];
-            double nx = baseX + connectorPos[i][1];
-            if (distance(x,y,nx,ny)<connectorSize)
-                return i;
-        }
-        for (int i : outConnector.get(name)) {
-            double ny = baseY + connectorPos[i][0];
-            double nx = baseX + connectorPos[i][1];
-            if (distance(x,y,nx,ny)<connectorSize)
-                return i;
-        }
+        if (inConnector.get(name)!=null)
+            for (int i : inConnector.get(name)) {
+                double ny = baseY + connectorPos[i][0];
+                double nx = baseX + connectorPos[i][1];
+                if (distance(x,y,nx,ny)<connectorSize)
+                    return i;
+            }
+        if (outConnector.get(name)!=null)
+            for (int i : outConnector.get(name)) {
+                double ny = baseY + connectorPos[i][0];
+                double nx = baseX + connectorPos[i][1];
+                if (distance(x,y,nx,ny)<connectorSize)
+                    return i;
+            }
         return -1;
     }
 
@@ -149,48 +151,184 @@ public class RootLayoutController implements Initializable {
         int y = (int) image.getY();
         int xi = x / viewW;
         int yi = y / viewH;
-        if (viewTable[xi][yi]!=null) {
-            drawingArea.getChildren().remove(viewTable[xi][yi].imageView);
+        if (viewTable[yi][xi]!=null) {
+            drawingArea.getChildren().remove(viewTable[yi][xi].imageView);
         }
-        viewTable[xi][yi] = node;
+        viewTable[yi][xi] = node;
+//        System.out.println(getPath(0,0, 0,10));
+        erasePath(0,1);
+        erasePath(1,0);
+        erasePath(1,7);
+        erasePath(0,6);
+        ArrayList<ArrayList<Integer>> path = getPath(0,0,0,7);
+        System.out.println(path);
+        showPath(path);
+    }
+
+    void removeFromTable(double x, double y) {
+        int xi = (int) (x / viewW);
+        int yi = (int) (y / viewH);
+        viewTable[yi][xi] = null;
     }
 
     /**
      * 将viewTable转换为Dijkstra所需的费用矩阵（有向图）
      * 每个位置都是一个图上的节点，向上的边费用为无穷大，其它边费用均为1
+     * 如果一个位置已经被占用，则和它相连的边费用都是无穷大
      * @return  费用矩阵cost
      */
     int[][] tableToCost() {
         int[][] cost = new int[200][200];
+        int nb = 0;
         for (int i=0; i<tableH; i++) {
             for (int j=0; j<tableW; j++) {
                 int s = i*tableW+j;
                 for (int k=0; k<tableH; k++) {
                     for (int l=0; l<tableW; l++) {
                         int e = k*tableW+l;
-                        if (i<=k  &&  (i==k && Math.abs(j-l)==1 || j==l && Math.abs(i-k)==1))
+                        if (i<=k  &&
+                                (i==k && Math.abs(j-l)==1 || j==l && Math.abs(i-k)==1) &&
+                                viewTable[i][j]==null && viewTable[k][l]==null
+                        ) {
                             cost[s][e] = 1;
+//                            System.out.printf("%d %d  %d %d\n",i,j,k,l);
+                            nb++;
+                        }
+
                         else
                             cost[s][e] = 999999;
                     }
                 }
             }
         }
+        System.out.println(nb);
         return cost;
     }
 
-//    // 将image的输入输出链接点记录到connectorList之中
-//    void putInConnectorList(ImageView image) {
-//        int x = (int) image.getX();
-//        int y = (int) image.getY();
-//        for (int c : )
-//    }
-
-    void removeFromTable(double x, double y) {
-        int xi = (int) (x / viewW);
-        int yi = (int) (y / viewH);
-        viewTable[xi][yi] = null;
+    /**
+     * 获取路径
+     * 首先调用tableToCost，将viewTable转换成费用矩阵
+     * 然后调用Algorithm.dijkstra求出最短路径
+     * 然后通过前驱数组，生成路径
+     * 如果路径cost之和超过10000，就认为无法抵达，返回null
+     * @param sx startX
+     * @param sy startY
+     * @param ex endX
+     * @param ey endY
+     * @return [[sx,sy], [x1,y1], ..., [ex,ey]]
+     */
+    ArrayList<ArrayList<Integer>> getPath(int sx, int sy, int ex, int ey) {
+        int[][] cost = tableToCost();
+        int s = sx+sy*tableW;
+        int e = ex+ey*tableW;
+        int[] path = Algorithm.dijkstra(cost, tableH*tableW, s, e);
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        int costSum = 0;
+        for (int i=e; ; i=path[i]) {
+            ArrayList<Integer> now = new ArrayList<>();
+            now.add(i%tableW);
+            now.add(i/tableW);
+            result.add(0, now);
+            if (i==s)
+                break;
+            costSum += cost[path[i]][i];
+        }
+        if (costSum>10000) {
+            System.out.println(costSum);
+            return null;
+        }
+        return result;
     }
+
+
+
+    /**
+     * 获得路径之后，调用此函数在界面上绘制连线
+     * 起点终点的位置不画线
+     * @param path
+     */
+    void showPath(ArrayList<ArrayList<Integer>> path) {
+        if (path==null) {
+            System.out.println("找不到路径");
+            return;
+        }
+        for (int i=1; i<path.size()-1; i++) {
+            int preX=path.get(i-1).get(0);
+            int preY=path.get(i-1).get(1);
+            int x = path.get(i).get(0);
+            int y = path.get(i).get(1);
+            int nextX = path.get(i+1).get(0);
+            int nextY = path.get(i+1).get(1);
+            viewTable[y][x] = new MyNode(drawingArea, drawController);
+            MyNode node = viewTable[y][x];
+            node.imageView = new ImageView();
+            node.imageView.setFitHeight(viewH);
+            node.imageView.setFitWidth(viewW);
+            node.imageView.setY(y*viewH);
+            node.imageView.setX(x*viewW);
+            node.name = "line";
+            String imgRoot = "resources/img/";
+            if (nextY==preY+2) { // 竖线
+                node.imageView.setImage(new Image(imgRoot+"draw_line_vertical.png"));
+                node.name = "line_vertical";
+            }
+            else if (nextY==preY+1) { // 弯折线
+                if (nextX==preX+1) {
+                    if (x==preX) { // ⤵
+                        node.imageView.setImage(new Image(imgRoot + "draw_line_down_right.png"));
+                        node.name = "line_down_right";
+                    }
+                    else { // ⤷
+                        node.imageView.setImage(new Image(imgRoot + "draw_line_right_down.png"));
+                        node.name = "line_right_down";
+                    }
+                }
+                else {
+                    if (x==preX) {// ⤶
+                        node.imageView.setImage(new Image(imgRoot + "draw_line_down_left.png"));
+                        node.name = "line_down_left";
+                    }
+                    else { // 左转下，没找到这个符号
+                        node.imageView.setImage(new Image(imgRoot + "draw_line_left_down.png"));
+                        node.name = "line_left_down";
+                    }
+                }
+            }
+            else if (nextY==preY) { // 横线
+                node.imageView.setImage(new Image(imgRoot+"draw_line_horizon.png"));
+                node.name = "line_horizon";
+            }
+            drawingArea.getChildren().add(node.imageView);
+        }
+    }
+
+    /**
+     * 递归地擦除所有与(sx,sy)相连的线
+     * @param sx
+     * @param sy
+     */
+    void erasePath(int sx, int sy) {
+        if (sx<0 || sy<0 || sx>=tableW || sy>=tableH)
+            return;
+        MyNode now = viewTable[sy][sx];
+        if (now==null)
+            return;
+        String[] ss = now.name.split("_", 2);
+        if (!ss[0].equals("line"))
+            return;
+        viewTable[sy][sx] = null;
+        drawingArea.getChildren().remove(now.imageView);
+        if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right"))
+            erasePath(sx, sy-1);  // 向上擦除
+        if (ss[1].equals("vertical") || ss[1].equals("right_down") || ss[1].equals("left_down"))
+            erasePath(sx, sy+1);  // 向下擦除
+        if (ss[1].equals("horizon") || ss[1].equals("down_left") || ss[1].equals("right_down"))
+            erasePath(sx-1, sy);
+        if (ss[1].equals("horizon") || ss[1].equals("left_down")  || ss[1].equals("down_right"))
+            erasePath(sx+1, sy);
+    }
+
+
 
 //    ArrayList<Integer> tableFindFree() {
 //        for (int h=0; h<tableH; h++) {
@@ -204,6 +342,7 @@ public class RootLayoutController implements Initializable {
 //        }
 //        return null;
 //    }
+
 
 
 
@@ -271,6 +410,8 @@ public class RootLayoutController implements Initializable {
 
         drawingArea.getChildren().addAll(shadow, connector);
 
+//        ArrayList<ArrayList<Integer>> path;
+        showPath(getPath(0,0,0,7));
         // 点击，创建图形
 //        drawingArea.;
 
@@ -299,6 +440,7 @@ public class RootLayoutController implements Initializable {
                     view.setY(yy);
                     putInTable(node);
                     drawingArea.getChildren().add(view);
+
                     System.out.println(drawingArea.getChildren().size());
                 }
                 if (event.getClickCount() == 1) {
@@ -308,10 +450,10 @@ public class RootLayoutController implements Initializable {
             else if (event.getButton().name().equals("SECONDARY")) {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
-                MyNode node = viewTable[x/viewW][y/viewH];
+                MyNode node = viewTable[y/viewH][x/viewW];
                 if (node!=null) {
                     drawingArea.getChildren().remove(node.imageView);
-                    viewTable[x/viewW][y/viewH] = null;
+                    viewTable[y/viewH][x/viewW] = null;
                 }
             }
         });
@@ -321,10 +463,10 @@ public class RootLayoutController implements Initializable {
                 boolean found = false;
                 int x = (int) event.getX();
                 int y = (int) event.getY();
-                MyNode node = viewTable[x/viewW][y/viewH];
+                MyNode node = viewTable[y/viewH][x/viewW];
                 if (node!=null) {
                     int c = touchConnector(node, event.getX(), event.getY());
-                    System.out.println(c);
+//                    System.out.println(c);
                     if (c!=-1) {
                         connector.setX(node.imageView.getX()+connectorPos[c][1]-connectorSize);
                         connector.setY(node.imageView.getY()+connectorPos[c][0]-connectorSize);
@@ -334,8 +476,6 @@ public class RootLayoutController implements Initializable {
                         found = true;
                     }
                 }
-                else
-                    System.out.println("null");
                 if (!found) {
                     connector.setX(-1000);
                     connector.setY(-1000);
@@ -357,6 +497,8 @@ public class RootLayoutController implements Initializable {
                 for (int j=0; j<tableW; j++) {
                     if (viewTable[i][j]!=null && viewTable[i][j].imageView.contains(event.getX(), event.getY())) {
                         selection = viewTable[i][j];
+                        drawingArea.getChildren().remove((selection.imageView));
+                        drawingArea.getChildren().add((selection.imageView));
 //                        selectShape = null;
                         relativeX = event.getX()-viewTable[i][j].imageView.getX();
                         relativeY = event.getY()-viewTable[i][j].imageView.getY();
