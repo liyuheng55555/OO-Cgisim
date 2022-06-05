@@ -27,6 +27,7 @@ public class LoopStNode extends MyNode {
             this.loop_st.setY(y);
             this.loop_st.setFitHeight(viewH);
             this.loop_st.setFitWidth(viewW);
+            this.loop_st.setId("loop_st");
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading IfNode image");

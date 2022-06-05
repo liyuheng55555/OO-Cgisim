@@ -29,6 +29,7 @@ public class PrintNode extends MyNode {
             this.print.setY(y);
             this.print.setFitHeight(viewH);
             this.print.setFitWidth(viewW);
+            this.print.setId("print");
         }catch(Exception e){
             e.printStackTrace();
             System.out.println("error in loading Print image");
@@ -59,11 +60,10 @@ public class PrintNode extends MyNode {
         this.nxtID = nxtID;
     }
 
-    public ImageView getPrint() {
+    @Override
+    public ImageView getImageView() {
         return print;
     }
-
-
 
     public void draw(AnchorPane drawingArea) {
         drawingArea.getChildren().add(this.print);
@@ -75,15 +75,15 @@ public class PrintNode extends MyNode {
         drawingArea.getChildren().remove(this.text);
     }
 
-    public void putInTable(ImageView[][] viewTable) {
-        if(viewTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] != null) {
+    public void putInTable(MyNode[][] nodeTable) {
+        if(nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] != null) {
             System.out.println("error in StatementNode putInTable");
             return;
         }
-        viewTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = this.print;
+        nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = this;
     }
 
-    public void removeFromTable(ImageView[][] viewTable) {
-        viewTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = null;
+    public void removeFromTable(MyNode[][] nodeTable) {
+        nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = null;
     }
 }

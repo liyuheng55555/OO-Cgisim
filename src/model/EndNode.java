@@ -9,17 +9,20 @@ import static model.Constant.viewW;
 
 public class EndNode extends MyNode {
     private int preID;
+    private int preIDplace;
     private ImageView end;
 
     public EndNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
         this.preID = -1;
+        this.preIDplace = -1;
         try{
             this.end = new ImageView(new Image("resources/img/draw_node_end.png"));
             this.end.setX(x);
             this.end.setY(y);
             this.end.setFitWidth(viewW);
             this.end.setFitHeight(viewH);
+            this.end.setId("end");
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading EndNode image");
@@ -34,6 +37,14 @@ public class EndNode extends MyNode {
         this.preID = preID;
     }
 
+    public int getPreIDplace() {
+        return preIDplace;
+    }
+
+    public void setPreIDplace(int preIDplace) {
+        this.preIDplace = preIDplace;
+    }
+
     public ImageView getEnd() {
         return end;
     }
@@ -46,6 +57,7 @@ public class EndNode extends MyNode {
         drawingArea.getChildren().add(this.end);
     }
 
+    @Override
     public ImageView getImageView() {
         return this.end;
     }

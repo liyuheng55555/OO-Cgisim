@@ -22,6 +22,7 @@ public class LoopEndNode extends MyNode {
             this.loop_end.setY(y);
             this.loop_end.setFitHeight(viewH);
             this.loop_end.setFitWidth(viewW);
+            this.loop_end.setId("loop_end");
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading LoopEndNode image");
@@ -56,9 +57,11 @@ public class LoopEndNode extends MyNode {
         drawingArea.getChildren().add(this.loop_end);
     }
 
+    @Override
     public ImageView getImageView() {
         return this.loop_end;
     }
+
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.loop_end);
     }

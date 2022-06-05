@@ -21,6 +21,7 @@ public class StartNode extends MyNode {
             this.start.setY(y);
             this.start.setFitHeight(viewH);
             this.start.setFitWidth(viewW);
+            this.start.setId("start");
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading StartNode image");

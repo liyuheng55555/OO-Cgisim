@@ -28,6 +28,7 @@ public class StatementNode extends MyNode {
             this.statement.setY(y);
             this.statement.setFitHeight(viewH);
             this.statement.setFitWidth(viewW);
+            this.statement.setId("statement");
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading StatementNode image");

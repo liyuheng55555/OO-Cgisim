@@ -104,8 +104,9 @@ public class RootLayoutController implements Initializable {
             for (int i : connector.get(name)) {
                 double ny = baseY + connectorPos[i][0];
                 double nx = baseX + connectorPos[i][1];
-                if (distance(x, y, nx, ny) < 4 * connectorSize)
+                if (distance(x, y, nx, ny) < 4 * connectorSize) {
                     return i;
+                }
             }
         }
         return -1;
@@ -152,9 +153,9 @@ public class RootLayoutController implements Initializable {
 //                            System.out.printf("%d %d  %d %d\n",i,j,k,l);
                             nb++;
                         }
-
-                        else
+                        else {
                             cost[s][e] = 999999;
+                        }
                     }
                 }
             }
@@ -173,11 +174,13 @@ public class RootLayoutController implements Initializable {
         for(MyNode node: nodeMap.values()){
             if(node instanceof StartNode){
                 if(((StartNode) node).getNxtID()!=-1){
-                    connectInfo[0][count] = (int)(((StartNode) node).getStart().getX()/viewW);
-                    connectInfo[1][count] = (int)(((StartNode) node).getStart().getY()/viewH);
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
                     connectInfo[2][count] = 2;
                     MyNode toNode = nodeMap.get(((StartNode) node).getNxtID());
-
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = 2;
                 }
             }
         }
