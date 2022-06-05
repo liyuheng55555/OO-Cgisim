@@ -97,21 +97,15 @@ public class MergeNode extends MyNode{
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.merge.setX(x);
+        this.merge.setY(y);
+        drawingArea.getChildren().add(this.merge);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea){
         drawingArea.getChildren().remove(this.merge);
     }
 
-    @Override
-    public void putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] != null) {
-            System.out.println("error in IfNode putInTable");
-            return;
-        }
-        nodeTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] = this;
-    }
-
-    @Override
-    public void removeFromTable(MyNode[][] nodeTable) {
-        nodeTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] = null;
-    }
 }

@@ -56,21 +56,15 @@ public class EndNode extends MyNode {
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.end.setX(x);
+        this.end.setY(y);
+        drawingArea.getChildren().add(this.end);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.end);
     }
 
-    @Override
-    public void putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] != null) {
-            System.out.println("error in EndNode putInTable");
-            return;
-        }
-        nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = this;
-    }
-
-    @Override
-    public void removeFromTable(MyNode[][] nodeTable) {
-        nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = null;
-    }
 }

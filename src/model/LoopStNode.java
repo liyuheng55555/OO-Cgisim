@@ -5,8 +5,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-import static model.Constant.viewH;
-import static model.Constant.viewW;
+import static model.Constant.*;
 
 public class LoopStNode extends MyNode {
     private Text text;
@@ -23,8 +22,8 @@ public class LoopStNode extends MyNode {
         this.loop_stNxtID = -1;
         this.loop_stNxtPlace = -1;
         this.text = new Text("loop code!");
-        this.text.setX(x);
-        this.text.setY(y + viewH / 2);
+        this.text.setX(x + textRelativeX);
+        this.text.setY(y + textRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.loop_st = new ImageView(new Image("resources/img/draw_node_loop_st.png"));
@@ -91,22 +90,19 @@ public class LoopStNode extends MyNode {
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.loop_st.setX(x);
+        this.loop_st.setY(y);
+        this.text.setX(x + textRelativeX);
+        this.text.setY(y + textRelativeY);
+        drawingArea.getChildren().add(this.loop_st);
+        drawingArea.getChildren().add(this.text);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.loop_st);
         drawingArea.getChildren().remove(this.text);
     }
 
-    @Override
-    public void putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.loop_st.getX()/viewW)] [(int)(this.loop_st.getY()/viewH)] != null) {
-            System.out.println("error in LoopNode putInTable");
-            return;
-        }
-        nodeTable[(int)(this.loop_st.getX()/viewW)] [(int)(this.loop_st.getY()/viewH)] = this;
-    }
-
-    @Override
-    public void removeFromTable(MyNode[][] nodeTable) {
-        nodeTable[(int)(this.loop_st.getX()/viewW)] [(int)(this.loop_st.getY()/viewH)] = null;
-    }
 }

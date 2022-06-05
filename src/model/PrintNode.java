@@ -6,8 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-import static model.Constant.viewH;
-import static model.Constant.viewW;
+import static model.Constant.*;
 
 
 public class PrintNode extends MyNode {
@@ -25,8 +24,8 @@ public class PrintNode extends MyNode {
         this.nxtID = -1;
         this.nxtPlace = -1;
         this.text = new Text("print code!");
-        this.text.setX(x);
-        this.text.setY(y + viewH / 2);
+        this.text.setX(x + textRelativeX);
+        this.text.setY(y + textRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.print = new ImageView(new Image("resources/img/draw_node_print.png"));
@@ -93,22 +92,19 @@ public class PrintNode extends MyNode {
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.print.setX(x);
+        this.print.setY(y);
+        this.text.setX(x + textRelativeX);
+        this.text.setY(y + textRelativeY);
+        drawingArea.getChildren().add(this.print);
+        drawingArea.getChildren().add(this.text);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.print);
         drawingArea.getChildren().remove(this.text);
     }
 
-    @Override
-    public void putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] != null) {
-            System.out.println("error in StatementNode putInTable");
-            return;
-        }
-        nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = this;
-    }
-
-    @Override
-    public void removeFromTable(MyNode[][] nodeTable) {
-        nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = null;
-    }
 }

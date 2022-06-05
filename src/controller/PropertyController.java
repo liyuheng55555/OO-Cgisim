@@ -34,6 +34,7 @@ public class PropertyController {
         } else if(curNode instanceof LoopStNode) {
             messageBox.setText(((LoopStNode) curNode).getText().getText());
         } else if(curNode instanceof StatementNode) {
+            System.out.println("StatementNode debug");
             messageBox.setText(((StatementNode) curNode).getText().getText());
         } else if(curNode instanceof PrintNode) {
             messageBox.setText(((PrintNode) curNode).getText().getText());

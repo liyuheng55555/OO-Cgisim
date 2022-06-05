@@ -3,10 +3,12 @@ package model;
 import javafx.scene.text.Font;
 
 public class Constant {
-    public static final int viewW = 150;
+    public static final int viewW = 161;
     public static final int viewH = 100;
     public static final int tableH = 20;
     public static final int tableW = 10;
+    public static final int textRelativeX = 30;
+    public static final int textRelativeY = 30;
     public static final int connectorSize = 5;
     public static final Font font = new Font("Arial", 10);
 

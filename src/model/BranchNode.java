@@ -5,8 +5,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-import static model.Constant.viewH;
-import static model.Constant.viewW;
+import static model.Constant.*;
 
 
 public class BranchNode extends MyNode {
@@ -28,8 +27,8 @@ public class BranchNode extends MyNode {
         this.branchFalseID = -1;
         this.branchFalsePlace = -1;
         this.text = new Text("branch code!");
-        this.text.setX(x);
-        this.text.setY(y + viewH / 2);
+        this.text.setX(x + textRelativeX);
+        this.text.setY(y + textRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.branch = new ImageView(new Image("resources/img/draw_node_if.png"));
@@ -112,22 +111,19 @@ public class BranchNode extends MyNode {
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.branch.setX(x);
+        this.branch.setY(y);
+        this.text.setX(x + textRelativeX);
+        this.text.setY(y + textRelativeY);
+        drawingArea.getChildren().add(this.branch);
+        drawingArea.getChildren().add(this.text);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea){
         drawingArea.getChildren().remove(this.branch);
         drawingArea.getChildren().remove(this.text);
     }
 
-    @Override
-    public void putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] != null) {
-            System.out.println("error in IfNode putInTable");
-            return;
-        }
-        nodeTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] = this;
-    }
-
-    @Override
-    public void removeFromTable(MyNode[][] nodeTable) {
-        nodeTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] = null;
-    }
 }

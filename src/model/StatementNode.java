@@ -6,8 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-import static model.Constant.viewH;
-import static model.Constant.viewW;
+import static model.Constant.*;
 
 public class StatementNode extends MyNode {
     private Text text;
@@ -92,20 +91,19 @@ public class StatementNode extends MyNode {
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.statement.setX(x);
+        this.statement.setY(y);
+        this.text.setX(x + textRelativeX);
+        this.text.setY(y + textRelativeY);
+        drawingArea.getChildren().add(this.statement);
+        drawingArea.getChildren().add(this.text);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.statement);
         drawingArea.getChildren().remove(this.text);
     }
 
-    public void putInTable(ImageView[][] viewTable) {
-        if(viewTable[(int)(this.statement.getX()/viewW)] [(int)(this.statement.getY()/viewH)] != null) {
-            System.out.println("error in StatementNode putInTable");
-            return;
-        }
-        viewTable[(int)(this.statement.getX()/viewW)] [(int)(this.statement.getY()/viewH)] = this.statement;
-    }
-
-    public void removeFromTable(ImageView[][] viewTable) {
-        viewTable[(int)(this.statement.getX()/viewW)] [(int)(this.statement.getY()/viewH)] = null;
-    }
 }

@@ -3,6 +3,9 @@ package model;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
+import static model.Constant.viewH;
+import static model.Constant.viewW;
+
 public class MyNode {
     private int factoryID;
 
@@ -26,12 +29,21 @@ public class MyNode {
     public void draw(AnchorPane drawingArea){
     }
 
+    public void draw(AnchorPane drawingArea, double x, double y) {
+    }
+
     public void remove(AnchorPane drawingArea){
     }
 
     public void putInTable(MyNode[][] nodeTable) {
+        if(nodeTable[(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] != null) {
+            System.out.println("error in StatementNode putInTable");
+            return;
+        }
+        nodeTable[(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] = this;
     }
 
     public void removeFromTable(MyNode[][] nodeTable) {
+        nodeTable [(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] = null;
     }
 }

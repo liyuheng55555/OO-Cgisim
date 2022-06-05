@@ -76,21 +76,15 @@ public class LoopEndNode extends MyNode {
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.loop_end.setX(x);
+        this.loop_end.setY(y);
+        drawingArea.getChildren().add(this.loop_end);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.loop_end);
     }
 
-    @Override
-    public void putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] != null) {
-            System.out.println("error in EndNode putInTable");
-            return;
-        }
-        nodeTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] = this;
-    }
-
-    @Override
-    public void removeFromTable(MyNode[][] nodeTable) {
-        nodeTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] = null;
-    }
 }

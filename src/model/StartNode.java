@@ -57,21 +57,15 @@ public class StartNode extends MyNode {
     }
 
     @Override
+    public void draw(AnchorPane drawingArea, double x, double y) {
+        this.start.setX(x);
+        this.start.setY(y);
+        drawingArea.getChildren().add(this.start);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.start);
     }
 
-    @Override
-    public void putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] != null) {
-            System.out.println("error in StartNode putInTable");
-            return;
-        }
-        nodeTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = this;
-    }
-
-    @Override
-    public void removeFromTable(MyNode[][] nodeTable) {
-        nodeTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = null;
-    }
 }
