@@ -14,6 +14,29 @@ public class Var {
         this.varValue = value;
     }
 
+    public void setVarName(String varName) {
+        this.varName = varName;
+    }
+
+    public void setVarType(String varType) {
+        this.varType = varType;
+    }
+
+    public void setVarValue(String varValue) {
+        this.varValue = varValue;
+    }
+
+    public String getVarName() {
+        return varName;
+    }
+
+    public String getVarType() {
+        return varType;
+    }
+
+    public String getVarValue() {
+        return varValue;
+    }
 }
 //
 ///**

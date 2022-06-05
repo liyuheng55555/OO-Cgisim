@@ -8,11 +8,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -36,17 +34,23 @@ public class RootLayoutController implements Initializable {
             new Var("c", "char", "c")
     );
     @FXML
-    private TableView tableView;
+    private TableView<Var> tableView;
     @FXML
     private Button add;
     @FXML
     private Button delete;
     @FXML
-    private TableColumn VarName;
+    private TableColumn<Var, String> VarName;
     @FXML
-    private TableColumn VarType;
+    private TableColumn<Var, String> VarType;
     @FXML
-    private TableColumn VarValue;
+    private TableColumn<Var, String> VarValue;
+    @FXML
+    private TextField txtName;
+    @FXML
+    private TextField txtType;
+    @FXML
+    private TextField txtValue;
     @FXML
     private AnchorPane drawingArea;
     @FXML
@@ -630,7 +634,51 @@ public class RootLayoutController implements Initializable {
         VarType.setCellValueFactory(new PropertyValueFactory<>("varType"));
         VarValue.setCellValueFactory(new PropertyValueFactory<>("varValue"));
         tableView.setEditable(true);
+        VarName.setCellFactory(TextFieldTableCell.forTableColumn());
+        VarName.setOnEditCommit(event->{
+            TableView tempTable = event.getTableView();
+            Var tem_var = (Var) tempTable.getItems().get(event.getTablePosition().getRow());
+            tem_var.setVarName(event.getNewValue());
+        });
+        VarType.setCellFactory(TextFieldTableCell.forTableColumn());
+        VarType.setOnEditCommit(event->{
+            TableView tempTable = event.getTableView();
+            Var tem_var = (Var) tempTable.getItems().get(event.getTablePosition().getRow());
+            tem_var.setVarType(event.getNewValue());
+        });
+        VarValue.setOnEditCommit(event->{
+            TableView tempTable = event.getTableView();
+            Var tem_var = (Var) tempTable.getItems().get(event.getTablePosition().getRow());
+            tem_var.setVarValue(event.getNewValue());
+        });
+        VarValue.setCellFactory(TextFieldTableCell.forTableColumn());
         tableView.setItems(data);
+        Alert alert =new Alert(Alert.AlertType.INFORMATION);
+        add.setOnAction(e->{
+
+            if(txtName.getText().isEmpty()||txtType.getText().isEmpty()
+                    ||txtValue.getText().isEmpty()){
+                alert.setContentText("表格未填满");
+                alert.show();
+                return;
+            }
+            data.add(new Var(txtName.getText(), txtType.getText(), txtValue.getText()));
+        });
+        delete.setOnAction(e->{
+            if (data.size() == 0) {
+                alert.setContentText("表格为空!");
+                alert.show();
+                return;
+            }
+            //获取光标所在行号
+            int moveIndex = tableView.getSelectionModel().getFocusedIndex();
+            System.out.println(moveIndex);
+            //删除对应行
+            Var var = data.get(moveIndex);
+            alert.setContentText(var.getVarName());
+            alert.show();
+            data.remove(moveIndex);
+        });
     }
 
     public void menuNew(){
