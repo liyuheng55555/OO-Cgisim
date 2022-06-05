@@ -21,7 +21,10 @@ public class Main extends Application {
     }
 
     /**
-     * 加载RootLayout.fxml
+     * init RootLayout.fxml and set it to the center of the scene.
+     *
+     * @throws IOException if the fxml file is not found
+     * @author
      */
     public void initRootLayout() {
         try {

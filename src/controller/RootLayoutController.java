@@ -1,25 +1,26 @@
 package controller;
 
-import java.net.URL;
-import java.util.*;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.MyNode;
 
-enum Status {
-    normal, dragging, connecting, selected
-}
+import java.net.URL;
+import java.util.*;
 
+import static model.Constant.tableH;
+import static model.Constant.tableW;
+import static model.Constant.viewH;
+import static model.Constant.viewW;
+import static model.Constant.connectorSize;
+import model.Constant.ClickStatus;
+import model.Constant.Status;
 
 public class RootLayoutController implements Initializable {
 
@@ -43,17 +44,12 @@ public class RootLayoutController implements Initializable {
     private ImageView choose_print;
     @FXML
     private TextField messageBox;
-    //    @FXML
+
     private ImageView shadow;
-    private ImageView imageView;
-
-    static final int viewH = 100;
-    static final int viewW = 150;
-
-    static final int connectorSize = 5;
 
     Status status = Status.normal;
-
+    ClickStatus clickStatus = ClickStatus.choosingStart;
+    NodeFactory nodeFactory;
 
     /*
     inConnector记录每种节点的输入点，outConnector记录输出点
@@ -91,6 +87,14 @@ public class RootLayoutController implements Initializable {
         connectorPos[4][1] = (double) viewW / 10 * 9;
     }
 
+    /**
+     * 寻找最近的可连接点
+     *
+     * @param node
+     * @param x
+     * @param y
+     * @return
+     */
     int touchConnector(MyNode node, double x, double y) {
         String name = node.name;
         double baseX = node.imageView.getX();
@@ -99,47 +103,36 @@ public class RootLayoutController implements Initializable {
             for (int i : inConnector.get(name)) {
                 double ny = baseY + connectorPos[i][0];
                 double nx = baseX + connectorPos[i][1];
-                if (distance(x,y,nx,ny)<connectorSize)
+                if (distance(x,y,nx,ny) < 4 * connectorSize)
                     return i;
             }
         if (outConnector.get(name)!=null)
             for (int i : outConnector.get(name)) {
                 double ny = baseY + connectorPos[i][0];
                 double nx = baseX + connectorPos[i][1];
-                if (distance(x,y,nx,ny)<connectorSize)
+                if (distance(x,y,nx,ny) < 4 * connectorSize)
                     return i;
             }
         return -1;
     }
 
-    /**
-     * 尝试绘制连线，x、y均为viewTable中的索引
-     * @param sx 起始x
-     * @param sy 起始y
-     * @param sd 起始输出点
-     * @param ex 结束x
-     * @param ey 结束y
-     * @param ed 最终输入点
-     */
-    void drawLine(int sx, int sy, int sd, int ex, int ey, int ed) {
-//        if
-    }
-
-
-
 
     private DrawController drawController;
-    private ShapeFactory shapeFactory;
     private PropertyController propertyController;
-    private String selectShape = null;
+    private String selectNode = null;
     private MyNode selection = null;
     private double relativeX = -1;
     private double relativeY = -1;
 
-    final int tableH = 20;
-    final int tableW = 10;
     MyNode[][] viewTable = new MyNode[tableH][tableW];
-    ArrayList<Point2D> connectorList = new ArrayList<>();
+    int factoryID = 0;
+    private final HashMap<Integer, MyNode> ShapeMap = new HashMap<>();
+    int startConnectionID;
+    int endConnectionID;
+
+    public HashMap<Integer, MyNode> getShapeMap() {
+        return ShapeMap;
+    }
 
     /**
      * 向viewTable中加入一个ImageView
@@ -206,6 +199,42 @@ public class RootLayoutController implements Initializable {
     }
 
     /**
+     * 从ShapeMap中获取线连接的信息, 并使用showPath显示路径
+     *
+     */
+    public void updateConnection(){
+        int[] sx = new int[ShapeMap.size()];
+        int[] sy = new int[ShapeMap.size()];
+        int[] ex = new int[ShapeMap.size()];
+        int[] ey = new int[ShapeMap.size()];
+        int count = 0;
+        for(MyNode Node: ShapeMap.values()){
+            if(Node.getNextNodeID()!=-1){
+                sx[count] = (int)(Node.imageView.getX() + connectorPos[2][1])/viewW;
+                sy[count] = (int)(Node.imageView.getY() + connectorPos[2][0])/viewH;
+                ex[count] = (int)(ShapeMap.get(Node.getNextNodeID()).imageView.getX() + connectorPos[0][1])/viewW;
+                ey[count] = (int)(ShapeMap.get(Node.getNextNodeID()).imageView.getY() + connectorPos[0][0])/viewH;
+                count ++;
+            }else if(Node.getNextTrueNodeID()!=-1){
+                sx[count] = (int)(Node.imageView.getX() + connectorPos[2][1])/viewW;
+                sy[count] = (int)(Node.imageView.getY() + connectorPos[2][0])/viewH;
+                ex[count] = (int)(ShapeMap.get(Node.getNextTrueNodeID()).imageView.getX() + connectorPos[0][1])/viewW;
+                ey[count] = (int)(ShapeMap.get(Node.getNextTrueNodeID()).imageView.getY() + connectorPos[0][0])/viewH;
+            }else if(Node.getNextFalseNodeID()!=-1){
+                sx[count] = (int)(Node.imageView.getX() + connectorPos[1][1])/viewW;
+                sy[count] = (int)(Node.imageView.getY() + connectorPos[1][0])/viewH;
+                ex[count] = (int)(ShapeMap.get(Node.getNextFalseNodeID()).imageView.getX() + connectorPos[0][1])/viewW;
+                ey[count] = (int)(ShapeMap.get(Node.getNextFalseNodeID()).imageView.getY() + connectorPos[0][0])/viewH;
+            }
+        }
+        for(int i = 0; i < count; i++){
+            System.out.println("connect" + sx[i] + " " + sy[i] + " " + ex[i] + " " + ey[i]);
+            showPath(getPath(sx[i],sy[i],ex[i],ey[i]));
+        }
+    }
+
+
+    /**
      * 获取路径
      * 首先调用tableToCost，将viewTable转换成费用矩阵
      * 然后调用Algorithm.dijkstra求出最短路径
@@ -229,8 +258,9 @@ public class RootLayoutController implements Initializable {
             now.add(i%tableW);
             now.add(i/tableW);
             result.add(0, now);
-            if (i==s)
+            if (i==s) {
                 break;
+            }
             costSum += cost[path[i]][i];
         }
         if (costSum>10000) {
@@ -259,7 +289,7 @@ public class RootLayoutController implements Initializable {
             int y = path.get(i).get(1);
             int nextX = path.get(i+1).get(0);
             int nextY = path.get(i+1).get(1);
-            viewTable[y][x] = new MyNode(drawingArea, drawController);
+            viewTable[y][x] = new MyNode();
             MyNode node = viewTable[y][x];
             node.imageView = new ImageView();
             node.imageView.setFitHeight(viewH);
@@ -308,24 +338,31 @@ public class RootLayoutController implements Initializable {
      * @param sy
      */
     void erasePath(int sx, int sy) {
-        if (sx<0 || sy<0 || sx>=tableW || sy>=tableH)
+        if (sx<0 || sy<0 || sx>=tableW || sy>=tableH) {
             return;
+        }
         MyNode now = viewTable[sy][sx];
-        if (now==null)
+        if (now==null) {
             return;
+        }
         String[] ss = now.name.split("_", 2);
-        if (!ss[0].equals("line"))
+        if (!ss[0].equals("line")) {
             return;
+        }
         viewTable[sy][sx] = null;
         drawingArea.getChildren().remove(now.imageView);
-        if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right"))
+        if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
-        if (ss[1].equals("vertical") || ss[1].equals("right_down") || ss[1].equals("left_down"))
+        }
+        if (ss[1].equals("vertical") || ss[1].equals("right_down") || ss[1].equals("left_down")) {
             erasePath(sx, sy+1);  // 向下擦除
-        if (ss[1].equals("horizon") || ss[1].equals("down_left") || ss[1].equals("right_down"))
+        }
+        if (ss[1].equals("horizon") || ss[1].equals("down_left") || ss[1].equals("right_down")) {
             erasePath(sx-1, sy);
-        if (ss[1].equals("horizon") || ss[1].equals("left_down")  || ss[1].equals("down_right"))
+        }
+        if (ss[1].equals("horizon") || ss[1].equals("left_down")  || ss[1].equals("down_right")) {
             erasePath(sx+1, sy);
+        }
     }
 
 
@@ -344,18 +381,23 @@ public class RootLayoutController implements Initializable {
 //    }
 
 
-
-
-    MyNode produceNode(String selectShape) {
-        String shape = selectShape.split("_")[2];
+    MyNode produceNode(String selectNode, int x, int y) {
+        String shape = selectNode.split("_")[2];
         Image image = null;
+        Image image2 = null;
         try {
             image = new Image("resources/img/draw_node_"+shape+".png");
+            if(shape.equals("if")) {
+                image2 = new Image("resources/img/draw_node_merge.png");
+            }
+            if(shape.equals("loop")) {
+                image2 = new Image("resources/img/draw_node_loop_end.png");
+            }
         } catch (Exception e) {
             System.out.println("!!!!!!!! 打开文件失败：resources/img/draw_node_"+shape+".png !!!!!!!!!");
             return null;
         }
-        MyNode my = new MyNode(drawingArea, drawController);
+        MyNode my = new MyNode(factoryID++, x, y);
         my.imageView = new ImageView();
         my.imageView.setImage(image);
         my.imageView.setFitHeight(viewH);
@@ -370,8 +412,8 @@ public class RootLayoutController implements Initializable {
 
 
 
-//    ImageView produceView(String selectShape) {
-//        String shape = selectShape.split("_")[2];
+//    ImageView produceView(String selectNode) {
+//        String shape = selectNode.split("_")[2];
 //        ImageView view = new ImageView();
 //        view.setFitHeight(viewH);
 //        view.setFitWidth (viewW);
@@ -392,7 +434,7 @@ public class RootLayoutController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         propertyController = new PropertyController(messageBox);
         drawController = new DrawController(drawingArea, propertyController);
-        shapeFactory = new ShapeFactory(drawController);
+        nodeFactory = new NodeFactory();
 
         shadow = new ImageView();
         shadow.setFitHeight(viewH);
@@ -410,15 +452,43 @@ public class RootLayoutController implements Initializable {
 
         drawingArea.getChildren().addAll(shadow, connector);
 
-//        ArrayList<ArrayList<Integer>> path;
         showPath(getPath(0,0,0,7));
-        // 点击，创建图形
-//        drawingArea.;
 
-//        drawingArea.setOnMouseClicked(event -> {
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (status == Status.normal) {
-
+            if (status == Status.normal && selectNode==null) {
+                boolean found = false;
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                MyNode node = viewTable[y/viewH][x/viewW];
+                if (node!=null) {
+                    int c = touchConnector(node, event.getX(), event.getY());
+                    if (c != -1) {
+                        found = true;
+                    }
+                }
+                if(found){
+                    if(clickStatus == ClickStatus.choosingStart){
+                        if(node.name.equals("start") || node.name.equals("if") || node.name.equals("statement")||node.name.equals("print")){
+                            clickStatus = ClickStatus.choosingEnd;
+                            startConnectionID = node.getFactoryID();
+                            System.out.println("已选择了连线开始点，请选择连线结束点");
+                        }
+                    }else{
+                        if(node.name.equals("end") || node.name.equals("if") || node.name.equals("statement")||node.name.equals("print")){
+                            clickStatus = ClickStatus.choosingStart;
+                            endConnectionID = node.getFactoryID();
+                            MyNode start = ShapeMap.get(startConnectionID);
+                            MyNode end = ShapeMap.get(endConnectionID);
+                            start.setNextNodeID(endConnectionID);
+                            end.setPreNodeID(startConnectionID);
+                            System.out.println("已选择了连线结束点, 连线完成");
+                        }else{
+                            clickStatus = ClickStatus.choosingStart;
+                            startConnectionID = -1;
+                            System.out.println("连线结束点选择失败，请重新选择连线开始点");
+                        }
+                    }
+                }
             }
             if (status == Status.dragging) {
                 status = Status.normal;
@@ -426,21 +496,11 @@ public class RootLayoutController implements Initializable {
             }
             keyBoardPane.requestFocus();
             if (event.getButton().name().equals("PRIMARY")) {
-                if (event.getClickCount() == 1 && selectShape != null) {
-                    double x, y;
-                    x = event.getX();
-                    y = event.getY();
-                    MyNode node = produceNode(selectShape);
-                    ImageView view = node.imageView;
-                    int xx = (int) x;
-                    int yy = (int) y;
-                    yy -= yy%viewH;
-                    xx -= xx%viewW;
-                    view.setX(xx);
-                    view.setY(yy);
+                if (event.getClickCount() == 1 && selectNode != null) {
+                    MyNode node = nodeFactory.produceNode(selectNode, (int)(event.getX()-event.getX()%viewW), (int)(event.getY()-event.getY()%viewH));
                     putInTable(node);
-                    drawingArea.getChildren().add(view);
-
+                    ShapeMap.put(node.getFactoryID(), node);
+                    drawingArea.getChildren().add(node.imageView);
                     System.out.println(drawingArea.getChildren().size());
                 }
                 if (event.getClickCount() == 1) {
@@ -456,6 +516,7 @@ public class RootLayoutController implements Initializable {
                     viewTable[y/viewH][x/viewW] = null;
                 }
             }
+            updateConnection();
         });
 
         drawingArea.setOnMouseMoved(event -> {
@@ -499,7 +560,7 @@ public class RootLayoutController implements Initializable {
                         selection = viewTable[i][j];
                         drawingArea.getChildren().remove((selection.imageView));
                         drawingArea.getChildren().add((selection.imageView));
-//                        selectShape = null;
+//                        selectNode = null;
                         relativeX = event.getX()-viewTable[i][j].imageView.getX();
                         relativeY = event.getY()-viewTable[i][j].imageView.getY();
                         removeFromTable(event.getX(), event.getY());
@@ -528,8 +589,6 @@ public class RootLayoutController implements Initializable {
                 double y = event.getY();
                 selection.imageView.setX(x-relativeX);
                 selection.imageView.setY(y-relativeY);
-
-//                drawingArea
             }
         });
 
@@ -558,9 +617,9 @@ public class RootLayoutController implements Initializable {
         Nodes.setOnMouseClicked(event -> {
             if (event.getTarget().getClass() == ImageView.class) {
                 ImageView nowImage = (ImageView) event.getTarget();
-                selectShape = nowImage.getId();
-                System.out.println("now: "+ selectShape);
-                if(selectShape != null){    // 如果之前有选择过Node，则清除之前选择的Node
+                selectNode = nowImage.getId();
+                System.out.println("now: "+ selectNode);
+                if(selectNode != null){    // 如果之前有选择过Node，则清除之前选择的Node
                     if (!nowImage.getId().contains("start")){
                         choose_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_start.png"))));
                         choose_start.setId("choose_node_start");
@@ -591,11 +650,11 @@ public class RootLayoutController implements Initializable {
                 }
                 else if (nowImage.getId().contains("shadow")) {
                     nowImage.setId(nowImage.getId().replace("shadow", "choose"));
-                    selectShape = null;
+                    selectNode = null;
                 }
                 nowImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/" + nowImage.getId() + ".png"))));
-                if(selectShape != null){
-                    System.out.println("current status: " + selectShape.split("_")[2]);
+                if(selectNode != null){
+                    System.out.println("current status: " + selectNode.split("_")[2]);
                 }else{
                     System.out.println("current status: null");
                 }

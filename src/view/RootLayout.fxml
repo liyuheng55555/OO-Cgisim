@@ -18,108 +18,92 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootLayout" prefHeight="900.0" prefWidth="1200.0" style="-fx-background-color: #FBFBFF;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
+<BorderPane prefHeight="900.0" prefWidth="1200.0" style="-fx-background-color: #FBFBFF;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
     <top>
         <MenuBar styleClass="MenuBar" stylesheets="@../resources/css/style.css" BorderPane.alignment="CENTER">
             <Menu mnemonicParsing="false" styleClass="menu" text="文件">
-                <MenuItem mnemonicParsing="false" onAction="#menuNew" text="New"/>
-                <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save"/>
-                <MenuItem mnemonicParsing="false" onAction="#menuOpen" text="Open"/>
-                <MenuItem mnemonicParsing="false" onAction="#menuExport" text="Export"/>
+                <MenuItem mnemonicParsing="false" onAction="#menuNew" text="New" />
+                <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save" />
+                <MenuItem mnemonicParsing="false" onAction="#menuOpen" text="Open" />
+                <MenuItem mnemonicParsing="false" onAction="#menuExport" text="Export" />
             </Menu>
             <Menu mnemonicParsing="false" text="程序">
-                <MenuItem mnemonicParsing="false" text="运行"/>
-                <MenuItem mnemonicParsing="false" text="暂停"/>
-                <MenuItem mnemonicParsing="false" text="debug"/>
-                <MenuItem mnemonicParsing="false" text="下一步"/>
-                <MenuItem mnemonicParsing="false" text="重置"/>
+                <MenuItem mnemonicParsing="false" text="运行" />
+                <MenuItem mnemonicParsing="false" text="暂停" />
+                <MenuItem mnemonicParsing="false" text="debug" />
+                <MenuItem mnemonicParsing="false" text="下一步" />
+                <MenuItem mnemonicParsing="false" text="重置" />
             </Menu>
         </MenuBar>
     </top>
     <center>
-        <ScrollPane id="scrollPane" prefHeight="868.0" stylesheets="@../resources/css/style.css"
-                    BorderPane.alignment="CENTER">
-            <AnchorPane fx:id="drawingArea" minHeight="0.0" minWidth="0.0" prefHeight="3000.0" prefWidth="3000.0"
-                        style="-fx-background-color: #ffffff;">
-                <AnchorPane fx:id="keyBoardPane" layoutX="500.0" layoutY="750.0" prefHeight="200.0" prefWidth="200.0"/>
+        <ScrollPane id="scrollPane" prefHeight="868.0" stylesheets="@../resources/css/style.css" BorderPane.alignment="CENTER">
+            <AnchorPane fx:id="drawingArea" minHeight="0.0" minWidth="0.0" prefHeight="3000.0" prefWidth="3000.0" style="-fx-background-color: #ffffff;">
+                <AnchorPane fx:id="keyBoardPane" layoutX="500.0" layoutY="750.0" prefHeight="200.0" prefWidth="200.0" />
                 <effect>
-                    <Blend/>
+                    <Blend />
                 </effect>
             </AnchorPane>
         </ScrollPane>
     </center>
     <left>
-        <AnchorPane fx:id="ChooseArea" prefHeight="200.0" prefWidth="200.0"
-                    style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
-            <VBox fx:id="Nodes" alignment="TOP_CENTER" prefHeight="824.0" prefWidth="221.0" AnchorPane.leftAnchor="0.0"
-                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
-                <ImageView fx:id="choose_start" id="choose_node_start" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_start.png"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+            <VBox fx:id="Nodes" alignment="TOP_CENTER" prefHeight="824.0" prefWidth="221.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                <ImageView id="choose_node_start" fx:id="choose_start" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_start.png" />
                 </ImageView>
-                <ImageView fx:id="choose_end" id="choose_node_end" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_end.png"/>
+                <ImageView id="choose_node_end" fx:id="choose_end" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_end.png" />
                 </ImageView>
-                <ImageView fx:id="choose_statement" id="choose_node_statement" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_statement.png"/>
+                <ImageView id="choose_node_statement" fx:id="choose_statement" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_statement.png" />
                 </ImageView>
-                <ImageView fx:id="choose_if" id="choose_node_if" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_if.png"/>
+                <ImageView id="choose_node_if" fx:id="choose_if" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_if.png" />
                 </ImageView>
-                <ImageView fx:id="choose_loop" id="choose_node_loop" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_loop.png"/>
+                <ImageView id="choose_node_loop" fx:id="choose_loop" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_loop.png" />
                 </ImageView>
-                <ImageView fx:id="choose_print" id="choose_node_print" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_print.png"/>
+                <ImageView id="choose_node_print" fx:id="choose_print" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_print.png" />
                 </ImageView>
             </VBox>
         </AnchorPane>
     </left>
     <right>
-        <AnchorPane blendMode="SRC_ATOP" prefHeight="868.0" prefWidth="237.0"
-                    BorderPane.alignment="CENTER">
-            <VBox fx:id="VarTableArea" prefHeight="868.0" prefWidth="240.0" style="-fx-background-color: #ECF5FF;"
-                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                  AnchorPane.topAnchor="0.0">
-                <TableView fx:id="varTable" id="tableview" accessibleRole="BUTTON" prefHeight="700.0"
-                           style="-fx-max-width: 300; -fx-padding: 0 5px 0 5px; -fx-background-color: #ECF5FF;"
-                           styleClass="tableview" stylesheets="@../resources/css/style.css">
+        <AnchorPane blendMode="SRC_ATOP" prefHeight="868.0" prefWidth="237.0" BorderPane.alignment="CENTER">
+            <VBox fx:id="VarTableArea" prefHeight="868.0" prefWidth="240.0" style="-fx-background-color: #ECF5FF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TableView id="tableview" fx:id="varTable" accessibleRole="BUTTON" prefHeight="700.0" style="-fx-max-width: 300; -fx-padding: 0 5px 0 5px; -fx-background-color: #ECF5FF;" styleClass="tableview" stylesheets="@../resources/css/style.css">
                     <columns>
-                        <TableColumn prefWidth="75.0" sortable="false" text="变量类型"/>
-                        <TableColumn prefWidth="75.0" sortable="false" text="变量值"/>
-                        <TableColumn prefWidth="75.0" sortable="false" text="变量名"/>
+                        <TableColumn prefWidth="75.0" sortable="false" text="变量类型" />
+                        <TableColumn prefWidth="75.0" sortable="false" text="变量值" />
+                        <TableColumn prefWidth="75.0" sortable="false" text="变量名" />
                     </columns>
                 </TableView>
                 <HBox prefHeight="50.0" prefWidth="200.0">
                     <VBox.margin>
-                        <Insets top="10.0"/>
+                        <Insets top="10.0" />
                     </VBox.margin>
                     <padding>
-                        <Insets top="10.0"/>
+                        <Insets top="10.0" />
                     </padding>
-                    <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="varName"
-                               style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
+                    <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="varName" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
                         <font>
-                            <Font name="System Italic" size="13.0"/>
+                            <Font name="System Italic" size="13.0" />
                         </font>
                     </TextField>
-                    <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="varType"
-                               style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;"/>
-                    <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="varValue"
-                               style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;"/>
+                    <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="varType" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
+                    <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="varValue" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
                 </HBox>
                 <HBox prefHeight="100.0" prefWidth="200.0">
-                    <Button minHeight="20.0" minWidth="60.0" mnemonicParsing="false"
-                            style="-fx-background-color: #00BB00; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;"
-                            text="add">
+                    <Button minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #00BB00; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="add">
                         <HBox.margin>
-                            <Insets left="100.0" top="2.0"/>
+                            <Insets left="100.0" top="2.0" />
                         </HBox.margin>
                     </Button>
-                    <Button minHeight="20.0" minWidth="60.0" mnemonicParsing="false"
-                            style="-fx-background-color: #EA0000; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;"
-                            text="delete" textFill="#f5eeee">
+                    <Button minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #EA0000; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="delete" textFill="#f5eeee">
                         <HBox.margin>
-                            <Insets left="10.0" top="2.0"/>
+                            <Insets left="10.0" top="2.0" />
                         </HBox.margin>
                     </Button>
                 </HBox>
@@ -128,10 +112,8 @@
     </right>
     <bottom>
         <HBox prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ECFFFF;" BorderPane.alignment="CENTER">
-            <Button mnemonicParsing="false" prefHeight="40.0"
-                    style="-fx-background-color: #F75000; -fx-text-fill: white;" text="commit"/>
-            <TextField fx:id="messageBox" layoutY="10.0" prefHeight="40.0" prefWidth="700.0" style="-fx-background-color: #ECFFFF;"
-                       text="please..."/>
+            <Button mnemonicParsing="false" prefHeight="40.0" style="-fx-background-color: #F75000; -fx-text-fill: white;" text="commit" />
+            <TextField fx:id="messageBox" layoutY="10.0" prefHeight="40.0" prefWidth="700.0" style="-fx-background-color: #ECFFFF;" text="Coding to Change the Node..." />
         </HBox>
     </bottom>
 </BorderPane>

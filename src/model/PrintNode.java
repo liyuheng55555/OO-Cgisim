@@ -8,13 +8,14 @@ import javafx.scene.text.Text;
 import static model.Constant.viewH;
 import static model.Constant.viewW;
 
-public class StatementNode extends MyNode {
+
+public class PrintNode extends MyNode {
     private Text text;
     private int preID;
     private int nxtID;
-    private ImageView statement;
+    private ImageView print;
 
-    public StatementNode(int factoryID,int x,int y) {
+    public PrintNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
         this.preID = -1;
         this.nxtID = -1;
@@ -22,12 +23,12 @@ public class StatementNode extends MyNode {
         this.text.setX(x + viewW / 2);
         this.text.setY(y + viewH / 2);
         try{
-            this.statement = new ImageView(new Image("resources/img/draw_node_statement.png"));
-            this.statement.setX(x);
-            this.statement.setY(y);
-        }catch(Exception e) {
+            this.print = new ImageView(new Image("resources/img/draw_node_print.png"));
+            this.print.setX(x);
+            this.print.setY(y);
+        }catch(Exception e){
             e.printStackTrace();
-            System.out.println("error in loading StatementNode image");
+            System.out.println("error in loading Print image");
         }
     }
 
@@ -55,11 +56,11 @@ public class StatementNode extends MyNode {
         this.nxtID = nxtID;
     }
 
-    public ImageView getStatement() {
-        return statement;
+    public ImageView getPrint() {
+        return print;
     }
 
-    public void setStatement(ImageView statement) {
-        this.statement = statement;
+    public void setPrint(ImageView print) {
+        this.print = print;
     }
 }
