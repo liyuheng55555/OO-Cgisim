@@ -58,17 +58,17 @@
                 <ImageView fx:id="choose_statement" id="choose_node_statement" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../resources/img/choose_node_statement.png"/>
                 </ImageView>
-                <ImageView fx:id="choose_if" id="choose_node_if" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_half_branch.png"/>
+                <ImageView fx:id="choose_branch" id="choose_node_branch" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_branch.png"/>
                 </ImageView>
                 <ImageView fx:id="choose_merge" id="choose_node_merge" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_half_merge.png"/>
+                    <Image url="@../resources/img/choose_node_merge.png"/>
                 </ImageView>
-                <ImageView fx:id="choose_loop_start" id="choose_node_loop_start" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_half_loop_start.png"/>
+                <ImageView fx:id="choose_loop_start" id="choose_node_loopStart" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_loopStart.png"/>
                 </ImageView>
-                <ImageView fx:id="choose_loop_end" id="choose_node_loop_end" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_half_loop_end.png"/>
+                <ImageView fx:id="choose_loop_end" id="choose_node_loopEnd" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_loopEnd.png"/>
                 </ImageView>
                 <ImageView fx:id="choose_print" id="choose_node_print" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../resources/img/choose_node_print.png"/>

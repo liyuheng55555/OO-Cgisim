@@ -22,9 +22,10 @@ public class LoopStNode extends MyNode {
         this.loop_stPrePlace = -1;
         this.loop_stNxtID = -1;
         this.loop_stNxtPlace = -1;
-        this.text = new Text("input your code!");
-        this.text.setX(x + viewW / 2);
+        this.text = new Text("loop code!");
+        this.text.setX(x);
         this.text.setY(y + viewH / 2);
+        this.text.setFont(Constant.font);
         try{
             this.loop_st = new ImageView(new Image("resources/img/draw_node_loop_st.png"));
             this.loop_st.setX(x);

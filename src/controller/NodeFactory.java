@@ -26,12 +26,11 @@ public class NodeFactory {
             case "merge":
                 node = new MergeNode(factoryID++, x, y);
                 break;
-            case "loop":
-                if("start".equals(selectNode.split("_")[3])) {
-                    node = new LoopStNode(factoryID++, x, y);
-                }else if("end".equals(selectNode.split("_")[3])) {
-                    node = new LoopEndNode(factoryID++, x, y);
-                }
+            case "loopStart":
+                node = new LoopStNode(factoryID++, x, y);
+                break;
+            case "loopEnd":
+                node = new LoopEndNode(factoryID++, x, y);
                 break;
             case "print":
                 node = new PrintNode(factoryID++, x, y);

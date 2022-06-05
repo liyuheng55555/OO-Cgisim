@@ -27,9 +27,10 @@ public class BranchNode extends MyNode {
         this.branchTruePlace = -1;
         this.branchFalseID = -1;
         this.branchFalsePlace = -1;
-        this.text = new Text("input your code!");
-        this.text.setX(x + viewW / 2);
+        this.text = new Text("branch code!");
+        this.text.setX(x);
         this.text.setY(y + viewH / 2);
+        this.text.setFont(Constant.font);
         try{
             this.branch = new ImageView(new Image("resources/img/draw_node_if.png"));
             this.branch.setId("branch");

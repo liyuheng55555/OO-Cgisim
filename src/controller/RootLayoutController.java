@@ -37,7 +37,7 @@ public class RootLayoutController implements Initializable {
     @FXML
     private ImageView choose_statement;
     @FXML
-    private ImageView choose_if;
+    private ImageView choose_branch;
     @FXML
     public ImageView choose_merge;
     @FXML
@@ -444,46 +444,9 @@ public class RootLayoutController implements Initializable {
         }
     }
 
-    MyNode produceNode(String selectNode, int x, int y) {
-        String shape = selectNode.split("_")[2];
-        Image image = null;
-        Image image2 = null;
-        try {
-            image = new Image("resources/img/draw_node_"+shape+".png");
-        } catch (Exception e) {
-            System.out.println("!!!!!!!! 打开文件失败：resources/img/draw_node_"+shape+".png !!!!!!!!!");
-            return null;
-        }
-        MyNode my = new MyNode(factoryID++, x, y);
-        my.imageView = new ImageView();
-        my.imageView.setImage(image);
-        my.imageView.setFitHeight(viewH);
-        my.imageView.setFitWidth(viewW);
-        //my.name = shape;
-        return my;
-    }
-
     double distance(double x1, double y1, double x2, double y2) {
         return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
     }
-
-
-
-//    ImageView produceView(String selectNode) {
-//        String shape = selectNode.split("_")[2];
-//        ImageView view = new ImageView();
-//        view.setFitHeight(viewH);
-//        view.setFitWidth (viewW);
-//        Image image = null;
-//        try {
-//            image = new Image("resources/img/draw_node_"+shape+".png");
-//        } catch (Exception e) {
-//            System.out.println("!!!!!!!! 打开文件失败：resources/img/draw_node_"+shape+".png !!!!!!!!!");
-//        }
-//        if (image!=null)
-//            view.setImage(image);
-//        return view;
-//    }
 
     boolean isDragging = false;
 
@@ -524,6 +487,7 @@ public class RootLayoutController implements Initializable {
                         if(found != -1) {
                             clickStatus = ClickStatus.choosingEnd;
                             startConnectionID = node.getFactoryID();
+                            startConnectionPlace = found;
                             System.out.println("已选择了连线开始点，请选择连线结束点");
                         }
                     }else if(clickStatus == ClickStatus.choosingEnd) {
@@ -667,7 +631,7 @@ public class RootLayoutController implements Initializable {
             loop:
             for (int i=0; i<tableH; i++) {
                 for (int j=0; j<tableW; j++) {
-                    if (nodeTable[i][j]!=null && nodeTable[i][j].imageView.contains(event.getX(), event.getY())) {
+                    if (nodeTable[i][j]!=null && nodeTable[i][j].getImageView().contains(event.getX(), event.getY())) {
                         selection = nodeTable[i][j];
                         drawingArea.getChildren().remove((selection.imageView));
                         drawingArea.getChildren().add((selection.imageView));
@@ -744,16 +708,20 @@ public class RootLayoutController implements Initializable {
                         choose_statement.setId("choose_node_statement");
                     }
                     if (!nowImage.getId().contains("branch")){
-                        choose_if.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_half_branch.png"))));
-                        choose_if.setId("choose_node_branch");
+                        choose_branch.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_branch.png"))));
+                        choose_branch.setId("choose_node_branch");
+                    }
+                    if(!nowImage.getId().contains("merge")){
+                        choose_merge.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_merge.png"))));
+                        choose_merge.setId("choose_node_merge");
                     }
                     if (!nowImage.getId().contains("loop_start")){
-                        choose_loop_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_half_loop_start.png"))));
-                        choose_loop_start.setId("choose_node_loop_start");
+                        choose_loop_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_loopStart.png"))));
+                        choose_loop_start.setId("choose_node_loopStart");
                     }
                     if (!nowImage.getId().contains("loop_end")){
-                        choose_loop_end.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_half_loop_end.png"))));
-                        choose_loop_end.setId("choose_node_loop_end");
+                        choose_loop_end.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_loopEnd.png"))));
+                        choose_loop_end.setId("choose_node_loopEnd");
                     }
                     if (!nowImage.getId().contains("print")){
                         choose_print.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_print.png"))));
@@ -767,6 +735,7 @@ public class RootLayoutController implements Initializable {
                     nowImage.setId(nowImage.getId().replace("shadow", "choose"));
                     selectNode = null;
                 }
+                System.out.println("debug: "+ nowImage.getId());
                 nowImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/" + nowImage.getId() + ".png"))));
                 if(selectNode != null){
                     System.out.println("current status: " + selectNode.split("_")[2]);

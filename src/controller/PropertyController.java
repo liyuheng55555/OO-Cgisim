@@ -11,6 +11,10 @@ public class PropertyController {
         this.messageBox = messageBox;
     }
 
+    /**
+     * This method is called when the user clicks the "Set" button.
+     *
+     */
     public void sendMessage() {
         if(curNode instanceof BranchNode) {
             ((BranchNode) curNode).getText().setText(messageBox.getText());

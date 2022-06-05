@@ -3,7 +3,6 @@ package model;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
 
 import static model.Constant.viewH;
 import static model.Constant.viewW;
@@ -29,7 +28,7 @@ public class MergeNode extends MyNode{
             this.merge = new ImageView(new Image("resources/img/draw_node_merge.png"));
             this.merge.setId("merge");
             this.merge.setX(x);
-            this.merge.setY(y + viewH * 2);
+            this.merge.setY(y);
             this.merge.setFitHeight(viewH);
             this.merge.setFitWidth(viewW);
             this.merge.setId("merge");
