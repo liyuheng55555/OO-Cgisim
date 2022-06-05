@@ -19,6 +19,8 @@ public class StartNode extends MyNode {
             this.start = new ImageView(new Image("resources/img/draw_node_start.png"));
             this.start.setX(x);
             this.start.setY(y);
+            this.start.setFitHeight(viewH);
+            this.start.setFitWidth(viewW);
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading StartNode image");
@@ -33,12 +35,9 @@ public class StartNode extends MyNode {
         this.nxtID = nxtID;
     }
 
-    public ImageView getStart() {
+    @Override
+    public ImageView getImageView() {
         return start;
-    }
-
-    public void setStart(ImageView start) {
-        this.start = start;
     }
 
     public void draw(AnchorPane drawingArea) {
@@ -49,15 +48,15 @@ public class StartNode extends MyNode {
         drawingArea.getChildren().remove(this.start);
     }
 
-    public void putInTable(ImageView[][] viewTable) {
-        if(viewTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] != null) {
+    public void putInTable(MyNode[][] nodeTable) {
+        if(nodeTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] != null) {
             System.out.println("error in StartNode putInTable");
             return;
         }
-        viewTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = this.start;
+        nodeTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = this;
     }
 
-    public void removeFromTable(ImageView[][] viewTable) {
-        viewTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = null;
+    public void removeFromTable(MyNode[][] nodeTable) {
+        nodeTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = null;
     }
 }

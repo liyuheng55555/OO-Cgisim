@@ -26,6 +26,8 @@ public class StatementNode extends MyNode {
             this.statement = new ImageView(new Image("resources/img/draw_node_statement.png"));
             this.statement.setX(x);
             this.statement.setY(y);
+            this.statement.setFitHeight(viewH);
+            this.statement.setFitWidth(viewW);
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading StatementNode image");

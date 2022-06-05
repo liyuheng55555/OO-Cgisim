@@ -27,6 +27,8 @@ public class PrintNode extends MyNode {
             this.print = new ImageView(new Image("resources/img/draw_node_print.png"));
             this.print.setX(x);
             this.print.setY(y);
+            this.print.setFitHeight(viewH);
+            this.print.setFitWidth(viewW);
         }catch(Exception e){
             e.printStackTrace();
             System.out.println("error in loading Print image");
@@ -61,9 +63,7 @@ public class PrintNode extends MyNode {
         return print;
     }
 
-    public void setPrint(ImageView print) {
-        this.print = print;
-    }
+
 
     public void draw(AnchorPane drawingArea) {
         drawingArea.getChildren().add(this.print);

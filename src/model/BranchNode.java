@@ -9,7 +9,7 @@ import static model.Constant.viewH;
 import static model.Constant.viewW;
 
 
-public class IfNode extends MyNode {
+public class BranchNode extends MyNode {
     private Text text;
     private int branchPreID;
     private int branchTrueID;
@@ -20,7 +20,7 @@ public class IfNode extends MyNode {
     private ImageView branch;
     private ImageView merge;
 
-    public IfNode(int factoryID, int x, int y) {
+    public BranchNode(int factoryID, int x, int y) {
         super(factoryID,x,y);
         this.branchPreID = -1;
         this.branchTrueID = -1;
@@ -38,8 +38,12 @@ public class IfNode extends MyNode {
             this.merge.setId("merge");
             this.branch.setX(x);
             this.branch.setY(y);
+            this.branch.setFitHeight(viewH);
+            this.branch.setFitWidth(viewW);
             this.merge.setX(x);
             this.merge.setY(y + viewH * 2);
+            this.merge.setFitHeight(viewH);
+            this.merge.setFitWidth(viewW);
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading IfNode image");

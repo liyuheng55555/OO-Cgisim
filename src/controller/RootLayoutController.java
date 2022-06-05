@@ -59,19 +59,20 @@ public class RootLayoutController implements Initializable {
     static {
         inConnector.put("start", Collections.emptyList());
         inConnector.put("end", Collections.singletonList(1));
-        inConnector.put("if", Collections.singletonList(1));
-        inConnector.put("loop", Collections.singletonList(1));
+        inConnector.put("branch", Collections.singletonList(1));
+        inConnector.put("merge", Arrays.asList(1,4));
+        inConnector.put("loop_st", Collections.singletonList(1));
+        inConnector.put("loop_end", Collections.singletonList(1));
         inConnector.put("statement", Collections.singletonList(1));
         inConnector.put("print", Collections.singletonList(1));
-        inConnector.put("merge", Arrays.asList(1,4));
 
         outConnector.put("start", Collections.singletonList(2));
         outConnector.put("end", Collections.emptyList());
-        outConnector.put("if", Arrays.asList(2,4));
-        outConnector.put("loop", Collections.singletonList(2));
+        outConnector.put("branch", Arrays.asList(2,4));
+        outConnector.put("merge", Collections.singletonList(2));
+        outConnector.put("loop_st", Collections.singletonList(2));
         outConnector.put("statement", Collections.singletonList(2));
         outConnector.put("print", Collections.singletonList(2));
-        outConnector.put("merge", Collections.singletonList(2));
     }
     // 各个点相对于基点的偏移量，[3][0]表示左侧点的纵坐标，[3][1]表示横坐标
     static double[][] connectorPos = new double[5][2];
@@ -92,26 +93,21 @@ public class RootLayoutController implements Initializable {
      * @param view
      * @param x
      * @param y
-     * @return
+     * @return 可连接点的序号，-1表示没有可连接点
+     * 序号 1：上方    2：下方    3：左侧    4：右侧
      */
-    int touchConnector(ImageView view, double x, double y) {
+    int touchConnector(ImageView view, double x, double y,  Map<String, List<Integer>> connector) {
         String name = view.getId();
         double baseX = view.getX();
         double baseY = view.getY();
-        if (inConnector.get(name)!=null)
-            for (int i : inConnector.get(name)) {
+        if (connector.get(name)!=null) {
+            for (int i : connector.get(name)) {
                 double ny = baseY + connectorPos[i][0];
                 double nx = baseX + connectorPos[i][1];
-                if (distance(x,y,nx,ny) < 4 * connectorSize)
+                if (distance(x, y, nx, ny) < 4 * connectorSize)
                     return i;
             }
-        if (outConnector.get(name)!=null)
-            for (int i : outConnector.get(name)) {
-                double ny = baseY + connectorPos[i][0];
-                double nx = baseX + connectorPos[i][1];
-                if (distance(x,y,nx,ny) < 4 * connectorSize)
-                    return i;
-            }
+        }
         return -1;
     }
 
@@ -123,45 +119,15 @@ public class RootLayoutController implements Initializable {
     private double relativeX = -1;
     private double relativeY = -1;
 
-    ImageView[][] viewTable = new ImageView[tableH][tableW];
     int factoryID = 0;
-    private final HashMap<Integer, MyNode> ShapeMap = new HashMap<>();
+    MyNode[][] nodeTable = new MyNode[tableH][tableW];
+    private final HashMap<Integer, MyNode> nodeMap = new HashMap<>();
     int startConnectionID;
     int endConnectionID;
 
-    public HashMap<Integer, MyNode> getShapeMap() {
-        return ShapeMap;
+    public HashMap<Integer, MyNode> getNodeMap() {
+        return nodeMap;
     }
-
-//    /**
-//     * 向viewTable中加入一个ImageView
-//     * @param node 待加入的imageview
-//     */
-//    void putInTable(MyNode node) {
-//        ImageView image = node.imageView;
-//        int x = (int) image.getX();
-//        int y = (int) image.getY();
-//        int xi = x / viewW;
-//        int yi = y / viewH;
-//        if (viewTable[yi][xi]!=null) {
-//            drawingArea.getChildren().remove(viewTable[yi][xi].imageView);
-//        }
-//        viewTable[yi][xi] = node;
-////        System.out.println(getPath(0,0, 0,10));
-//        erasePath(0,1);
-//        erasePath(1,0);
-//        erasePath(1,7);
-//        erasePath(0,6);
-//        ArrayList<ArrayList<Integer>> path = getPath(0,0,0,7);
-//        System.out.println(path);
-//        showPath(path);
-//    }
-
-//    void removeFromTable(double x, double y) {
-//        int xi = (int) (x / viewW);
-//        int yi = (int) (y / viewH);
-//        viewTable[yi][xi] = null;
-//    }
 
     /**
      * 将viewTable转换为Dijkstra所需的费用矩阵（有向图）
@@ -180,7 +146,7 @@ public class RootLayoutController implements Initializable {
                         int e = k*tableW+l;
                         if (i<=k  &&
                                 (i==k && Math.abs(j-l)==1 || j==l && Math.abs(i-k)==1) &&
-                                viewTable[i][j]==null && viewTable[k][l]==null
+                                nodeTable[i][j]==null && nodeTable[k][l]==null
                         ) {
                             cost[s][e] = 1;
 //                            System.out.printf("%d %d  %d %d\n",i,j,k,l);
@@ -202,28 +168,17 @@ public class RootLayoutController implements Initializable {
      *
      */
     public void updateConnection(){
-        int[] sx = new int[ShapeMap.size()];
-        int[] sy = new int[ShapeMap.size()];
-        int[] ex = new int[ShapeMap.size()];
-        int[] ey = new int[ShapeMap.size()];
+        int[][] connectInfo = new int[6][nodeMap.size()];
         int count = 0;
-        for(MyNode Node: ShapeMap.values()){
-            if(Node.getNextNodeID()!=-1){
-                sx[count] = (int)(Node.imageView.getX() + connectorPos[2][1])/viewW;
-                sy[count] = (int)(Node.imageView.getY() + connectorPos[2][0])/viewH;
-                ex[count] = (int)(ShapeMap.get(Node.getNextNodeID()).imageView.getX() + connectorPos[0][1])/viewW;
-                ey[count] = (int)(ShapeMap.get(Node.getNextNodeID()).imageView.getY() + connectorPos[0][0])/viewH;
-                count ++;
-            }else if(Node.getNextTrueNodeID()!=-1){
-                sx[count] = (int)(Node.imageView.getX() + connectorPos[2][1])/viewW;
-                sy[count] = (int)(Node.imageView.getY() + connectorPos[2][0])/viewH;
-                ex[count] = (int)(ShapeMap.get(Node.getNextTrueNodeID()).imageView.getX() + connectorPos[0][1])/viewW;
-                ey[count] = (int)(ShapeMap.get(Node.getNextTrueNodeID()).imageView.getY() + connectorPos[0][0])/viewH;
-            }else if(Node.getNextFalseNodeID()!=-1){
-                sx[count] = (int)(Node.imageView.getX() + connectorPos[1][1])/viewW;
-                sy[count] = (int)(Node.imageView.getY() + connectorPos[1][0])/viewH;
-                ex[count] = (int)(ShapeMap.get(Node.getNextFalseNodeID()).imageView.getX() + connectorPos[0][1])/viewW;
-                ey[count] = (int)(ShapeMap.get(Node.getNextFalseNodeID()).imageView.getY() + connectorPos[0][0])/viewH;
+        for(MyNode node: nodeMap.values()){
+            if(node instanceof StartNode){
+                if(((StartNode) node).getNxtID()!=-1){
+                    connectInfo[0][count] = (int)(((StartNode) node).getStart().getX()/viewW);
+                    connectInfo[1][count] = (int)(((StartNode) node).getStart().getY()/viewH);
+                    connectInfo[2][count] = 2;
+                    MyNode toNode = nodeMap.get(((StartNode) node).getNxtID());
+
+                }
             }
         }
         for(int i = 0; i < count; i++){
@@ -233,22 +188,45 @@ public class RootLayoutController implements Initializable {
     }
 
 
+    void bad() throws Exception {
+        throw new Exception("不应该出现这种情况");
+    }
+
     /**
-     * 获取路径
-     * 首先调用tableToCost，将viewTable转换成费用矩阵
-     * 然后调用Algorithm.dijkstra求出最短路径
-     * 然后通过前驱数组，生成路径
-     * 如果路径cost之和超过10000，就认为无法抵达，返回null
+     * 获取路径；
+     * 首先调用tableToCost，将viewTable转换成费用矩阵；
+     * 然后调用Algorithm.dijkstra求出最短路径；
+     * 然后通过前驱数组，生成路径；
+     * 如果路径cost之和超过10000，就认为无法抵达，返回null；
+     * start和end这两个位置都需要有node存在，否则可能出问题；
      * @param sx startX
      * @param sy startY
+     * @param sc startConnector 取值1 2 3 4
      * @param ex endX
      * @param ey endY
+     * @param ec endConnector
      * @return [[sx,sy], [x1,y1], ..., [ex,ey]]
      */
-    ArrayList<ArrayList<Integer>> getPath(int sx, int sy, int ex, int ey) {
+    ArrayList<ArrayList<Integer>> getPath(int sx, int sy, int sc, int ex, int ey, int ec) throws Exception {
         int[][] cost = tableToCost();
-        int s = sx+sy*tableW;
-        int e = ex+ey*tableW;
+        // 下面四个是调整后的坐标
+        int sx_=sx, sy_=sy, ex_=ex, ey_=ey;
+        switch (sc) {
+            case 1: bad();
+            case 2: sy_++; break;
+            case 3: bad();
+            case 4: sx_++; break;
+            default: bad();
+        }
+        switch (ec) {
+            case 1: ey_--; break;
+            case 2: bad();
+            case 3: bad();
+            case 4: ex_++; break;
+            default: bad();
+        }
+        int s = sx_+sy_*tableW;
+        int e = ex_+ey_*tableW;
         int[] path = Algorithm.dijkstra(cost, tableH*tableW, s, e);
         ArrayList<ArrayList<Integer>> result = new ArrayList<>();
         int costSum = 0;
@@ -257,15 +235,22 @@ public class RootLayoutController implements Initializable {
             now.add(i%tableW);
             now.add(i/tableW);
             result.add(0, now);
-            if (i==s) {
+            if (i==s)
                 break;
-            }
             costSum += cost[path[i]][i];
         }
         if (costSum>10000) {
             System.out.println(costSum);
             return null;
         }
+        // 添加首末端点
+        ArrayList<Integer> start = new ArrayList<>(), end = new ArrayList<>();
+        start.add(sx);
+        start.add(sy);
+        end.add(ex);
+        end.add(ey);
+        result.add(0, start);
+        result.add(end);
         return result;
     }
 
@@ -289,7 +274,8 @@ public class RootLayoutController implements Initializable {
             int nextX = path.get(i+1).get(0);
             int nextY = path.get(i+1).get(1);
             ImageView view = new ImageView();
-            viewTable[y][x] = view;
+            nodeTable[y][x] = new MyNode();
+            nodeTable[y][x].imageView = view;
             view.setFitHeight(viewH);
             view.setFitWidth(viewW);
             view.setY(y*viewH);
@@ -339,11 +325,11 @@ public class RootLayoutController implements Initializable {
         if (sx<0 || sy<0 || sx>=tableW || sy>=tableH) {
             return;
         }
-        ImageView view = viewTable[sy][sx];
-        if (view==null) {
+        MyNode node = nodeTable[sy][sx];
+        if (node==null) {
             return;
         }
-        String[] ss = view.getId().split("_", 2);
+        String[] ss = node.imageView.getId().split("_", 2);
         if (!ss[0].equals("line")) {
             return;
         }
@@ -496,7 +482,7 @@ public class RootLayoutController implements Initializable {
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectNode != null) {
                     MyNode node = nodeFactory.produceNode(selectNode, (int)(event.getX()-event.getX()%viewW), (int)(event.getY()-event.getY()%viewH));
-                    putInTable(node);
+                    node.putInTable();
                     ShapeMap.put(node.getFactoryID(), node);
                     drawingArea.getChildren().add(node.imageView);
                     System.out.println(drawingArea.getChildren().size());

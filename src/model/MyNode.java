@@ -6,8 +6,7 @@ import javafx.scene.layout.AnchorPane;
 public class MyNode {
     private int factoryID;
 
-    public ImageView imageView;
-    //public String name;
+    public ImageView imageView; // image for the line
 
     public MyNode(){
     }
@@ -20,7 +19,11 @@ public class MyNode {
         return factoryID;
     }
 
-    public void setFactoryID(int factoryID) {
-        this.factoryID = factoryID;
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    public void putInTable(){
+
     }
 }

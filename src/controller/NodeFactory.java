@@ -21,10 +21,10 @@ public class NodeFactory {
                 node = new StatementNode(factoryID++, x, y);
                 break;
             case "if":
-                node = new IfNode(factoryID++, x, y);
+                node = new BranchNode(factoryID++, x, y);
                 break;
             case "loop":
-                node = new LoopNode(factoryID++, x, y);
+                node = new LoopStNode(factoryID++, x, y);
                 break;
             case "print":
                 node = new PrintNode(factoryID++, x, y);

@@ -18,6 +18,8 @@ public class EndNode extends MyNode {
             this.end = new ImageView(new Image("resources/img/draw_node_end.png"));
             this.end.setX(x);
             this.end.setY(y);
+            this.end.setFitWidth(viewW);
+            this.end.setFitHeight(viewH);
         }catch(Exception e) {
             e.printStackTrace();
             System.out.println("error in loading EndNode image");
@@ -44,19 +46,22 @@ public class EndNode extends MyNode {
         drawingArea.getChildren().add(this.end);
     }
 
+    public ImageView getImageView() {
+        return this.end;
+    }
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.end);
     }
 
-    public void putInTable(ImageView[][] viewTable) {
-        if(viewTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] != null) {
+    public void putInTable(MyNode[][] nodeTable) {
+        if(nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] != null) {
             System.out.println("error in EndNode putInTable");
             return;
         }
-        viewTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = this.end;
+        nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = this;
     }
 
-    public void removeFromTable(ImageView[][] viewTable) {
-        viewTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = null;
+    public void removeFromTable(MyNode[][] nodeTable) {
+        nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = null;
     }
 }
