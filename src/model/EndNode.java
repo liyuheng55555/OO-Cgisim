@@ -2,6 +2,10 @@ package model;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+
+import static model.Constant.viewH;
+import static model.Constant.viewW;
 
 public class EndNode extends MyNode {
     private int preID;
@@ -34,5 +38,25 @@ public class EndNode extends MyNode {
 
     public void setEnd(ImageView end) {
         this.end = end;
+    }
+
+    public void draw(AnchorPane drawingArea) {
+        drawingArea.getChildren().add(this.end);
+    }
+
+    public void remove(AnchorPane drawingArea) {
+        drawingArea.getChildren().remove(this.end);
+    }
+
+    public void putInTable(ImageView[][] viewTable) {
+        if(viewTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] != null) {
+            System.out.println("error in EndNode putInTable");
+            return;
+        }
+        viewTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = this.end;
+    }
+
+    public void removeFromTable(ImageView[][] viewTable) {
+        viewTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = null;
     }
 }

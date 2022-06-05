@@ -3,6 +3,7 @@ package model;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import static model.Constant.viewH;
@@ -61,5 +62,27 @@ public class StatementNode extends MyNode {
 
     public void setStatement(ImageView statement) {
         this.statement = statement;
+    }
+
+    public void draw(AnchorPane drawingArea) {
+        drawingArea.getChildren().add(this.statement);
+        drawingArea.getChildren().add(this.text);
+    }
+
+    public void remove(AnchorPane drawingArea) {
+        drawingArea.getChildren().remove(this.statement);
+        drawingArea.getChildren().remove(this.text);
+    }
+
+    public void putInTable(ImageView[][] viewTable) {
+        if(viewTable[(int)(this.statement.getX()/viewW)] [(int)(this.statement.getY()/viewH)] != null) {
+            System.out.println("error in StatementNode putInTable");
+            return;
+        }
+        viewTable[(int)(this.statement.getX()/viewW)] [(int)(this.statement.getY()/viewH)] = this.statement;
+    }
+
+    public void removeFromTable(ImageView[][] viewTable) {
+        viewTable[(int)(this.statement.getX()/viewW)] [(int)(this.statement.getY()/viewH)] = null;
     }
 }

@@ -21,6 +21,7 @@ import static model.Constant.viewW;
 import static model.Constant.connectorSize;
 import model.Constant.ClickStatus;
 import model.Constant.Status;
+import model.StartNode;
 
 public class RootLayoutController implements Initializable {
 
@@ -44,8 +45,6 @@ public class RootLayoutController implements Initializable {
     private ImageView choose_print;
     @FXML
     private TextField messageBox;
-
-    private ImageView shadow;
 
     Status status = Status.normal;
     ClickStatus clickStatus = ClickStatus.choosingStart;
@@ -90,15 +89,15 @@ public class RootLayoutController implements Initializable {
     /**
      * 寻找最近的可连接点
      *
-     * @param node
+     * @param view
      * @param x
      * @param y
      * @return
      */
-    int touchConnector(MyNode node, double x, double y) {
-        String name = node.name;
-        double baseX = node.imageView.getX();
-        double baseY = node.imageView.getY();
+    int touchConnector(ImageView view, double x, double y) {
+        String name = view.getId();
+        double baseX = view.getX();
+        double baseY = view.getY();
         if (inConnector.get(name)!=null)
             for (int i : inConnector.get(name)) {
                 double ny = baseY + connectorPos[i][0];
@@ -124,7 +123,7 @@ public class RootLayoutController implements Initializable {
     private double relativeX = -1;
     private double relativeY = -1;
 
-    MyNode[][] viewTable = new MyNode[tableH][tableW];
+    ImageView[][] viewTable = new ImageView[tableH][tableW];
     int factoryID = 0;
     private final HashMap<Integer, MyNode> ShapeMap = new HashMap<>();
     int startConnectionID;
@@ -134,35 +133,35 @@ public class RootLayoutController implements Initializable {
         return ShapeMap;
     }
 
-    /**
-     * 向viewTable中加入一个ImageView
-     * @param node 待加入的imageview
-     */
-    void putInTable(MyNode node) {
-        ImageView image = node.imageView;
-        int x = (int) image.getX();
-        int y = (int) image.getY();
-        int xi = x / viewW;
-        int yi = y / viewH;
-        if (viewTable[yi][xi]!=null) {
-            drawingArea.getChildren().remove(viewTable[yi][xi].imageView);
-        }
-        viewTable[yi][xi] = node;
-//        System.out.println(getPath(0,0, 0,10));
-        erasePath(0,1);
-        erasePath(1,0);
-        erasePath(1,7);
-        erasePath(0,6);
-        ArrayList<ArrayList<Integer>> path = getPath(0,0,0,7);
-        System.out.println(path);
-        showPath(path);
-    }
+//    /**
+//     * 向viewTable中加入一个ImageView
+//     * @param node 待加入的imageview
+//     */
+//    void putInTable(MyNode node) {
+//        ImageView image = node.imageView;
+//        int x = (int) image.getX();
+//        int y = (int) image.getY();
+//        int xi = x / viewW;
+//        int yi = y / viewH;
+//        if (viewTable[yi][xi]!=null) {
+//            drawingArea.getChildren().remove(viewTable[yi][xi].imageView);
+//        }
+//        viewTable[yi][xi] = node;
+////        System.out.println(getPath(0,0, 0,10));
+//        erasePath(0,1);
+//        erasePath(1,0);
+//        erasePath(1,7);
+//        erasePath(0,6);
+//        ArrayList<ArrayList<Integer>> path = getPath(0,0,0,7);
+//        System.out.println(path);
+//        showPath(path);
+//    }
 
-    void removeFromTable(double x, double y) {
-        int xi = (int) (x / viewW);
-        int yi = (int) (y / viewH);
-        viewTable[yi][xi] = null;
-    }
+//    void removeFromTable(double x, double y) {
+//        int xi = (int) (x / viewW);
+//        int yi = (int) (y / viewH);
+//        viewTable[yi][xi] = null;
+//    }
 
     /**
      * 将viewTable转换为Dijkstra所需的费用矩阵（有向图）
@@ -289,46 +288,45 @@ public class RootLayoutController implements Initializable {
             int y = path.get(i).get(1);
             int nextX = path.get(i+1).get(0);
             int nextY = path.get(i+1).get(1);
-            viewTable[y][x] = new MyNode();
-            MyNode node = viewTable[y][x];
-            node.imageView = new ImageView();
-            node.imageView.setFitHeight(viewH);
-            node.imageView.setFitWidth(viewW);
-            node.imageView.setY(y*viewH);
-            node.imageView.setX(x*viewW);
-            node.name = "line";
+            ImageView view = new ImageView();
+            viewTable[y][x] = view;
+            view.setFitHeight(viewH);
+            view.setFitWidth(viewW);
+            view.setY(y*viewH);
+            view.setX(x*viewW);
+            view.setId("line");
             String imgRoot = "resources/img/";
             if (nextY==preY+2) { // 竖线
-                node.imageView.setImage(new Image(imgRoot+"draw_line_vertical.png"));
-                node.name = "line_vertical";
+                view.setImage(new Image(imgRoot+"draw_line_vertical.png"));
+                view.setId("line_vertical");
             }
             else if (nextY==preY+1) { // 弯折线
                 if (nextX==preX+1) {
                     if (x==preX) { // ⤵
-                        node.imageView.setImage(new Image(imgRoot + "draw_line_down_right.png"));
-                        node.name = "line_down_right";
+                        view.setImage(new Image(imgRoot + "draw_line_down_right.png"));
+                        view.setId("line_down_right");
                     }
                     else { // ⤷
-                        node.imageView.setImage(new Image(imgRoot + "draw_line_right_down.png"));
-                        node.name = "line_right_down";
+                        view.setImage(new Image(imgRoot + "draw_line_right_down.png"));
+                        view.setId("line_right_down");
                     }
                 }
                 else {
                     if (x==preX) {// ⤶
-                        node.imageView.setImage(new Image(imgRoot + "draw_line_down_left.png"));
-                        node.name = "line_down_left";
+                        view.setImage(new Image(imgRoot + "draw_line_down_left.png"));
+                        view.setId("line_down_left");
                     }
                     else { // 左转下，没找到这个符号
-                        node.imageView.setImage(new Image(imgRoot + "draw_line_left_down.png"));
-                        node.name = "line_left_down";
+                        view.setImage(new Image(imgRoot + "draw_line_left_down.png"));
+                        view.setId("line_left_down");
                     }
                 }
             }
             else if (nextY==preY) { // 横线
-                node.imageView.setImage(new Image(imgRoot+"draw_line_horizon.png"));
-                node.name = "line_horizon";
+                view.setImage(new Image(imgRoot+"draw_line_horizon.png"));
+                view.setId("line_horizon");
             }
-            drawingArea.getChildren().add(node.imageView);
+            drawingArea.getChildren().add(view);
         }
     }
 
@@ -341,16 +339,16 @@ public class RootLayoutController implements Initializable {
         if (sx<0 || sy<0 || sx>=tableW || sy>=tableH) {
             return;
         }
-        MyNode now = viewTable[sy][sx];
-        if (now==null) {
+        ImageView view = viewTable[sy][sx];
+        if (view==null) {
             return;
         }
-        String[] ss = now.name.split("_", 2);
+        String[] ss = view.getId().split("_", 2);
         if (!ss[0].equals("line")) {
             return;
         }
         viewTable[sy][sx] = null;
-        drawingArea.getChildren().remove(now.imageView);
+        drawingArea.getChildren().remove(view);
         if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
         }
@@ -402,7 +400,7 @@ public class RootLayoutController implements Initializable {
         my.imageView.setImage(image);
         my.imageView.setFitHeight(viewH);
         my.imageView.setFitWidth(viewW);
-        my.name = shape;
+        //my.name = shape;
         return my;
     }
 
@@ -433,9 +431,9 @@ public class RootLayoutController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         propertyController = new PropertyController(messageBox);
-        drawController = new DrawController(drawingArea, propertyController);
         nodeFactory = new NodeFactory();
 
+        ImageView shadow;
         shadow = new ImageView();
         shadow.setFitHeight(viewH);
         shadow.setFitWidth (viewW);
@@ -459,16 +457,16 @@ public class RootLayoutController implements Initializable {
                 boolean found = false;
                 int x = (int) event.getX();
                 int y = (int) event.getY();
-                MyNode node = viewTable[y/viewH][x/viewW];
-                if (node!=null) {
-                    int c = touchConnector(node, event.getX(), event.getY());
+                ImageView view = viewTable[y/viewH][x/viewW];
+                if (view!=null) {
+                    int c = touchConnector(view, event.getX(), event.getY());
                     if (c != -1) {
                         found = true;
                     }
                 }
                 if(found){
                     if(clickStatus == ClickStatus.choosingStart){
-                        if(node.name.equals("start") || node.name.equals("if") || node.name.equals("statement")||node.name.equals("print")){
+                        if(view.getId().equals("start") || node.name.equals("if") || node.name.equals("statement")||node.name.equals("print")){
                             clickStatus = ClickStatus.choosingEnd;
                             startConnectionID = node.getFactoryID();
                             System.out.println("已选择了连线开始点，请选择连线结束点");

@@ -3,6 +3,10 @@ package model;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+
+import static model.Constant.viewH;
+import static model.Constant.viewW;
 
 public class StartNode extends MyNode {
     private int nxtID;
@@ -35,5 +39,25 @@ public class StartNode extends MyNode {
 
     public void setStart(ImageView start) {
         this.start = start;
+    }
+
+    public void draw(AnchorPane drawingArea) {
+        drawingArea.getChildren().add(this.start);
+    }
+
+    public void remove(AnchorPane drawingArea) {
+        drawingArea.getChildren().remove(this.start);
+    }
+
+    public void putInTable(ImageView[][] viewTable) {
+        if(viewTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] != null) {
+            System.out.println("error in StartNode putInTable");
+            return;
+        }
+        viewTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = this.start;
+    }
+
+    public void removeFromTable(ImageView[][] viewTable) {
+        viewTable[(int)(this.start.getX()/viewW)] [(int)(this.start.getY()/viewH)] = null;
     }
 }

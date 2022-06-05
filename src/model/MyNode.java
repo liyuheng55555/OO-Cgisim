@@ -7,12 +7,12 @@ public class MyNode {
     private int factoryID;
 
     public ImageView imageView;
-    public String name;
+    //public String name;
 
-    public MyNode(AnchorPane drawingArea){
+    public MyNode(){
     }
 
-    public MyNode(int factoryID, int x, int y, AnchorPane drawingArea) {
+    public MyNode(int factoryID, int x, int y) {
         this.factoryID = factoryID;
     }
 

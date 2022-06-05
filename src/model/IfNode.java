@@ -2,6 +2,7 @@ package model;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import static model.Constant.viewH;
@@ -33,6 +34,8 @@ public class IfNode extends MyNode {
         try{
             this.branch = new ImageView(new Image("resources/img/draw_node_if.png"));
             this.merge = new ImageView(new Image("resources/img/draw_node_merge.png"));
+            this.branch.setId("branch");
+            this.merge.setId("merge");
             this.branch.setX(x);
             this.branch.setY(y);
             this.merge.setX(x);
@@ -115,11 +118,30 @@ public class IfNode extends MyNode {
         this.merge = merge;
     }
 
-    public void draw() {
-
+    public void draw(AnchorPane drawingArea){
+        drawingArea.getChildren().add(this.branch);
+        drawingArea.getChildren().add(this.merge);
+        drawingArea.getChildren().add(this.text);
     }
 
-    public void remove(){
+    public void remove(AnchorPane drawingArea){
+        drawingArea.getChildren().remove(this.branch);
+        drawingArea.getChildren().remove(this.merge);
+        drawingArea.getChildren().remove(this.text);
+    }
 
+    public void putInTable(ImageView[][] viewTable) {
+        if(viewTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] != null
+                || viewTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] != null) {
+            System.out.println("error in IfNode putInTable");
+            return;
+        }
+        viewTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] = this.branch;
+        viewTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] = this.merge;
+    }
+
+    public void removeFromTable(ImageView[][] viewTable) {
+        viewTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] = null;
+        viewTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] = null;
     }
 }

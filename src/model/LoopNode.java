@@ -2,6 +2,7 @@ package model;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import static model.Constant.viewH;
@@ -92,5 +93,32 @@ public class LoopNode extends MyNode {
 
     public void setLoop_end(ImageView loop_end) {
         this.loop_end = loop_end;
+    }
+
+    public void draw(AnchorPane drawingArea) {
+        drawingArea.getChildren().add(this.loop_st);
+        drawingArea.getChildren().add(this.loop_end);
+        drawingArea.getChildren().add(this.text);
+    }
+
+    public void remove(AnchorPane drawingArea) {
+        drawingArea.getChildren().remove(this.loop_st);
+        drawingArea.getChildren().remove(this.loop_end);
+        drawingArea.getChildren().remove(this.text);
+    }
+
+    public void putInTable(ImageView[][] viewTable) {
+        if(viewTable[(int)(this.loop_st.getX()/viewW)] [(int)(this.loop_st.getY()/viewH)] != null
+                || viewTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] != null) {
+            System.out.println("error in LoopNode putInTable");
+            return;
+        }
+        viewTable[(int)(this.loop_st.getX()/viewW)] [(int)(this.loop_st.getY()/viewH)] = this.loop_st;
+        viewTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] = this.loop_end;
+    }
+
+    public void removeFromTable(ImageView[][] viewTable) {
+        viewTable[(int)(this.loop_st.getX()/viewW)] [(int)(this.loop_st.getY()/viewH)] = null;
+        viewTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] = null;
     }
 }
