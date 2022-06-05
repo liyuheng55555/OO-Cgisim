@@ -3,10 +3,16 @@ package controller;
 import java.net.URL;
 import java.util.*;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -15,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.MyNode;
+import model.Var;
 
 enum Status {
     normal, dragging, connecting, selected
@@ -22,7 +29,24 @@ enum Status {
 
 
 public class RootLayoutController implements Initializable {
-
+    //创建数据源
+    final ObservableList<Var> data = FXCollections.observableArrayList(
+            new Var("a", "int", "1"),
+            new Var("b", "double", "2.3"),
+            new Var("c", "char", "c")
+    );
+    @FXML
+    private TableView tableView;
+    @FXML
+    private Button add;
+    @FXML
+    private Button delete;
+    @FXML
+    private TableColumn VarName;
+    @FXML
+    private TableColumn VarType;
+    @FXML
+    private TableColumn VarValue;
     @FXML
     private AnchorPane drawingArea;
     @FXML
@@ -601,6 +625,12 @@ public class RootLayoutController implements Initializable {
                 }
             }
         });
+//        装载data
+        VarName.setCellValueFactory(new PropertyValueFactory<>("varName"));
+        VarType.setCellValueFactory(new PropertyValueFactory<>("varType"));
+        VarValue.setCellValueFactory(new PropertyValueFactory<>("varValue"));
+        tableView.setEditable(true);
+        tableView.setItems(data);
     }
 
     public void menuNew(){
