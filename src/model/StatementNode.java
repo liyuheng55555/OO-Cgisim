@@ -12,13 +12,17 @@ import static model.Constant.viewW;
 public class StatementNode extends MyNode {
     private Text text;
     private int preID;
+    private int prePlace;
     private int nxtID;
+    private int nxtPlace;
     private ImageView statement;
 
     public StatementNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
         this.preID = -1;
+        this.prePlace = -1;
         this.nxtID = -1;
+        this.nxtPlace = -1;
         this.text = new Text("input your code!");
         this.text.setX(x + viewW / 2);
         this.text.setY(y + viewH / 2);
@@ -59,19 +63,34 @@ public class StatementNode extends MyNode {
         this.nxtID = nxtID;
     }
 
-    public ImageView getStatement() {
+    public int getPrePlace() {
+        return prePlace;
+    }
+
+    public void setPrePlace(int prePlace) {
+        this.prePlace = prePlace;
+    }
+
+    public int getNxtPlace() {
+        return nxtPlace;
+    }
+
+    public void setNxtPlace(int nxtPlace) {
+        this.nxtPlace = nxtPlace;
+    }
+
+    @Override
+    public ImageView getImageView() {
         return statement;
     }
 
-    public void setStatement(ImageView statement) {
-        this.statement = statement;
-    }
-
+    @Override
     public void draw(AnchorPane drawingArea) {
         drawingArea.getChildren().add(this.statement);
         drawingArea.getChildren().add(this.text);
     }
 
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.statement);
         drawingArea.getChildren().remove(this.text);

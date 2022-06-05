@@ -13,13 +13,17 @@ import static model.Constant.viewW;
 public class PrintNode extends MyNode {
     private Text text;
     private int preID;
+    private int prePlace;
     private int nxtID;
+    private int nxtPlace;
     private ImageView print;
 
     public PrintNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
         this.preID = -1;
+        this.prePlace = -1;
         this.nxtID = -1;
+        this.nxtPlace = -1;
         this.text = new Text("input your code!");
         this.text.setX(x + viewW / 2);
         this.text.setY(y + viewH / 2);
@@ -60,21 +64,40 @@ public class PrintNode extends MyNode {
         this.nxtID = nxtID;
     }
 
+    public int getPrePlace() {
+        return prePlace;
+    }
+
+    public void setPrePlace(int prePlace) {
+        this.prePlace = prePlace;
+    }
+
+    public int getNxtPlace() {
+        return nxtPlace;
+    }
+
+    public void setNxtPlace(int nxtPlace) {
+        this.nxtPlace = nxtPlace;
+    }
+
     @Override
     public ImageView getImageView() {
         return print;
     }
 
+    @Override
     public void draw(AnchorPane drawingArea) {
         drawingArea.getChildren().add(this.print);
         drawingArea.getChildren().add(this.text);
     }
 
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.print);
         drawingArea.getChildren().remove(this.text);
     }
 
+    @Override
     public void putInTable(MyNode[][] nodeTable) {
         if(nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] != null) {
             System.out.println("error in StatementNode putInTable");
@@ -83,6 +106,7 @@ public class PrintNode extends MyNode {
         nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = this;
     }
 
+    @Override
     public void removeFromTable(MyNode[][] nodeTable) {
         nodeTable[(int)(this.print.getX()/viewW)] [(int)(this.print.getY()/viewH)] = null;
     }

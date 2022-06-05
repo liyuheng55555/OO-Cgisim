@@ -20,11 +20,18 @@ public class NodeFactory {
             case "statement":
                 node = new StatementNode(factoryID++, x, y);
                 break;
-            case "if":
+            case "branch":
                 node = new BranchNode(factoryID++, x, y);
                 break;
+            case "merge":
+                node = new MergeNode(factoryID++, x, y);
+                break;
             case "loop":
-                node = new LoopStNode(factoryID++, x, y);
+                if("start".equals(selectNode.split("_")[3])) {
+                    node = new LoopStNode(factoryID++, x, y);
+                }else if("end".equals(selectNode.split("_")[3])) {
+                    node = new LoopEndNode(factoryID++, x, y);
+                }
                 break;
             case "print":
                 node = new PrintNode(factoryID++, x, y);

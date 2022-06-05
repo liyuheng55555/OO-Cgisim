@@ -12,15 +12,21 @@ import static model.Constant.viewW;
 public class BranchNode extends MyNode {
     private Text text;
     private int branchPreID;
+    private int branchPrePlace;
     private int branchTrueID;
+    private int branchTruePlace;
     private int branchFalseID;
+    private int branchFalsePlace;
     private ImageView branch;
 
     public BranchNode(int factoryID, int x, int y) {
         super(factoryID,x,y);
         this.branchPreID = -1;
+        this.branchPrePlace = -1;
         this.branchTrueID = -1;
+        this.branchTruePlace = -1;
         this.branchFalseID = -1;
+        this.branchFalsePlace = -1;
         this.text = new Text("input your code!");
         this.text.setX(x + viewW / 2);
         this.text.setY(y + viewH / 2);
@@ -69,21 +75,48 @@ public class BranchNode extends MyNode {
         this.branchFalseID = branchFalseID;
     }
 
+    public int getBranchPrePlace() {
+        return branchPrePlace;
+    }
+
+    public void setBranchPrePlace(int branchPrePlace) {
+        this.branchPrePlace = branchPrePlace;
+    }
+
+    public int getBranchTruePlace() {
+        return branchTruePlace;
+    }
+
+    public void setBranchTruePlace(int branchTruePlace) {
+        this.branchTruePlace = branchTruePlace;
+    }
+
+    public int getBranchFalsePlace() {
+        return branchFalsePlace;
+    }
+
+    public void setBranchFalsePlace(int branchFalsePlace) {
+        this.branchFalsePlace = branchFalsePlace;
+    }
+
     @Override
     public ImageView getImageView() {
         return this.branch;
     }
 
+    @Override
     public void draw(AnchorPane drawingArea){
         drawingArea.getChildren().add(this.branch);
         drawingArea.getChildren().add(this.text);
     }
 
+    @Override
     public void remove(AnchorPane drawingArea){
         drawingArea.getChildren().remove(this.branch);
         drawingArea.getChildren().remove(this.text);
     }
 
+    @Override
     public void putInTable(MyNode[][] nodeTable) {
         if(nodeTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] != null) {
             System.out.println("error in IfNode putInTable");
@@ -92,6 +125,7 @@ public class BranchNode extends MyNode {
         nodeTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] = this;
     }
 
+    @Override
     public void removeFromTable(MyNode[][] nodeTable) {
         nodeTable[(int)(this.branch.getX()/viewW)] [(int)(this.branch.getY()/viewH)] = null;
     }

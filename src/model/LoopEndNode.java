@@ -9,13 +9,17 @@ import static model.Constant.viewW;
 
 public class LoopEndNode extends MyNode {
     private int loop_endPreID;
+    private int loop_endPrePlace;
     private int loop_endNxtID;
+    private int loop_endNxtPlace;
     private ImageView loop_end;
 
     public LoopEndNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
         this.loop_endPreID = -1;
+        this.loop_endPrePlace = -1;
         this.loop_endNxtID = -1;
+        this.loop_endNxtPlace = -1;
         try{
             this.loop_end = new ImageView(new Image("resources/img/draw_node_loop_end.png"));
             this.loop_end.setX(x);
@@ -45,16 +49,20 @@ public class LoopEndNode extends MyNode {
         this.loop_endNxtID = loop_endNxtID;
     }
 
-    public ImageView getEnd() {
-        return loop_end;
+    public int getLoop_endPrePlace() {
+        return loop_endPrePlace;
     }
 
-    public void setEnd(ImageView loop_end) {
-        this.loop_end = loop_end;
+    public void setLoop_endPrePlace(int loop_endPrePlace) {
+        this.loop_endPrePlace = loop_endPrePlace;
     }
 
-    public void draw(AnchorPane drawingArea) {
-        drawingArea.getChildren().add(this.loop_end);
+    public int getLoop_endNxtPlace() {
+        return loop_endNxtPlace;
+    }
+
+    public void setLoop_endNxtPlace(int loop_endNxtPlace) {
+        this.loop_endNxtPlace = loop_endNxtPlace;
     }
 
     @Override
@@ -62,10 +70,17 @@ public class LoopEndNode extends MyNode {
         return this.loop_end;
     }
 
+    @Override
+    public void draw(AnchorPane drawingArea) {
+        drawingArea.getChildren().add(this.loop_end);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.loop_end);
     }
 
+    @Override
     public void putInTable(MyNode[][] nodeTable) {
         if(nodeTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] != null) {
             System.out.println("error in EndNode putInTable");
@@ -74,6 +89,7 @@ public class LoopEndNode extends MyNode {
         nodeTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] = this;
     }
 
+    @Override
     public void removeFromTable(MyNode[][] nodeTable) {
         nodeTable[(int)(this.loop_end.getX()/viewW)] [(int)(this.loop_end.getY()/viewH)] = null;
     }

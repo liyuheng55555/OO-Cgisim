@@ -10,15 +10,21 @@ import static model.Constant.viewW;
 
 public class MergeNode extends MyNode{
     private int mergeTrueID;
+    private int mergeTruePlace;
     private int mergeFalseID;
+    private int mergeFalsePlace;
     private int mergeNxtID;
+    private int mergeNxtPlace;
     private ImageView merge;
 
     public MergeNode(int factoryID, int x, int y) {
         super(factoryID,x,y);
         this.mergeTrueID = -1;
+        this.mergeTruePlace = -1;
         this.mergeFalseID = -1;
+        this.mergeFalsePlace = -1;
         this.mergeNxtID = -1;
+        this.mergeNxtPlace = -1;
         try{
             this.merge = new ImageView(new Image("resources/img/draw_node_merge.png"));
             this.merge.setId("merge");
@@ -57,19 +63,46 @@ public class MergeNode extends MyNode{
         this.mergeNxtID = mergeNxtID;
     }
 
+    public int getMergeTruePlace() {
+        return mergeTruePlace;
+    }
+
+    public void setMergeTruePlace(int mergeTruePlace) {
+        this.mergeTruePlace = mergeTruePlace;
+    }
+
+    public int getMergeFalsePlace() {
+        return mergeFalsePlace;
+    }
+
+    public void setMergeFalsePlace(int mergeFalsePlace) {
+        this.mergeFalsePlace = mergeFalsePlace;
+    }
+
+    public int getMergeNxtPlace() {
+        return mergeNxtPlace;
+    }
+
+    public void setMergeNxtPlace(int mergeNxtPlace) {
+        this.mergeNxtPlace = mergeNxtPlace;
+    }
+
     @Override
     public ImageView getImageView()  {
         return this.merge;
     }
 
+    @Override
     public void draw(AnchorPane drawingArea){
         drawingArea.getChildren().add(this.merge);
     }
 
+    @Override
     public void remove(AnchorPane drawingArea){
         drawingArea.getChildren().remove(this.merge);
     }
 
+    @Override
     public void putInTable(MyNode[][] nodeTable) {
         if(nodeTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] != null) {
             System.out.println("error in IfNode putInTable");
@@ -78,6 +111,7 @@ public class MergeNode extends MyNode{
         nodeTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] = this;
     }
 
+    @Override
     public void removeFromTable(MyNode[][] nodeTable) {
         nodeTable[(int)(this.merge.getX()/viewW)] [(int)(this.merge.getY()/viewH)] = null;
     }

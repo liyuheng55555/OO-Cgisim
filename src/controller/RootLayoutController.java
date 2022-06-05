@@ -9,7 +9,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import model.MyNode;
+import model.*;
 
 import java.net.URL;
 import java.util.*;
@@ -21,7 +21,6 @@ import static model.Constant.viewW;
 import static model.Constant.connectorSize;
 import model.Constant.ClickStatus;
 import model.Constant.Status;
-import model.StartNode;
 
 public class RootLayoutController implements Initializable {
 
@@ -40,7 +39,11 @@ public class RootLayoutController implements Initializable {
     @FXML
     private ImageView choose_if;
     @FXML
-    private ImageView choose_loop;
+    public ImageView choose_merge;
+    @FXML
+    public ImageView choose_loop_start;
+    @FXML
+    public ImageView choose_loop_end;
     @FXML
     private ImageView choose_print;
     @FXML
@@ -90,14 +93,15 @@ public class RootLayoutController implements Initializable {
     /**
      * 寻找最近的可连接点
      *
-     * @param view
+     * @param node
      * @param x
      * @param y
      * @return 可连接点的序号，-1表示没有可连接点
      * 序号 1：上方    2：下方    3：左侧    4：右侧
      */
-    int touchConnector(ImageView view, double x, double y,  Map<String, List<Integer>> connector) {
-        String name = view.getId();
+    int touchConnector(MyNode node, double x, double y,  Map<String, List<Integer>> connector) {
+        String name = node.getImageView().getId();
+        ImageView view = node.getImageView();
         double baseX = view.getX();
         double baseY = view.getY();
         if (connector.get(name)!=null) {
@@ -112,8 +116,6 @@ public class RootLayoutController implements Initializable {
         return -1;
     }
 
-
-    private DrawController drawController;
     private PropertyController propertyController;
     private String selectNode = null;
     private MyNode selection = null;
@@ -124,7 +126,9 @@ public class RootLayoutController implements Initializable {
     MyNode[][] nodeTable = new MyNode[tableH][tableW];
     private final HashMap<Integer, MyNode> nodeMap = new HashMap<>();
     int startConnectionID;
+    int startConnectionPlace;
     int endConnectionID;
+    int endConnectionPlace;
 
     public HashMap<Integer, MyNode> getNodeMap() {
         return nodeMap;
@@ -180,13 +184,100 @@ public class RootLayoutController implements Initializable {
                     MyNode toNode = nodeMap.get(((StartNode) node).getNxtID());
                     connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
                     connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-                    connectInfo[5][count] = 2;
+                    connectInfo[5][count] = ((StartNode) node).getNxtPlace();
+                    count++;
+                }
+            }
+            if(node instanceof BranchNode){
+                if(((BranchNode) node).getBranchTrueID()!=-1){
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
+                    connectInfo[2][count] = 2;
+                    MyNode toNode = nodeMap.get(((BranchNode) node).getBranchTrueID());
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = ((BranchNode) node).getBranchTruePlace();
+                    count++;
+                }
+                if(((BranchNode) node).getBranchFalseID()!=-1){
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
+                    connectInfo[2][count] = 4;
+                    MyNode toNode = nodeMap.get(((BranchNode) node).getBranchFalseID());
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = ((BranchNode) node).getBranchFalsePlace();
+                    count++;
+                }
+            }
+            if(node instanceof MergeNode){
+                if(((MergeNode) node).getMergeNxtID()!=-1){
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
+                    connectInfo[2][count] = 2;
+                    MyNode toNode = nodeMap.get(((MergeNode) node).getMergeNxtID());
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = ((MergeNode) node).getMergeNxtPlace();
+                    count++;
+                }
+            }
+            if(node instanceof LoopStNode){
+                if(((LoopStNode) node).getLoop_stNxtID()!=-1){
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
+                    connectInfo[2][count] = 2;
+                    MyNode toNode = nodeMap.get(((LoopStNode) node).getLoop_stNxtID());
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = ((LoopStNode) node).getLoop_stNxtPlace();
+                    count++;
+                }
+            }
+            if(node instanceof LoopEndNode){
+                if(((LoopEndNode) node).getLoop_endNxtID()!=-1){
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
+                    connectInfo[2][count] = 2;
+                    MyNode toNode = nodeMap.get(((LoopEndNode) node).getLoop_endNxtID());
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = ((LoopEndNode) node).getLoop_endNxtPlace();
+                    count++;
+                }
+            }
+            if(node instanceof StatementNode){
+                if(((StatementNode) node).getNxtID()!=-1){
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
+                    connectInfo[2][count] = 2;
+                    MyNode toNode = nodeMap.get(((StatementNode) node).getNxtID());
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = ((StatementNode) node).getNxtPlace();
+                    count++;
+                }
+            }
+            if(node instanceof PrintNode){
+                if(((PrintNode) node).getNxtID()!=-1){
+                    connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
+                    connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
+                    connectInfo[2][count] = 2;
+                    MyNode toNode = nodeMap.get(((PrintNode) node).getNxtID());
+                    connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
+                    connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
+                    connectInfo[5][count] = ((PrintNode) node).getNxtPlace();
+                    count++;
                 }
             }
         }
         for(int i = 0; i < count; i++){
-            System.out.println("connect" + sx[i] + " " + sy[i] + " " + ex[i] + " " + ey[i]);
-            showPath(getPath(sx[i],sy[i],ex[i],ey[i]));
+            System.out.println("connect" + connectInfo[1][i] + " " + connectInfo[2][i] + " " + connectInfo[4][i] + " " + connectInfo[5][i]);
+            try{
+                showPath(getPath(connectInfo[1][i], connectInfo[2][i], connectInfo[3][i], connectInfo[4][i], connectInfo[5][i], connectInfo[6][i]));
+            }catch(Exception e){
+                System.out.println("find path error");
+            }
         }
     }
 
@@ -238,8 +329,9 @@ public class RootLayoutController implements Initializable {
             now.add(i%tableW);
             now.add(i/tableW);
             result.add(0, now);
-            if (i==s)
+            if (i==s) {
                 break;
+            }
             costSum += cost[path[i]][i];
         }
         if (costSum>10000) {
@@ -336,8 +428,8 @@ public class RootLayoutController implements Initializable {
         if (!ss[0].equals("line")) {
             return;
         }
-        viewTable[sy][sx] = null;
-        drawingArea.getChildren().remove(view);
+        nodeTable[sy][sx] = null;
+        drawingArea.getChildren().remove(node);
         if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
         }
@@ -352,34 +444,12 @@ public class RootLayoutController implements Initializable {
         }
     }
 
-
-
-//    ArrayList<Integer> tableFindFree() {
-//        for (int h=0; h<tableH; h++) {
-//            for (int w=0; w<tableW; w++) {
-//                if (viewTable[h][w]==null) {
-//                    ArrayList<Integer> arr = new ArrayList<>();
-//                    arr.add(w,h);
-//                    return arr;
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
-
     MyNode produceNode(String selectNode, int x, int y) {
         String shape = selectNode.split("_")[2];
         Image image = null;
         Image image2 = null;
         try {
             image = new Image("resources/img/draw_node_"+shape+".png");
-            if(shape.equals("if")) {
-                image2 = new Image("resources/img/draw_node_merge.png");
-            }
-            if(shape.equals("loop")) {
-                image2 = new Image("resources/img/draw_node_loop_end.png");
-            }
         } catch (Exception e) {
             System.out.println("!!!!!!!! 打开文件失败：resources/img/draw_node_"+shape+".png !!!!!!!!!");
             return null;
@@ -439,38 +509,87 @@ public class RootLayoutController implements Initializable {
 
         drawingArea.getChildren().addAll(shadow, connector);
 
-        showPath(getPath(0,0,0,7));
+        try {
+            showPath(getPath(0,0,2,0,7,1));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (status == Status.normal && selectNode==null) {
-                boolean found = false;
-                int x = (int) event.getX();
-                int y = (int) event.getY();
-                ImageView view = viewTable[y/viewH][x/viewW];
-                if (view!=null) {
-                    int c = touchConnector(view, event.getX(), event.getY());
-                    if (c != -1) {
-                        found = true;
-                    }
-                }
-                if(found){
-                    if(clickStatus == ClickStatus.choosingStart){
-                        if(view.getId().equals("start") || node.name.equals("if") || node.name.equals("statement")||node.name.equals("print")){
+                MyNode node = nodeTable[(int) event.getY()/viewH][(int) event.getX()/viewW];
+                if (node!=null) {
+                    if(clickStatus == ClickStatus.choosingStart) {
+                        int found = touchConnector(node, event.getX(), event.getY(), outConnector);
+                        if(found != -1) {
                             clickStatus = ClickStatus.choosingEnd;
                             startConnectionID = node.getFactoryID();
                             System.out.println("已选择了连线开始点，请选择连线结束点");
                         }
-                    }else{
-                        if(node.name.equals("end") || node.name.equals("if") || node.name.equals("statement")||node.name.equals("print")){
-                            clickStatus = ClickStatus.choosingStart;
+                    }else if(clickStatus == ClickStatus.choosingEnd) {
+                        int found = touchConnector(node, event.getX(), event.getY(), inConnector);
+                        clickStatus = ClickStatus.choosingStart;
+                        if(found != -1) {
                             endConnectionID = node.getFactoryID();
-                            MyNode start = ShapeMap.get(startConnectionID);
-                            MyNode end = ShapeMap.get(endConnectionID);
-                            start.setNextNodeID(endConnectionID);
-                            end.setPreNodeID(startConnectionID);
+                            endConnectionPlace = found;
+                            MyNode start = nodeMap.get(startConnectionID);
+                            MyNode end = nodeMap.get(endConnectionID);
+                            if(start instanceof StartNode) {
+                                ((StartNode) start).setNxtID(endConnectionID);
+                                ((StartNode) start).setNxtPlace(endConnectionPlace);
+                            }else if(start instanceof BranchNode) {
+                                if(startConnectionPlace == 2) {
+                                    ((BranchNode) start).setBranchTrueID(endConnectionID);
+                                    ((BranchNode) start).setBranchTruePlace(endConnectionPlace);
+                                }else if(startConnectionPlace == 4) {
+                                    ((BranchNode) start).setBranchFalseID(endConnectionID);
+                                    ((BranchNode) start).setBranchFalsePlace(endConnectionPlace);
+                                }
+                            }else if(start instanceof MergeNode) {
+                                ((MergeNode) start).setMergeNxtID(endConnectionID);
+                                ((MergeNode) start).setMergeNxtPlace(endConnectionPlace);
+                            }else if(start instanceof LoopStNode) {
+                                ((LoopStNode) start).setLoop_stNxtID(endConnectionID);
+                                ((LoopStNode) start).setLoop_stNxtPlace(endConnectionPlace);
+                            }else if(start instanceof LoopEndNode) {
+                                ((LoopEndNode) start).setLoop_endNxtID(endConnectionID);
+                                ((LoopEndNode) start).setLoop_endNxtPlace(endConnectionPlace);
+                            }else if(start instanceof StatementNode) {
+                                ((StatementNode) start).setNxtID(endConnectionID);
+                                ((StatementNode) start).setNxtPlace(endConnectionPlace);
+                            }else if(start instanceof PrintNode) {
+                                ((PrintNode) start).setNxtID(endConnectionID);
+                                ((PrintNode) start).setNxtPlace(endConnectionPlace);
+                            }
+                            if(end instanceof EndNode) {
+                                ((EndNode) end).setPreID(startConnectionID);
+                                ((EndNode) end).setPrePlace(startConnectionPlace);
+                            }else if(end instanceof BranchNode) {
+                                ((BranchNode) end).setBranchPreID(startConnectionID);
+                                ((BranchNode) end).setBranchPrePlace(startConnectionPlace);
+                            }else if(end instanceof MergeNode) {
+                                if(endConnectionPlace == 1) {
+                                   ((MergeNode) end).setMergeTrueID(startConnectionID);
+                                   ((MergeNode) end).setMergeTruePlace(startConnectionPlace);
+                                }else if(endConnectionPlace == 4) {
+                                    ((MergeNode) end).setMergeFalseID(startConnectionID);
+                                    ((MergeNode) end).setMergeFalsePlace(startConnectionPlace);
+                                }
+                            }else if(end instanceof LoopStNode) {
+                                ((LoopStNode) end).setLoop_stPreID(startConnectionID);
+                                ((LoopStNode) end).setLoop_stPrePlace(startConnectionPlace);
+                            }else if(end instanceof LoopEndNode) {
+                                ((LoopEndNode) end).setLoop_endPreID(startConnectionID);
+                                ((LoopEndNode) end).setLoop_endPrePlace(startConnectionPlace);
+                            }else if(end instanceof StatementNode) {
+                                ((StatementNode) end).setPreID(startConnectionID);
+                                ((StatementNode) end).setPrePlace(startConnectionPlace);
+                            }else if(end instanceof PrintNode) {
+                                ((PrintNode) end).setPreID(startConnectionID);
+                                ((PrintNode) end).setPrePlace(startConnectionPlace);
+                            }
                             System.out.println("已选择了连线结束点, 连线完成");
                         }else{
-                            clickStatus = ClickStatus.choosingStart;
                             startConnectionID = -1;
                             System.out.println("连线结束点选择失败，请重新选择连线开始点");
                         }
@@ -485,22 +604,25 @@ public class RootLayoutController implements Initializable {
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectNode != null) {
                     MyNode node = nodeFactory.produceNode(selectNode, (int)(event.getX()-event.getX()%viewW), (int)(event.getY()-event.getY()%viewH));
-                    node.putInTable();
-                    ShapeMap.put(node.getFactoryID(), node);
-                    drawingArea.getChildren().add(node.imageView);
-                    System.out.println(drawingArea.getChildren().size());
+                    node.putInTable(nodeTable);
+                    nodeMap.put(node.getFactoryID(), node);
+                    node.draw(drawingArea);
                 }
                 if (event.getClickCount() == 1) {
-                    drawController.getPropertyController().update();
+                    MyNode node = nodeTable[(int)(event.getX()-event.getX()%viewW)/viewW][(int)(event.getY()-event.getY()%viewH)/viewH];
+                    if (node != null) {
+                        propertyController.update(node);
+                    }
                 }
             }
             else if (event.getButton().name().equals("SECONDARY")) {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
-                MyNode node = viewTable[y/viewH][x/viewW];
+                MyNode node = nodeTable[y/viewH][x/viewW];
                 if (node!=null) {
-                    drawingArea.getChildren().remove(node.imageView);
-                    viewTable[y/viewH][x/viewW] = null;
+                    node.removeFromTable(nodeTable);
+                    nodeMap.remove(node.getFactoryID());
+                    node.remove(drawingArea);
                 }
             }
             updateConnection();
@@ -511,10 +633,12 @@ public class RootLayoutController implements Initializable {
                 boolean found = false;
                 int x = (int) event.getX();
                 int y = (int) event.getY();
-                MyNode node = viewTable[y/viewH][x/viewW];
+                MyNode node = nodeTable[y/viewH][x/viewW];
                 if (node!=null) {
-                    int c = touchConnector(node, event.getX(), event.getY());
-//                    System.out.println(c);
+                    int c = touchConnector(node, event.getX(), event.getY(), inConnector);
+                    if (c == -1) {
+                        touchConnector(node, event.getX(), event.getY(), outConnector);
+                    }
                     if (c!=-1) {
                         connector.setX(node.imageView.getX()+connectorPos[c][1]-connectorSize);
                         connector.setY(node.imageView.getY()+connectorPos[c][0]-connectorSize);
@@ -543,14 +667,14 @@ public class RootLayoutController implements Initializable {
             loop:
             for (int i=0; i<tableH; i++) {
                 for (int j=0; j<tableW; j++) {
-                    if (viewTable[i][j]!=null && viewTable[i][j].imageView.contains(event.getX(), event.getY())) {
-                        selection = viewTable[i][j];
+                    if (nodeTable[i][j]!=null && nodeTable[i][j].imageView.contains(event.getX(), event.getY())) {
+                        selection = nodeTable[i][j];
                         drawingArea.getChildren().remove((selection.imageView));
                         drawingArea.getChildren().add((selection.imageView));
 //                        selectNode = null;
-                        relativeX = event.getX()-viewTable[i][j].imageView.getX();
-                        relativeY = event.getY()-viewTable[i][j].imageView.getY();
-                        removeFromTable(event.getX(), event.getY());
+                        relativeX = event.getX()-nodeTable[i][j].imageView.getX();
+                        relativeY = event.getY()-nodeTable[i][j].imageView.getY();
+                        selection.removeFromTable(nodeTable);
                         break loop;
                     }
                 }
@@ -590,7 +714,7 @@ public class RootLayoutController implements Initializable {
 //                viewTable[x/viewW][y/viewH] = selection;
                 selection.imageView.setX(x);
                 selection.imageView.setY(y);
-                putInTable(selection);
+                selection.putInTable(nodeTable);
                 selection = null;
                 shadow.setX(-1000);
                 shadow.setY(-1000);
@@ -619,13 +743,17 @@ public class RootLayoutController implements Initializable {
                         choose_statement.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_statement.png"))));
                         choose_statement.setId("choose_node_statement");
                     }
-                    if (!nowImage.getId().contains("if")){
-                        choose_if.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_if.png"))));
-                        choose_if.setId("choose_node_if");
+                    if (!nowImage.getId().contains("branch")){
+                        choose_if.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_half_branch.png"))));
+                        choose_if.setId("choose_node_branch");
                     }
-                    if (!nowImage.getId().contains("loop")){
-                        choose_loop.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_loop.png"))));
-                        choose_loop.setId("choose_node_loop");
+                    if (!nowImage.getId().contains("loop_start")){
+                        choose_loop_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_half_loop_start.png"))));
+                        choose_loop_start.setId("choose_node_loop_start");
+                    }
+                    if (!nowImage.getId().contains("loop_end")){
+                        choose_loop_end.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_half_loop_end.png"))));
+                        choose_loop_end.setId("choose_node_loop_end");
                     }
                     if (!nowImage.getId().contains("print")){
                         choose_print.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_print.png"))));

@@ -49,23 +49,29 @@
     <left>
         <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
             <VBox fx:id="Nodes" alignment="TOP_CENTER" prefHeight="824.0" prefWidth="221.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
-                <ImageView id="choose_node_start" fx:id="choose_start" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_start.png" />
+                <ImageView fx:id="choose_start" id="choose_node_start" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_start.png"/>
                 </ImageView>
-                <ImageView id="choose_node_end" fx:id="choose_end" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_end.png" />
+                <ImageView fx:id="choose_end" id="choose_node_end" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_end.png"/>
                 </ImageView>
-                <ImageView id="choose_node_statement" fx:id="choose_statement" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_statement.png" />
+                <ImageView fx:id="choose_statement" id="choose_node_statement" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_statement.png"/>
                 </ImageView>
-                <ImageView id="choose_node_if" fx:id="choose_if" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_if.png" />
+                <ImageView fx:id="choose_if" id="choose_node_if" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_half_branch.png"/>
                 </ImageView>
-                <ImageView id="choose_node_loop" fx:id="choose_loop" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_loop.png" />
+                <ImageView fx:id="choose_merge" id="choose_node_merge" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_half_merge.png"/>
                 </ImageView>
-                <ImageView id="choose_node_print" fx:id="choose_print" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../resources/img/choose_node_print.png" />
+                <ImageView fx:id="choose_loop_start" id="choose_node_loop_start" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_half_loop_start.png"/>
+                </ImageView>
+                <ImageView fx:id="choose_loop_end" id="choose_node_loop_end" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_half_loop_end.png"/>
+                </ImageView>
+                <ImageView fx:id="choose_print" id="choose_node_print" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../resources/img/choose_node_print.png"/>
                 </ImageView>
             </VBox>
         </AnchorPane>

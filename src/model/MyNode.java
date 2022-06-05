@@ -23,7 +23,15 @@ public class MyNode {
         return imageView;
     }
 
-    public void putInTable(){
+    public void draw(AnchorPane drawingArea){
+    }
 
+    public void remove(AnchorPane drawingArea){
+    }
+
+    public void putInTable(MyNode[][] nodeTable) {
+    }
+
+    public void removeFromTable(MyNode[][] nodeTable) {
     }
 }

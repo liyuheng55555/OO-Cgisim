@@ -9,13 +9,13 @@ import static model.Constant.viewW;
 
 public class EndNode extends MyNode {
     private int preID;
-    private int preIDplace;
+    private int prePlace;
     private ImageView end;
 
     public EndNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
         this.preID = -1;
-        this.preIDplace = -1;
+        this.prePlace = -1;
         try{
             this.end = new ImageView(new Image("resources/img/draw_node_end.png"));
             this.end.setX(x);
@@ -37,34 +37,30 @@ public class EndNode extends MyNode {
         this.preID = preID;
     }
 
-    public int getPreIDplace() {
-        return preIDplace;
+    public int getPrePlace() {
+        return prePlace;
     }
 
-    public void setPreIDplace(int preIDplace) {
-        this.preIDplace = preIDplace;
-    }
-
-    public ImageView getEnd() {
-        return end;
-    }
-
-    public void setEnd(ImageView end) {
-        this.end = end;
-    }
-
-    public void draw(AnchorPane drawingArea) {
-        drawingArea.getChildren().add(this.end);
+    public void setPrePlace(int prePlace) {
+        this.prePlace = prePlace;
     }
 
     @Override
     public ImageView getImageView() {
         return this.end;
     }
+
+    @Override
+    public void draw(AnchorPane drawingArea) {
+        drawingArea.getChildren().add(this.end);
+    }
+
+    @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.end);
     }
 
+    @Override
     public void putInTable(MyNode[][] nodeTable) {
         if(nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] != null) {
             System.out.println("error in EndNode putInTable");
@@ -73,6 +69,7 @@ public class EndNode extends MyNode {
         nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = this;
     }
 
+    @Override
     public void removeFromTable(MyNode[][] nodeTable) {
         nodeTable[(int)(this.end.getX()/viewW)] [(int)(this.end.getY()/viewH)] = null;
     }
