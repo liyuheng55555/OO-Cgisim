@@ -616,6 +616,7 @@ public class RootLayoutController implements Initializable {
                 int y = (int) event.getY();
                 MyNode node = nodeTable[y/viewH][x/viewW];
                 if (node!=null) {
+                    eraseAllPath(node);
                     node.removeFromTable(nodeTable);
                     nodeMap.remove(node.getFactoryID());
                     node.remove(drawingArea);
