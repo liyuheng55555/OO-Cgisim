@@ -304,6 +304,7 @@ public class RootLayoutController implements Initializable {
         int y = (int) (node.getImageView().getY()/viewH);
         for (int c=1; c<=4; c++) {
             if (node.connectTo[c]!=-1) {
+                System.out.println(c);
                 switch (c) {
                     case 1: erasePath(x,y-1); break;
                     case 2: erasePath(x,y+1); break;
@@ -552,7 +553,8 @@ public class RootLayoutController implements Initializable {
             return;
         }
         nodeTable[sy][sx] = null;
-        drawingArea.getChildren().remove(node);
+        if (drawingArea.getChildren().remove(node.getImageView()))
+            System.out.println("图上删除"+sx+" "+sy);
         if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
         }
