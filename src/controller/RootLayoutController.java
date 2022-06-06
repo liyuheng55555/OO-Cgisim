@@ -272,7 +272,7 @@ public class RootLayoutController implements Initializable {
         for(int i = 0; i < count; i++){
             System.out.println("connect" + connectInfo[1][i] + " " + connectInfo[2][i] + " " + connectInfo[4][i] + " " + connectInfo[5][i]);
             try{
-                showPath(getPath(connectInfo[1][i], connectInfo[2][i], connectInfo[3][i], connectInfo[4][i], connectInfo[5][i], connectInfo[6][i]));
+                showPath(getPath(connectInfo[0][i], connectInfo[1][i], connectInfo[2][i], connectInfo[3][i], connectInfo[4][i], connectInfo[5][i]));
             }catch(Exception e){
                 System.out.println("find path error");
             }
@@ -468,12 +468,6 @@ public class RootLayoutController implements Initializable {
 
         drawingArea.getChildren().addAll(shadow, connector);
 
-        try {
-            showPath(getPath(0,0,2,0,7,1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (status == Status.normal && selectNode==null) {
                 MyNode node = nodeTable[(int) event.getY()/viewH][(int) event.getX()/viewW];
@@ -564,9 +558,10 @@ public class RootLayoutController implements Initializable {
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectNode != null) {
                     MyNode node = nodeFactory.produceNode(selectNode, (int)(event.getX()-event.getX()%viewW), (int)(event.getY()-event.getY()%viewH));
-                    node.putInTable(nodeTable);
-                    nodeMap.put(node.getFactoryID(), node);
-                    node.draw(drawingArea);
+                    if(node.putInTable(nodeTable)){
+                        nodeMap.put(node.getFactoryID(), node);
+                        node.draw(drawingArea);
+                    }
                 }
                 if (event.getClickCount() == 1) {
                     MyNode node = nodeTable[(int)(event.getY()-event.getY()%viewH)/viewH][(int)(event.getX()-event.getX()%viewW)/viewW];
@@ -753,5 +748,8 @@ public class RootLayoutController implements Initializable {
         System.out.println("reset");
     }
 
+    public void commit(){
+        propertyController.sendMessage();
+    }
 }
 

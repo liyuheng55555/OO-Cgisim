@@ -10,7 +10,7 @@ public class Constant {
     public static final int textRelativeX = 30;
     public static final int textRelativeY = 30;
     public static final int connectorSize = 5;
-    public static final Font font = new Font("Arial", 10);
+    public static final Font font = new Font("Arial", 18);
 
     public enum Status {
         normal, dragging, connecting, selected

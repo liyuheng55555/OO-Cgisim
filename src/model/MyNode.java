@@ -35,12 +35,13 @@ public class MyNode {
     public void remove(AnchorPane drawingArea){
     }
 
-    public void putInTable(MyNode[][] nodeTable) {
+    public boolean putInTable(MyNode[][] nodeTable) {
         if(nodeTable[(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] != null) {
             System.out.println("error in StatementNode putInTable");
-            return;
+            return false;
         }
         nodeTable[(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] = this;
+        return true;
     }
 
     public void removeFromTable(MyNode[][] nodeTable) {

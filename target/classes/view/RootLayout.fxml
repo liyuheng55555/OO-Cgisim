@@ -118,7 +118,7 @@
     </right>
     <bottom>
         <HBox prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ECFFFF;" BorderPane.alignment="CENTER">
-            <Button mnemonicParsing="false" prefHeight="40.0" style="-fx-background-color: #F75000; -fx-text-fill: white;" text="commit" />
+            <Button onAction="#commit" mnemonicParsing="false" prefHeight="40.0" style="-fx-background-color: #F75000; -fx-text-fill: white;" text="commit" />
             <TextField fx:id="messageBox" layoutY="10.0" prefHeight="40.0" prefWidth="700.0" style="-fx-background-color: #ECFFFF;" text="Coding to Change the Node..." />
         </HBox>
     </bottom>
