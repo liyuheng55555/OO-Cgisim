@@ -93,9 +93,9 @@ public class RootLayoutController implements Initializable {
     /**
      * 寻找最近的可连接点
      * 序号 1：上方    2：下方    3：左侧    4：右侧
-     * @param node
-     * @param x
-     * @param y
+     * @param node 待处理node
+     * @param x    鼠标横坐标
+     * @param y    鼠标纵坐标
      * @return 可连接点的序号，-1表示没有可连接点
      *
      */
@@ -122,7 +122,6 @@ public class RootLayoutController implements Initializable {
     private double relativeX = -1;
     private double relativeY = -1;
 
-    int factoryID = 0;
     MyNode[][] nodeTable = new MyNode[tableH][tableW];
     private final HashMap<Integer, MyNode> nodeMap = new HashMap<>();
     int startConnectionID;
@@ -188,100 +187,6 @@ public class RootLayoutController implements Initializable {
                     count++;
                 }
             }
-//                    if(node instanceof StartNode){
-//            if(((StartNode) node).getNxtID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 2;
-//                MyNode toNode = nodeMap.get(((StartNode) node).getNxtID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((StartNode) node).getNxtPlace();
-//                count++;
-//            }
-//        }
-//        if(node instanceof BranchNode){
-//            if(((BranchNode) node).getBranchTrueID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 2;
-//                MyNode toNode = nodeMap.get(((BranchNode) node).getBranchTrueID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((BranchNode) node).getBranchTruePlace();
-//                count++;
-//            }
-//            if(((BranchNode) node).getBranchFalseID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 4;
-//                MyNode toNode = nodeMap.get(((BranchNode) node).getBranchFalseID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((BranchNode) node).getBranchFalsePlace();
-//                count++;
-//            }
-//        }
-//        if(node instanceof MergeNode){
-//            if(((MergeNode) node).getMergeNxtID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 2;
-//                MyNode toNode = nodeMap.get(((MergeNode) node).getMergeNxtID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((MergeNode) node).getMergeNxtPlace();
-//                count++;
-//            }
-//        }
-//        if(node instanceof LoopStNode){
-//            if(((LoopStNode) node).getLoop_stNxtID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 2;
-//                MyNode toNode = nodeMap.get(((LoopStNode) node).getLoop_stNxtID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((LoopStNode) node).getLoop_stNxtPlace();
-//                count++;
-//            }
-//        }
-//        if(node instanceof LoopEndNode){
-//            if(((LoopEndNode) node).getLoop_endNxtID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 2;
-//                MyNode toNode = nodeMap.get(((LoopEndNode) node).getLoop_endNxtID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((LoopEndNode) node).getLoop_endNxtPlace();
-//                count++;
-//            }
-//        }
-//        if(node instanceof StatementNode){
-//            if(((StatementNode) node).getNxtID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 2;
-//                MyNode toNode = nodeMap.get(((StatementNode) node).getNxtID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((StatementNode) node).getNxtPlace();
-//                count++;
-//            }
-//        }
-//        if(node instanceof PrintNode){
-//            if(((PrintNode) node).getNxtID()!=-1){
-//                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-//                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-//                connectInfo[2][count] = 2;
-//                MyNode toNode = nodeMap.get(((PrintNode) node).getNxtID());
-//                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-//                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-//                connectInfo[5][count] = ((PrintNode) node).getNxtPlace();
-//                count++;
-//            }
-//        }
         }
 
         for(int i = 0; i < count; i++){
@@ -365,7 +270,9 @@ public class RootLayoutController implements Initializable {
      * 检查对node而言方位c是输入点还是输出点
      * @param node  待检查node
      * @param c     方位
-     * @return      1代表输出点，0代表输入点，-1代表既不是输出也不是输入
+     * @return      1代表输出点，
+     *              0代表输入点，
+     *              -1代表既不是输出也不是输入
      */
     int checkInOrOut(MyNode node, int c) {
         String name = node.getImageView().getId();
@@ -376,33 +283,6 @@ public class RootLayoutController implements Initializable {
         if (connectors!=null && connectors.contains(c))
             return 1;
         return -1;
-    }
-
-    /**
-     * 获取以node为起点的路径，将其填入connectInfo数组
-     * @param node
-     * @param connectInfo
-     * @param count
-     * @return
-     */
-    private int getCount(MyNode node, int[][] connectInfo, int count) {
-        for (int c=1; c<=4; c++) {
-            int id = node.connectTo[c];
-            System.out.println(id);
-            if (id!=-1 && checkInOrOut(node, c)==1) {  // 有连接，而且是输出点
-                connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
-                connectInfo[1][count] = (int)(node.getImageView().getY()/viewH);
-                connectInfo[2][count] = c;
-                MyNode toNode = nodeMap.get(id);
-                connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
-                connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-                connectInfo[5][count] = node.connectPlace[c];
-                count++;
-            }
-        }
-        return count;
-
-
     }
 
     void bad() throws Exception {
@@ -552,7 +432,7 @@ public class RootLayoutController implements Initializable {
             return;
         }
         nodeTable[sy][sx] = null;
-        drawingArea.getChildren().remove(node);
+        drawingArea.getChildren().remove(node.getImageView());
         if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
         }
@@ -668,6 +548,11 @@ public class RootLayoutController implements Initializable {
                                 ((PrintNode) end).setPrePlace(startConnectionPlace);
                             }
                             System.out.println("已选择了连线结束点, 连线完成");
+                            try {
+                                tryCreatePath(end);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }else{
                             startConnectionID = -1;
                             System.out.println("连线结束点选择失败，请重新选择连线开始点");
