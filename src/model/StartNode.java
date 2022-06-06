@@ -36,6 +36,7 @@ public class StartNode extends MyNode {
 
     public void setNxtID(int nxtID) {
         this.nxtID = nxtID;
+        connectTo[2] = nxtID;
     }
 
     public int getNxtPlace() {
@@ -44,6 +45,7 @@ public class StartNode extends MyNode {
 
     public void setNxtPlace(int nxtPlace) {
         this.nxtPlace = nxtPlace;
+        connectPlace[2] = nxtPlace;
     }
 
     @Override

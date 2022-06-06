@@ -52,6 +52,7 @@ public class LoopStNode extends MyNode {
 
     public void setLoop_stPreID(int loop_stPreID) {
         this.loop_stPreID = loop_stPreID;
+        connectTo[1] = loop_stPreID;
     }
 
     public int getLoop_stNxtID() {
@@ -60,6 +61,7 @@ public class LoopStNode extends MyNode {
 
     public void setLoop_stNxtID(int loop_stNxtID) {
         this.loop_stNxtID = loop_stNxtID;
+        connectTo[2] = loop_stNxtID;
     }
 
     public int getLoop_stPrePlace() {
@@ -68,6 +70,7 @@ public class LoopStNode extends MyNode {
 
     public void setLoop_stPrePlace(int loop_stPrePlace) {
         this.loop_stPrePlace = loop_stPrePlace;
+        connectPlace[1] = loop_stPrePlace;
     }
 
     public int getLoop_stNxtPlace() {
@@ -76,6 +79,7 @@ public class LoopStNode extends MyNode {
 
     public void setLoop_stNxtPlace(int loop_stNxtPlace) {
         this.loop_stNxtPlace = loop_stNxtPlace;
+        connectPlace[2] = loop_stNxtPlace;
     }
 
     @Override

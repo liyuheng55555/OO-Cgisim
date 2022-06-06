@@ -43,10 +43,12 @@ public class LoopEndNode extends MyNode {
 
     public void setLoop_endPreID(int loop_endPreID) {
         this.loop_endPreID = loop_endPreID;
+        connectTo[1] = loop_endPreID;
     }
 
     public void setLoop_endNxtID(int loop_endNxtID) {
         this.loop_endNxtID = loop_endNxtID;
+        connectTo[2] = loop_endNxtID;
     }
 
     public int getLoop_endPrePlace() {
@@ -55,6 +57,7 @@ public class LoopEndNode extends MyNode {
 
     public void setLoop_endPrePlace(int loop_endPrePlace) {
         this.loop_endPrePlace = loop_endPrePlace;
+        connectPlace[1] = loop_endPrePlace;
     }
 
     public int getLoop_endNxtPlace() {
@@ -63,6 +66,7 @@ public class LoopEndNode extends MyNode {
 
     public void setLoop_endNxtPlace(int loop_endNxtPlace) {
         this.loop_endNxtPlace = loop_endNxtPlace;
+        connectPlace[2] = loop_endNxtPlace;
     }
 
     @Override

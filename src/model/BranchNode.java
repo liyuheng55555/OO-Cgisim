@@ -18,6 +18,7 @@ public class BranchNode extends MyNode {
     private int branchFalsePlace;
     private ImageView branch;
 
+
     public BranchNode(int factoryID, int x, int y) {
         super(factoryID,x,y);
         this.branchPreID = -1;
@@ -30,6 +31,7 @@ public class BranchNode extends MyNode {
         this.text.setX(x + textRelativeX);
         this.text.setY(y + textRelativeY);
         this.text.setFont(Constant.font);
+//        this.name = "if";
         try{
             this.branch = new ImageView(new Image("resources/img/draw_node_if.png"));
             this.branch.setId("branch");
@@ -57,6 +59,7 @@ public class BranchNode extends MyNode {
 
     public void setBranchPreID(int branchPreID) {
         this.branchPreID = branchPreID;
+        connectTo[1] = branchPreID;
     }
 
     public int getBranchTrueID() {
@@ -65,6 +68,7 @@ public class BranchNode extends MyNode {
 
     public void setBranchTrueID(int branchTrueID) {
         this.branchTrueID = branchTrueID;
+        connectTo[2] = branchTrueID;
     }
 
     public int getBranchFalseID() {
@@ -73,6 +77,7 @@ public class BranchNode extends MyNode {
 
     public void setBranchFalseID(int branchFalseID) {
         this.branchFalseID = branchFalseID;
+        connectTo[4] = branchFalseID;
     }
 
     public int getBranchPrePlace() {
@@ -81,6 +86,7 @@ public class BranchNode extends MyNode {
 
     public void setBranchPrePlace(int branchPrePlace) {
         this.branchPrePlace = branchPrePlace;
+        connectPlace[1] = branchPrePlace;
     }
 
     public int getBranchTruePlace() {
@@ -89,6 +95,7 @@ public class BranchNode extends MyNode {
 
     public void setBranchTruePlace(int branchTruePlace) {
         this.branchTruePlace = branchTruePlace;
+        connectPlace[2] = branchTruePlace;
     }
 
     public int getBranchFalsePlace() {
@@ -97,6 +104,7 @@ public class BranchNode extends MyNode {
 
     public void setBranchFalsePlace(int branchFalsePlace) {
         this.branchFalsePlace = branchFalsePlace;
+        connectPlace[4] = branchFalsePlace;
     }
 
     @Override
