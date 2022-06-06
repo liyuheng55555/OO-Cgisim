@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -35,6 +36,8 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
