@@ -7,7 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -19,9 +18,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.*;
 
-import java.net.URL;
-import java.util.*;
-
 import static model.Constant.tableH;
 import static model.Constant.tableW;
 import static model.Constant.viewH;
@@ -32,23 +28,23 @@ import model.Constant.Status;
 
 public class RootLayoutController implements Initializable {
     //创建数据源
-    final ObservableList<Var> data = FXCollections.observableArrayList(
-            new Var("a", "int", "1"),
-            new Var("b", "double", "2.3"),
-            new Var("c", "char", "c")
+    final ObservableList<TableVar> data = FXCollections.observableArrayList(
+            new TableVar("a", "int", "1"),
+            new TableVar("b", "float", "2.3"),
+            new TableVar("c", "bool", "true")
     );
     @FXML
-    private TableView<Var> tableView;
+    private TableView<TableVar> tableView;
     @FXML
     private Button add;
     @FXML
     private Button delete;
     @FXML
-    private TableColumn<Var, String> VarName;
+    private TableColumn<TableVar, String> VarName;
     @FXML
-    private TableColumn<Var, String> VarType;
+    private TableColumn<TableVar, String> VarType;
     @FXML
-    private TableColumn<Var, String> VarValue;
+    private TableColumn<TableVar, String> VarValue;
     @FXML
     private TextField txtName;
     @FXML
@@ -119,6 +115,9 @@ public class RootLayoutController implements Initializable {
         connectorPos[3][1] = (double) viewW / 10;
         connectorPos[4][0] = (double) viewH / 2;
         connectorPos[4][1] = (double) viewW / 10 * 9;
+    }
+
+    public RootLayoutController() throws Exception {
     }
 
     /**
@@ -773,20 +772,20 @@ public class RootLayoutController implements Initializable {
         tableView.setEditable(true);
         VarName.setCellFactory(TextFieldTableCell.forTableColumn());
         VarName.setOnEditCommit(event->{
-            TableView tempTable = event.getTableView();
-            Var tem_var = (Var) tempTable.getItems().get(event.getTablePosition().getRow());
-            tem_var.setVarName(event.getNewValue());
+            TableView<TableVar> tempTable = event.getTableView();
+            TableVar tem_Table_var = (TableVar) tempTable.getItems().get(event.getTablePosition().getRow());
+            tem_Table_var.setVarName(event.getNewValue());
         });
         VarType.setCellFactory(TextFieldTableCell.forTableColumn());
         VarType.setOnEditCommit(event->{
-            TableView tempTable = event.getTableView();
-            Var tem_var = (Var) tempTable.getItems().get(event.getTablePosition().getRow());
-            tem_var.setVarType(event.getNewValue());
+            TableView<TableVar> tempTable = event.getTableView();
+            TableVar tem_Table_var = (TableVar) tempTable.getItems().get(event.getTablePosition().getRow());
+            tem_Table_var.setVarType(event.getNewValue());
         });
         VarValue.setOnEditCommit(event->{
-            TableView tempTable = event.getTableView();
-            Var tem_var = (Var) tempTable.getItems().get(event.getTablePosition().getRow());
-            tem_var.setVarValue(event.getNewValue());
+            TableView<TableVar> tempTable = event.getTableView();
+            TableVar tem_Table_var = (TableVar) tempTable.getItems().get(event.getTablePosition().getRow());
+            tem_Table_var.setVarValue(event.getNewValue());
         });
         VarValue.setCellFactory(TextFieldTableCell.forTableColumn());
         tableView.setItems(data);
@@ -799,7 +798,11 @@ public class RootLayoutController implements Initializable {
                 alert.show();
                 return;
             }
-            data.add(new Var(txtName.getText(), txtType.getText(), txtValue.getText()));
+            try {
+                data.add(new TableVar(txtName.getText(), txtType.getText(), txtValue.getText()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
         delete.setOnAction(e->{
             if (data.size() == 0) {
@@ -811,8 +814,8 @@ public class RootLayoutController implements Initializable {
             int moveIndex = tableView.getSelectionModel().getFocusedIndex();
             System.out.println(moveIndex);
             //删除对应行
-            Var var = data.get(moveIndex);
-            alert.setContentText(var.getVarName());
+            TableVar tableVar = data.get(moveIndex);
+            alert.setContentText(tableVar.getVarName());
             alert.show();
             data.remove(moveIndex);
         });
