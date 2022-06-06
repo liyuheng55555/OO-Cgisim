@@ -1,8 +1,43 @@
-//package model;
-//
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.util.regex.Pattern;
+package model;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+public class Var {
+    public String varName;
+    public String varValue;
+    public String varType;
+    public Var(String name, String type, String value){
+        this.varName = name;
+        this.varType = type;
+        this.varValue = value;
+    }
+
+    public void setVarName(String varName) {
+        this.varName = varName;
+    }
+
+    public void setVarType(String varType) {
+        this.varType = varType;
+    }
+
+    public void setVarValue(String varValue) {
+        this.varValue = varValue;
+    }
+
+    public String getVarName() {
+        return varName;
+    }
+
+    public String getVarType() {
+        return varType;
+    }
+
+    public String getVarValue() {
+        return varValue;
+    }
+}
 //
 ///**
 // *

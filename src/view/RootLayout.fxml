@@ -81,9 +81,9 @@
             <VBox fx:id="VarTableArea" prefHeight="868.0" prefWidth="240.0" style="-fx-background-color: #ECF5FF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <TableView id="tableview" fx:id="varTable" accessibleRole="BUTTON" prefHeight="700.0" style="-fx-max-width: 300; -fx-padding: 0 5px 0 5px; -fx-background-color: #ECF5FF;" styleClass="tableview" stylesheets="@../resources/css/style.css">
                     <columns>
-                        <TableColumn prefWidth="75.0" sortable="false" text="变量类型" />
-                        <TableColumn prefWidth="75.0" sortable="false" text="变量值" />
-                        <TableColumn prefWidth="75.0" sortable="false" text="变量名" />
+                        <TableColumn fx:id="VarType" prefWidth="75.0" sortable="false" text="变量类型"/>
+                        <TableColumn fx:id="VarValue" prefWidth="75.0" sortable="false" text="变量值"/>
+                        <TableColumn fx:id="VarName" prefWidth="75.0" sortable="false" text="变量名"/>
                     </columns>
                 </TableView>
                 <HBox prefHeight="50.0" prefWidth="200.0">
