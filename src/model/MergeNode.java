@@ -44,6 +44,7 @@ public class MergeNode extends MyNode{
 
     public void setMergeTrueID(int mergeTrueID) {
         this.mergeTrueID = mergeTrueID;
+        connectTo[1] = mergeTrueID;
     }
 
     public int getMergeFalseID() {
@@ -52,6 +53,7 @@ public class MergeNode extends MyNode{
 
     public void setMergeFalseID(int mergeFalseID) {
         this.mergeFalseID = mergeFalseID;
+        connectTo[4] = mergeFalseID;
     }
 
     public int getMergeNxtID() {
@@ -60,6 +62,7 @@ public class MergeNode extends MyNode{
 
     public void setMergeNxtID(int mergeNxtID) {
         this.mergeNxtID = mergeNxtID;
+        connectTo[2] = mergeNxtID;
     }
 
     public int getMergeTruePlace() {
@@ -68,6 +71,7 @@ public class MergeNode extends MyNode{
 
     public void setMergeTruePlace(int mergeTruePlace) {
         this.mergeTruePlace = mergeTruePlace;
+        connectPlace[1] = mergeTruePlace;
     }
 
     public int getMergeFalsePlace() {
@@ -76,6 +80,7 @@ public class MergeNode extends MyNode{
 
     public void setMergeFalsePlace(int mergeFalsePlace) {
         this.mergeFalsePlace = mergeFalsePlace;
+        connectPlace[4] = mergeFalsePlace;
     }
 
     public int getMergeNxtPlace() {
@@ -84,6 +89,7 @@ public class MergeNode extends MyNode{
 
     public void setMergeNxtPlace(int mergeNxtPlace) {
         this.mergeNxtPlace = mergeNxtPlace;
+        connectPlace[2] = mergeNxtPlace;
     }
 
     @Override

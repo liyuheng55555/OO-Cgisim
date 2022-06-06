@@ -16,6 +16,7 @@ public class EndNode extends MyNode {
         super(factoryID,x,y);
         this.preID = -1;
         this.prePlace = -1;
+        this.name = "end";
         try{
             this.end = new ImageView(new Image("resources/img/draw_node_end.png"));
             this.end.setX(x);
@@ -35,6 +36,7 @@ public class EndNode extends MyNode {
 
     public void setPreID(int preID) {
         this.preID = preID;
+        connectTo[1] = preID;
     }
 
     public int getPrePlace() {
@@ -43,6 +45,7 @@ public class EndNode extends MyNode {
 
     public void setPrePlace(int prePlace) {
         this.prePlace = prePlace;
+        connectPlace[1] = prePlace;
     }
 
     @Override

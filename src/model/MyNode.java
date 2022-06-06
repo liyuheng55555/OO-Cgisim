@@ -11,6 +11,8 @@ public class MyNode {
 
     public ImageView imageView; // image for the line
 
+    public String name;
+
     public MyNode(){
     }
 
@@ -34,6 +36,12 @@ public class MyNode {
 
     public void remove(AnchorPane drawingArea){
     }
+
+    // connectTo[1] = 100 意思是本节点的上方连接着100号节点
+    public int[] connectTo = new int[]{-1, -1, -1, -1, -1};
+
+    // connectPlace[1] = 2 意思是本节点的上方连接着另一个节点的下方
+    public int[] connectPlace = new int []{-1, -1, -1, -1, -1};
 
     public void putInTable(MyNode[][] nodeTable) {
         if(nodeTable[(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] != null) {

@@ -53,6 +53,7 @@ public class StatementNode extends MyNode {
 
     public void setPreID(int preID) {
         this.preID = preID;
+        connectTo[1] = preID;
     }
 
     public int getNxtID() {
@@ -61,6 +62,7 @@ public class StatementNode extends MyNode {
 
     public void setNxtID(int nxtID) {
         this.nxtID = nxtID;
+        connectTo[2] = nxtID;
     }
 
     public int getPrePlace() {
@@ -69,6 +71,7 @@ public class StatementNode extends MyNode {
 
     public void setPrePlace(int prePlace) {
         this.prePlace = prePlace;
+        connectPlace[1] = prePlace;
     }
 
     public int getNxtPlace() {
@@ -77,6 +80,7 @@ public class StatementNode extends MyNode {
 
     public void setNxtPlace(int nxtPlace) {
         this.nxtPlace = nxtPlace;
+        connectPlace[2] = nxtPlace;
     }
 
     @Override
