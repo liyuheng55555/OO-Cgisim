@@ -77,16 +77,16 @@ public class TableVar {
         return varValue.get();
     }
 
-    public void setVarValue(String value) {
-        varValue.set(value);
+    public void setVarName(String name) {
+        this.varName.set(name);
     }
 
     public void setVarType(String varType) {
         this.varType.set(varType);
     }
 
-    public void setVarName(String name) {
-        this.varName.set(name);
+    public void setVarValue(String value) {
+        varValue.set(value);
     }
 
 

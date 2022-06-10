@@ -28,12 +28,12 @@ public class Run {
      * 如果当前已经处于运行状态，就运行一步
      * @throws Exception 运行过程中发生错误
      */
-    static public void stepRun() throws Exception {
+    static public int stepRun() throws Exception {
         if (nowID == -1) {
             nowID = startID;
             System.out.printf("nowID = %d\n", nowID);
             Var.runMap = new HashMap<>(Var.initMap);
-            return;
+            return nowID;
         }
 //        Map<Integer, MyNode> shapeMap = rootLayoutController.getNodeMap();
         MyNode now = nodeMap.get(nowID);
@@ -65,6 +65,8 @@ public class Run {
         else if (now instanceof StatementNode) {
             StatementNode stateNode = (StatementNode) now;
             String expression = stateNode.getText().getText();
+            if (expression.charAt(expression.length()-1)!='\n')
+                expression += "\n";
             Main.run(expression, Var.runMap);
             nowID = stateNode.getNxtID();
         }
@@ -72,6 +74,7 @@ public class Run {
             throw new Exception(nowID+"号节点类型未知，也许是"+now.getClass().toString());
         }
         System.out.printf("nowID = %d\n", nowID);
+        return nowID;
     }
 
     /**

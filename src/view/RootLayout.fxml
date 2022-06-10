@@ -28,10 +28,10 @@
                 <MenuItem mnemonicParsing="false" onAction="#menuExport" text="Export" />
             </Menu>
             <Menu mnemonicParsing="false" text="程序">
-                <MenuItem mnemonicParsing="false" text="运行" />
+                <MenuItem mnemonicParsing="false" onAction="#run" text="运行" />
                 <MenuItem mnemonicParsing="false" text="暂停" />
                 <MenuItem mnemonicParsing="false" text="debug" />
-                <MenuItem mnemonicParsing="false" text="下一步" />
+                <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步" />
                 <MenuItem mnemonicParsing="false" text="重置" />
             </Menu>
         </MenuBar>

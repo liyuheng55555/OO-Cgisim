@@ -80,6 +80,30 @@ public class RootLayoutController implements Initializable {
     ClickStatus clickStatus = ClickStatus.choosingStart;
     NodeFactory nodeFactory;
 
+    ShowAnything showSelection;
+    ShowAnything showRunPosition;
+
+    /**
+     * 设置所有ShowAnything对象；
+     * 因为initialize函数已经太长了，所以单独写一个函数
+     */
+    void showAnythingInitialize() {
+        // 选中位置
+        Image selectPng = new Image("resources/img/select.png");
+        ImageView selectView = new ImageView(selectPng);
+        selectView.setFitHeight(viewH);
+        selectView.setFitWidth(viewW);
+        showSelection = new ShowAnything(selectView, drawingArea, 0, 0);
+        // 运行位置
+        Image runPosPng = new Image("resources/img/select.png");
+        ImageView runView = new ImageView(runPosPng);
+        runView.setFitHeight(viewH);
+        runView.setFitWidth(viewW);
+        showRunPosition = new ShowAnything(runView, drawingArea, 0, 0);
+        // 结构错误、语法错误等
+
+    }
+
     /*
     inConnector记录每种节点的输入点，outConnector记录输出点
     1：上方    2：下方    3：左侧    4：右侧
@@ -383,7 +407,6 @@ public class RootLayoutController implements Initializable {
     }
 
 
-
     /**
      * 获得路径之后，调用此函数在界面上绘制连线
      * 起点终点的位置不画线
@@ -483,6 +506,7 @@ public class RootLayoutController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        showAnythingInitialize();
         propertyController = new PropertyController(messageBox);
         nodeFactory = new NodeFactory();
 
@@ -604,9 +628,18 @@ public class RootLayoutController implements Initializable {
                     }
                 }
                 if (event.getClickCount() == 1) {
-                    MyNode node = nodeTable[(int)(event.getY()-event.getY()%viewH)/viewH][(int)(event.getX()-event.getX()%viewW)/viewW];
+                    int y = (int)(event.getY()-event.getY()%viewH)/viewH;
+                    int x = (int)(event.getX()-event.getX()%viewW)/viewW;
+                    MyNode node = nodeTable[y][x];
                     if (node != null) {
                         propertyController.update(node);
+                        showSelection.clear();
+                        try {
+                            showSelection.draw(x,y);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
             }
@@ -667,9 +700,12 @@ public class RootLayoutController implements Initializable {
         // ---------------------- 拖动响应，分为按下鼠标、拖动、松开鼠标，三个阶段 ---------------------------
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_PRESSED, event -> {
             System.out.println("MOUSE_PRESSED");
-            selection = nodeTable[(int)(event.getY()/viewH)][(int)(event.getX()/viewW)];
+            int y = (int)(event.getY()/viewH);
+            int x = (int)(event.getX()/viewW);
+            selection = nodeTable[y][x];
             if(selection != null) {
                 eraseAllPath(selection);
+                showSelection.clear();
                 System.out.println("Selection is: " + selection.getClass().getName());
                 selection.remove(drawingArea);
                 selection.draw(drawingArea);
@@ -821,10 +857,22 @@ public class RootLayoutController implements Initializable {
         });
     }
 
+    private int getStartID() {
+        for (MyNode node : nodeMap.values()) {
+            if (node instanceof StartNode)
+                return node.getFactoryID();
+        }
+        return -1;
+    }
+
+
     public void menuNew(){
         System.out.println("New");
+//        Thread thread = new Thread();
+//        while(true);
     }
     public void menuSave(){
+
         System.out.println("Save");
     }
     public void menuOpen(){
@@ -835,6 +883,7 @@ public class RootLayoutController implements Initializable {
     }
     public void run(){
         System.out.println("run");
+        Run.setup(getStartID(), nodeMap);
     }
     public void stop(){
         System.out.println("stop");
@@ -844,9 +893,29 @@ public class RootLayoutController implements Initializable {
     }
     public void stepRun(){
         System.out.println("stepRun");
+        int next = -2;
+        try {
+            next = Run.stepRun();
+        } catch (Exception e) {
+//            e.printStackTrace();
+            Alert alert =new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(e.getMessage());
+            alert.show();
+            return;
+        }
+        MyNode node = nodeMap.get(next);
+        int x = (int) (node.getImageView().getX()/viewW);
+        int y = (int) (node.getImageView().getY()/viewH);
+        showRunPosition.clear();
+        try {
+            showRunPosition.draw(x,y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public void reset(){
         System.out.println("reset");
+        Run.reset();
     }
 
     public void commit(){
