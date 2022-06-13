@@ -59,8 +59,9 @@ public class Eval extends CgisimBaseVisitor<Object> {
      */
     @Override
     public Object visitPrintExpr(CgisimParser.PrintExprContext ctx) {
-        System.out.println(visit(ctx.expr()));
-        return 0;
+        Object result = visit(ctx.expr());
+        System.out.println(result);
+        return result;
     }
 
     @Override
@@ -164,8 +165,8 @@ public class Eval extends CgisimBaseVisitor<Object> {
         Integer i1 = (Integer)left;
         Integer i2 = (Integer)right;
         switch (ctx.op.getType()) {
-            case CgisimParser.L:    return i1 < i2;
-            case CgisimParser.G:    return i1 > i2;
+            case CgisimParser.L:    return i1 < i2 ;
+            case CgisimParser.G:    return i1 > i2 ;
             case CgisimParser.LE:   return i1 <= i2;
             case CgisimParser.GE:   return i1 >= i2;
         }

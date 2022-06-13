@@ -883,7 +883,15 @@ public class RootLayoutController implements Initializable {
     }
     public void run(){
         System.out.println("run");
-        Run.setup(getStartID(), nodeMap);
+        try {
+            Run.setup(getStartID(), nodeMap, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(e.getMessage());
+            alert.show();
+        }
+
     }
     public void stop(){
         System.out.println("stop");
@@ -903,6 +911,7 @@ public class RootLayoutController implements Initializable {
             alert.show();
             return;
         }
+        // stepRun success, update run position
         MyNode node = nodeMap.get(next);
         int x = (int) (node.getImageView().getX()/viewW);
         int y = (int) (node.getImageView().getY()/viewH);
@@ -912,6 +921,13 @@ public class RootLayoutController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // update data table
+        Map<String, Object> varMap = Run.varMap;
+        for (TableVar tVar : data) {
+            String name = tVar.getVarName();
+            tVar.setVarValue(varMap.get(name).toString());
+        }
+        tableView.refresh();
     }
     public void reset(){
         System.out.println("reset");
