@@ -21,7 +21,7 @@ public class LoopEndNode extends MyNode {
         this.loop_endNxtID = -1;
         this.loop_endNxtPlace = -1;
         try{
-            this.loop_end = new ImageView(new Image("resources/img/draw_node_loop_end.png"));
+            this.loop_end = new ImageView(new Image("sources/img/draw_node_loop_end.png"));
             this.loop_end.setX(x);
             this.loop_end.setY(y);
             this.loop_end.setFitHeight(viewH);

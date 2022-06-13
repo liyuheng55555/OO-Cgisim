@@ -18,7 +18,7 @@ public class StartNode extends MyNode {
         this.nxtID = -1;
         this.nxtPlace = -1;
         try{
-            this.start = new ImageView(new Image("resources/img/draw_node_start.png"));
+            this.start = new ImageView(new Image("sources/img/draw_node_start.png"));
             this.start.setX(x);
             this.start.setY(y);
             this.start.setFitHeight(viewH);

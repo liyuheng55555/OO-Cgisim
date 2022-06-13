@@ -28,7 +28,7 @@ public class PrintNode extends MyNode {
         this.text.setY(y + textRelativeY);
         this.text.setFont(Constant.font);
         try{
-            this.print = new ImageView(new Image("resources/img/draw_node_print.png"));
+            this.print = new ImageView(new Image("sources/img/draw_node_print.png"));
             this.print.setX(x);
             this.print.setY(y);
             this.print.setFitHeight(viewH);
