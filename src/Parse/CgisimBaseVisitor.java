@@ -1,4 +1,4 @@
-// Generated from E:/重要资料/学习/第2学期/面向对象/面向对象小组作业/Cgisim/src/Parse\Cgisim.g4 by ANTLR 4.10.1
+// Generated from E:/重要资料/学习/第2学期/面向对象/OO-Cgisim/src/Parse\Cgisim.g4 by ANTLR 4.10.1
 package Parse;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -109,6 +109,27 @@ public class CgisimBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitInt(CgisimParser.IntContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitFlt(CgisimParser.FltContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitNegFloat(CgisimParser.NegFloatContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitPosFloat(CgisimParser.PosFloatContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

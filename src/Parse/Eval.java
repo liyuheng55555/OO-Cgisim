@@ -150,8 +150,8 @@ public class Eval extends CgisimBaseVisitor<Object> {
         if (!left.getClass().equals(right.getClass()))
             throw new RuntimeException(beaut(ctx.getText())+": 尝试对不同性质的算式做判等运算");
         switch (ctx.op.getType()) {
-            case CgisimParser.EQUAL: return left == right;
-            case CgisimParser.NE: return left != right;
+            case CgisimParser.EQUAL: return left.equals(right);
+            case CgisimParser.NE: return !left.equals(right);
         }
         throw new RuntimeException("未知的错误");
     }
@@ -160,10 +160,14 @@ public class Eval extends CgisimBaseVisitor<Object> {
     public Object visitCompare(CgisimParser.CompareContext ctx) {
         Object left = visit(ctx.expr(0));
         Object right = visit(ctx.expr(1));
-        if (!left.getClass().equals(Integer.class) || !right.getClass().equals(Integer.class))
+        if (!left.getClass().equals(right.getClass()) || !left.getClass().equals(Integer.class) && !left.getClass().equals(Float.class))
             throw new RuntimeException(beaut(ctx.getText())+": 尝试对非数字做算术运算");
-        Integer i1 = (Integer)left;
-        Integer i2 = (Integer)right;
+        float i1, i2;
+        i1 = Float.parseFloat(left.toString());
+        i2 = Float.parseFloat(right.toString());
+//        Float i1 = (Float) left;
+//        Comparable<?> i2 = (Comparable<?>)right;
+//        i1.compareTo(i2);
         switch (ctx.op.getType()) {
             case CgisimParser.L:    return i1 < i2 ;
             case CgisimParser.G:    return i1 > i2 ;
@@ -187,6 +191,30 @@ public class Eval extends CgisimBaseVisitor<Object> {
     public Object visitParens(CgisimParser.ParensContext ctx) {
         return visit(ctx.expr());
     }
+
+    @Override
+    public Object visitFlt(CgisimParser.FltContext ctx) {
+        return visit(ctx.float_());
+    }
+
+    @Override
+    public Object visitNegFloat(CgisimParser.NegFloatContext ctx) {
+        return -(Float) visit(ctx.float_());
+    }
+
+    @Override
+    public Object visitPosFloat(CgisimParser.PosFloatContext ctx) {
+        String str = ctx.getText();
+        Float f = null;
+        try {
+            f = Float.valueOf(str);
+        } catch (Exception e) {
+            throw new RuntimeException(str+"无法作为浮点数被解析");
+        }
+        return f;
+    }
+
+
 }
 
 /**

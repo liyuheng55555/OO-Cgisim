@@ -75,6 +75,10 @@ public class RootLayoutController implements Initializable {
     private ImageView choose_print;
     @FXML
     private TextField messageBox;
+//    @FXML
+//    private Button compileButton;
+//    @FXML
+//    private Button stepRunButton;
 
     Status status = Status.normal;
     ClickStatus clickStatus = ClickStatus.choosingStart;

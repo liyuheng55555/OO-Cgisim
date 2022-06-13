@@ -13,11 +13,18 @@ expr:	expr op=('*'|'/'|'%') expr # MulDiv
     |   expr op=('=='|'!=') expr    # Equal
     |   expr '&&' expr # And
     |   expr '||' expr # Or
+    |   float               # Flt
     |	integer             # Int
     |   ID                  # id
     |   BOOL                # bool
     |	'(' expr ')'        # parens
     ;
+
+float   :   '-'float            # negFloat
+        |   PFloat              # posFloat
+        ;
+
+PFloat  :   [0-9]+ '.' [0-9]* ;
 
 integer:    '-'integer  # negInt
        |    NATURAL     # posInt

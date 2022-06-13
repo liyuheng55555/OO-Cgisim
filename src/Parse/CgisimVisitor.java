@@ -1,4 +1,4 @@
-// Generated from E:/重要资料/学习/第2学期/面向对象/面向对象小组作业/Cgisim/src/Parse\Cgisim.g4 by ANTLR 4.10.1
+// Generated from E:/重要资料/学习/第2学期/面向对象/OO-Cgisim/src/Parse\Cgisim.g4 by ANTLR 4.10.1
 package Parse;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -107,6 +107,27 @@ public interface CgisimVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInt(CgisimParser.IntContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Flt}
+	 * labeled alternative in {@link CgisimParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFlt(CgisimParser.FltContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code negFloat}
+	 * labeled alternative in {@link CgisimParser#float}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNegFloat(CgisimParser.NegFloatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code posFloat}
+	 * labeled alternative in {@link CgisimParser#float}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPosFloat(CgisimParser.PosFloatContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code negInt}
 	 * labeled alternative in {@link CgisimParser#integer}.
