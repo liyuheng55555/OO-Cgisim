@@ -27,7 +27,7 @@ public class StatementNode extends MyNode {
         this.text.setY(y + viewH / 2);
         this.text.setFont(Constant.font);
         try{
-            this.statement = new ImageView(new Image("resources/img/draw_node_statement.png"));
+            this.statement = new ImageView(new Image("sources/img/draw_node_statement.png"));
             this.statement.setX(x);
             this.statement.setY(y);
             this.statement.setFitHeight(viewH);

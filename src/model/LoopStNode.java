@@ -26,7 +26,7 @@ public class LoopStNode extends MyNode {
         this.text.setY(y + textRelativeY);
         this.text.setFont(Constant.font);
         try{
-            this.loop_st = new ImageView(new Image("resources/img/draw_node_loop_st.png"));
+            this.loop_st = new ImageView(new Image("sources/img/draw_node_loop_st.png"));
             this.loop_st.setX(x);
             this.loop_st.setY(y);
             this.loop_st.setFitHeight(viewH);

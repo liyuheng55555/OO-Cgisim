@@ -25,7 +25,7 @@ public class MergeNode extends MyNode{
         this.mergeNxtID = -1;
         this.mergeNxtPlace = -1;
         try{
-            this.merge = new ImageView(new Image("resources/img/draw_node_merge.png"));
+            this.merge = new ImageView(new Image("sources/img/draw_node_merge.png"));
             this.merge.setId("merge");
             this.merge.setX(x);
             this.merge.setY(y);

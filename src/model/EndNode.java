@@ -18,7 +18,7 @@ public class EndNode extends MyNode {
         this.prePlace = -1;
         this.name = "end";
         try{
-            this.end = new ImageView(new Image("resources/img/draw_node_end.png"));
+            this.end = new ImageView(new Image("sources/img/draw_node_end.png"));
             this.end.setX(x);
             this.end.setY(y);
             this.end.setFitWidth(viewW);

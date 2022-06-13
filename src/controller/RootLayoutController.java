@@ -93,13 +93,13 @@ public class RootLayoutController implements Initializable {
      */
     void showAnythingInitialize() {
         // 选中位置
-        Image selectPng = new Image("resources/img/select.png");
+        Image selectPng = new Image("sources/img/select.png");
         ImageView selectView = new ImageView(selectPng);
         selectView.setFitHeight(viewH);
         selectView.setFitWidth(viewW);
         showSelection = new ShowAnything(selectView, drawingArea, 0, 0);
         // 运行位置
-        Image runPosPng = new Image("resources/img/select.png");
+        Image runPosPng = new Image("sources/img/select.png");
         ImageView runView = new ImageView(runPosPng);
         runView.setFitHeight(viewH);
         runView.setFitWidth(viewW);
@@ -436,7 +436,7 @@ public class RootLayoutController implements Initializable {
             view.setY(y*viewH);
             view.setX(x*viewW);
             view.setId("line");
-            String imgRoot = "resources/img/";
+            String imgRoot = "sources/img/";
             if (nextY==preY+2) { // 竖线
                 view.setImage(new Image(imgRoot+"draw_line_vertical.png"));
                 view.setId("line_vertical");
@@ -518,14 +518,14 @@ public class RootLayoutController implements Initializable {
         shadow = new ImageView();
         shadow.setFitHeight(viewH);
         shadow.setFitWidth (viewW);
-        shadow.setImage(new Image("resources/img/shadow.png"));
+        shadow.setImage(new Image("sources/img/shadow.png"));
         shadow.setX(-1000);
         shadow.setY(-1000);
 
         ImageView connector = new ImageView();
         connector.setFitWidth(2*connectorSize);
         connector.setFitHeight(2*connectorSize);
-        connector.setImage(new Image("resources/img/co.png"));
+        connector.setImage(new Image("sources/img/co.png"));
         connector.setX(-1000);
         connector.setY(-1000);
 
@@ -757,35 +757,35 @@ public class RootLayoutController implements Initializable {
                 System.out.println("now: "+ selectNode);
                 if(selectNode != null){    // 如果之前有选择过Node，则清除之前选择的Node
                     if (!nowImage.getId().contains("start")){
-                        choose_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_start.png"))));
+                        choose_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_start.png"))));
                         choose_start.setId("choose_node_start");
                     }
                     if (!nowImage.getId().contains("end")){
-                        choose_end.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_end.png"))));
+                        choose_end.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_end.png"))));
                         choose_end.setId("choose_node_end");
                     }
                     if (!nowImage.getId().contains("statement")){
-                        choose_statement.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_statement.png"))));
+                        choose_statement.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_statement.png"))));
                         choose_statement.setId("choose_node_statement");
                     }
                     if (!nowImage.getId().contains("branch")){
-                        choose_branch.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_branch.png"))));
+                        choose_branch.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_branch.png"))));
                         choose_branch.setId("choose_node_branch");
                     }
                     if(!nowImage.getId().contains("merge")){
-                        choose_merge.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_merge.png"))));
+                        choose_merge.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_merge.png"))));
                         choose_merge.setId("choose_node_merge");
                     }
                     if (!nowImage.getId().contains("loop_start")){
-                        choose_loop_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_loopStart.png"))));
+                        choose_loop_start.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_loopStart.png"))));
                         choose_loop_start.setId("choose_node_loopStart");
                     }
                     if (!nowImage.getId().contains("loop_end")){
-                        choose_loop_end.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_loopEnd.png"))));
+                        choose_loop_end.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_loopEnd.png"))));
                         choose_loop_end.setId("choose_node_loopEnd");
                     }
                     if (!nowImage.getId().contains("print")){
-                        choose_print.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/choose_node_print.png"))));
+                        choose_print.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/choose_node_print.png"))));
                         choose_print.setId("choose_node_print");
                     }
                 }
@@ -797,7 +797,7 @@ public class RootLayoutController implements Initializable {
                     selectNode = null;
                 }
                 System.out.println("debug: "+ nowImage.getId());
-                nowImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../resources/img/" + nowImage.getId() + ".png"))));
+                nowImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../sources/img/" + nowImage.getId() + ".png"))));
                 if(selectNode != null){
                     System.out.println("current status: " + selectNode.split("_")[2]);
                 }else{

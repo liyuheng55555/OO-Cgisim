@@ -33,7 +33,7 @@ public class BranchNode extends MyNode {
         this.text.setFont(Constant.font);
 //        this.name = "if";
         try{
-            this.branch = new ImageView(new Image("resources/img/draw_node_if.png"));
+            this.branch = new ImageView(new Image("sources/img/draw_node_if.png"));
             this.branch.setId("branch");
             this.branch.setX(x);
             this.branch.setY(y);
