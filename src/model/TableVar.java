@@ -40,13 +40,14 @@ package model;
 // */
 
 
-// ‘≠TableVar
+// ÂéüTableVar
 
-import model.Var;
+//import model.Var;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TableVar {
@@ -57,7 +58,7 @@ public class TableVar {
     private final StringProperty varValue;
 
     public TableVar(String varName, String varType, String varValue) throws Exception {
-        Var.add(varName, varType, varValue);
+//        Var.add(varName, varType, varValue);
         this.varName = new SimpleStringProperty(varName);
         this.varType = new SimpleStringProperty(varType);
         this.varValue = new SimpleStringProperty(varValue);
@@ -89,35 +90,45 @@ public class TableVar {
         varValue.set(value);
     }
 
-
-
-    // ???????????ß“?????????¶À???????TableVar??????????????
-    // controller.Var.edit()?????????????ßµ???????????????
-    public void tryEdit(String varName, String varType, String varValue) throws Exception {
-        Var.edit(this.varName.getValue(), varName, varType, varValue);
-        this.varName.set(varName);
-        this.varType.set(varType);
-        this.varValue.set(varValue);
-    }
-
-    // ?????????ß÷???????¶À???????TableVar??????????????
-    public void tryRemove() {
-        Var.remove(varName.getName());
-        varList.remove(this);
-    }
-
-    // stepRun???????????????????°¿???
-    static void pull() {
-        Map<String,String> varMap = Var.getAll();
-        for (String name : varMap.keySet()) {
-            System.out.println(name+" "+varMap.get(name));
-        }
-        for (TableVar var: varList) {
-            if (varMap.containsKey(var.varName.get())) {
-                var.varValue.set(varMap.get(var.varName.get()));
-                System.out.println("change "+var.varName.get()+" to "+var.varValue.get());
-            }
-
-        }
-    }
+    /**
+     * Ëß£ÊûêÊï¥‰∏™Ë°®Ê†ºÔºåËé∑Âèñ
+     * @return
+     */
+//    static HashMap<String, Object> help() {
+//        HashMap<String, Object> result = new HashMap<>();
+//
+//        return result;
+//    }
+//
+//
+//
+//    // ???????????–±?????????Œª???????TableVar??????????????
+//    // controller.Var.edit()?????????????–£???????????????
+//    public void tryEdit(String varName, String varType, String varValue) throws Exception {
+//        Var.edit(this.varName.getValue(), varName, varType, varValue);
+//        this.varName.set(varName);
+//        this.varType.set(varType);
+//        this.varValue.set(varValue);
+//    }
+//
+//    // ?????????–µ???????Œª???????TableVar??????????????
+//    public void tryRemove() {
+//        Var.remove(varName.getName());
+//        varList.remove(this);
+//    }
+//
+//    // stepRun???????????????????¬±???
+//    static void pull() {
+//        Map<String,String> varMap = Var.getAll();
+//        for (String name : varMap.keySet()) {
+//            System.out.println(name+" "+varMap.get(name));
+//        }
+//        for (TableVar var: varList) {
+//            if (varMap.containsKey(var.varName.get())) {
+//                var.varValue.set(varMap.get(var.varName.get()));
+//                System.out.println("change "+var.varName.get()+" to "+var.varValue.get());
+//            }
+//
+//        }
+//    }
 }

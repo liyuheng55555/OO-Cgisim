@@ -1,61 +1,117 @@
 package controller;
 
 import Parse.Main;
+import javafx.collections.ObservableList;
 import model.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Run {
     Run() {}
-    static int nowID = -1;
     static int startID = -1;
+    static int nowID = -1;
     static Map<Integer, MyNode> nodeMap = null;
-
+    static Map<String, Object> varMap = null;
 
     /**
-     * ÔËĞĞ´Ëº¯ÊıÒÔÉèÖÃRunÀà
-     * @param sID ÆğÊ¼½Úµã±àºÅ
-     * @param nMap °üº¬È«²¿½ÚµãµÄMap
+     * ä½¿ç”¨æ­¤å‡½æ•°è®¾å®šè¿è¡Œæ‰€éœ€çš„ç¯å¢ƒ
+     * @param sID   èµ·å§‹èŠ‚ç‚¹ç¼–å·
+     * @param nMap  nodeMap
+     * @param data  å˜é‡è¡¨æ ¼
+     * @throws Exception    å˜é‡è¡¨æ ¼ä¸­çš„ä¸åˆæ³•æƒ…å†µ
      */
-    static public void setup(int sID, Map<Integer, MyNode> nMap) {
+    static public void setup(int sID, Map<Integer, MyNode> nMap, ObservableList<TableVar> data) throws Exception {
+        setStartID(sID);
+        setNodeMap(nMap);
+        setVarMap(data);
+    }
+
+    static public void setStartID(int sID) {
         startID = sID;
+    }
+    static public void setNodeMap(Map<Integer, MyNode> nMap) {
         nodeMap = nMap;
+    }
+    static private Pattern namePat = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*$");
+    static private Pattern boolPat = Pattern.compile("^(true|false|True|False)$");
+
+    /**
+     * æ£€æŸ¥å¹¶è®¾å®šdataMapï¼Œæ£€æŸ¥å†…å®¹åŒ…æ‹¬ï¼š<br/>
+     * (1)å˜é‡åä¸èƒ½é‡å¤ <br/>
+     * (2)å˜é‡åè¦ç¬¦åˆnamePat <br/>
+     * (3)ç±»å‹æ˜¯intã€boolã€float <br/>
+     * (4)å€¼å’Œç±»å‹è¦åŒ¹é… <br/>
+     * @param data RootLayoutControllerä¸­çš„dataè¡¨
+     * @throws Exception ä»»ä½•æ£€æŸ¥ä¸é€šè¿‡åˆ™æŠ›å‡ºExceptionï¼Œå¼‚å¸¸ä¿¡æ¯ä¼šå†™æ¸…æ¥š
+     */
+    static public void setVarMap(ObservableList<TableVar> data) throws Exception {
+        varMap = new HashMap<>();
+        int cnt = 0;
+        for (TableVar var : data) {
+            String name = var.getVarName();
+            String type = var.getVarType();
+            String strValue = var.getVarValue();
+            if (varMap.containsKey(name))
+                throw new Exception("å˜é‡å"+name+"é‡å¤");
+            if (!namePat.matcher(name).find())
+                throw new Exception("å˜é‡å"+name+"æ— æ•ˆ");
+            Object value;
+            switch (type) {
+                case "int":
+                    value = new Integer(strValue);
+                    break;
+                case "float":
+                    value = new Float(strValue);
+                    break;
+                case "bool":
+                    if (!boolPat.matcher(strValue).find())
+                        throw new Exception("boolç±»å‹å˜é‡å€¼"+strValue+"æ— æ•ˆ");
+                    value = Boolean.valueOf(strValue);
+                    break;
+                default:
+                    throw new Exception("ç±»å‹"+type+"æ— æ•ˆ");
+            }
+            varMap.put(name, value);
+        }
     }
 
     /**
-     * Èç¹ûµ±Ç°´¦ÓÚ·ÇÔËĞĞ×´Ì¬£¬¾Í½«×´Ì¬¸Ä±äÎªÔËĞĞ£¬ÔËĞĞÎ»ÖÃÉèÔÚstartNode£»
-     * Èç¹ûµ±Ç°ÒÑ¾­´¦ÓÚÔËĞĞ×´Ì¬£¬¾ÍÔËĞĞÒ»²½
-     * @throws Exception ÔËĞĞ¹ı³ÌÖĞ·¢Éú´íÎó
+     * å¦‚æœå½“å‰å¤„äºéè¿è¡ŒçŠ¶æ€ï¼Œå°±å°†çŠ¶æ€æ”¹å˜ä¸ºè¿è¡Œï¼Œè¿è¡Œä½ç½®è®¾åœ¨startNodeï¼›
+     * å¦‚æœå½“å‰å·²ç»å¤„äºè¿è¡ŒçŠ¶æ€ï¼Œå°±è¿è¡Œä¸€æ­¥
+     * @throws Exception è¿è¡Œè¿‡ç¨‹ä¸­å‘ç”Ÿé”™è¯¯
      */
     static public int stepRun() throws Exception {
         if (nowID == -1) {
             nowID = startID;
             System.out.printf("nowID = %d\n", nowID);
-            Var.runMap = new HashMap<>(Var.initMap);
+//            Var.runMap = new HashMap<>(Var.initMap);
             return nowID;
         }
 //        Map<Integer, MyNode> shapeMap = rootLayoutController.getNodeMap();
         MyNode now = nodeMap.get(nowID);
         if (now==null) {
-            throw new Exception(nowID+"ºÅ½ÚµãÃ»ÓĞ¶ÔÓ¦µÄMyShape¶ÔÏó");
+            throw new Exception(nowID+"å·èŠ‚ç‚¹æ²¡æœ‰å¯¹åº”çš„MyShapeå¯¹è±¡");
         }
         if (now instanceof StartNode) {
             nowID = ((StartNode) now).getNxtID();
         }
         else if (now instanceof EndNode) {
-            throw new Exception("³ÌĞòÒÑ¾­µ½´ïÖÕµã");
+            throw new Exception("ç¨‹åºå·²ç»åˆ°è¾¾ç»ˆç‚¹");
         }
         else if (now instanceof BranchNode) {
             BranchNode ifNode = (BranchNode) now;
             String expression = ifNode.getText().getText();
-            Object result = Main.run(expression, Var.runMap);
+            if (expression.charAt(expression.length()-1)!='\n')
+                expression += "\n";
+            Object result = Main.run(expression, varMap);
             if (!(result instanceof Boolean))
                 throw new Exception(
-                        nowID+"ºÅ½ÚµãÊÇIfNode£¬"+
-                                "µ«±í´ïÊ½ÔËËã½á¹û²»ÊÇBoolean£¬"+
-                                "¶øÊÇ"+result.getClass().toString()+
-                                "£¬ÖµÎª"+result.toString()
+                        nowID+"å·èŠ‚ç‚¹æ˜¯IfNodeï¼Œ"+
+                                "ä½†è¡¨è¾¾å¼è¿ç®—ç»“æœä¸æ˜¯Booleanï¼Œ"+
+                                "è€Œæ˜¯"+result.getClass().toString()+
+                                "ï¼Œå€¼ä¸º"+result.toString()
                 );
             if ((Boolean)result)
                 nowID = ifNode.getBranchTrueID();
@@ -67,22 +123,22 @@ public class Run {
             String expression = stateNode.getText().getText();
             if (expression.charAt(expression.length()-1)!='\n')
                 expression += "\n";
-            Main.run(expression, Var.runMap);
+            Main.run(expression, varMap);
             nowID = stateNode.getNxtID();
         }
         else {
-            throw new Exception(nowID+"ºÅ½ÚµãÀàĞÍÎ´Öª£¬Ò²ĞíÊÇ"+now.getClass().toString());
+            throw new Exception(nowID+"å·èŠ‚ç‚¹ç±»å‹æœªçŸ¥ï¼Œä¹Ÿè®¸æ˜¯"+now.getClass().toString());
         }
         System.out.printf("nowID = %d\n", nowID);
         return nowID;
     }
 
     /**
-     * ÖØÖÃµ½·ÇÔËĞĞ×´Ì¬
+     * é‡ç½®åˆ°éè¿è¡ŒçŠ¶æ€
      */
     static public void reset() {
         nowID = -1;
-        Var.runMap = null;
+        varMap = null;
     }
     static public int getNowID() {
         return nowID;

@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/src/Parse/CgisimBaseVisitor.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/controller/NodeFactory.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/controller/RootLayoutController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/controller/Run.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/model/TableVar.java" charset="UTF-8" />
     <file url="PROJECT" charset="GBK" />
   </component>
 </project>
