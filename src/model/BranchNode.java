@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -147,4 +148,39 @@ public class BranchNode extends MyNode {
         drawingArea.getChildren().remove(this.text);
     }
 
+    @JSONCreator
+    public BranchNode(@JSONField(name="factoryID") int factoryID,
+                      @JSONField(name = "connectPlace") int[] connectPlace,
+                      @JSONField(name = "connectTo") int[] connectTo,
+                      @JSONField(name = "xIndex") double xIndex,
+                      @JSONField(name = "yIndex") double yIndex,
+                      @JSONField(name = "branchPrePlace") int branchPrePlace,
+                      @JSONField(name = "branchTrueID") int branchTrueID,
+                      @JSONField(name = "branchTruePlace") int branchTruePlace,
+                      @JSONField(name = "branchFalseID") int branchFalseID,
+                      @JSONField(name = "branchFalsePlace") int branchFalsePlace,
+                      @JSONField(name = "branchText") String branchText) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.branchPrePlace = branchPrePlace;
+        this.branchTrueID = branchTrueID;
+        this.branchTruePlace = branchTruePlace;
+        this.branchFalseID = branchFalseID;
+        this.branchFalsePlace = branchFalsePlace;
+        this.branchText = branchText;
+        this.text = new Text(branchText);
+        this.text.setX(xIndex + textRelativeX);
+        this.text.setY(yIndex + textRelativeY);
+        this.text.setFont(Constant.font);
+        try {
+            this.branch = new ImageView(new Image("sources/img/draw_node_if.png"));
+            this.branch.setX(xIndex);
+            this.branch.setY(yIndex);
+            this.branch.setFitWidth(viewW);
+            this.branch.setFitHeight(viewH);
+            this.branch.setId("branch");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading IfNode image");
+        }
+    }
 }

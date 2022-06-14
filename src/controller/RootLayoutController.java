@@ -2,9 +2,11 @@ package controller;
 
 import java.io.*;
 import java.net.URL;
+import java.sql.Statement;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import javafx.collections.FXCollections;
@@ -874,12 +876,10 @@ public class RootLayoutController implements Initializable {
         runButton.setOnMouseClicked(e->{
             alert.setContentText("run_success");
             alert.show();
-            outText.setText("测试输出");
         });
         pauseButton.setOnMouseClicked(e->{
             alert.setContentText("pause_success");
             alert.show();
-            outText.appendText("测试追加输出");
         });
     }
     private int getStartID() {
@@ -910,10 +910,21 @@ public class RootLayoutController implements Initializable {
         if (file != null) {
             try {
                 FileWriter fileWriter = new FileWriter(file);
-                String nodeMapJson = JSON.toJSONString(nodeMap, SerializerFeature.IgnoreErrorGetter);
-                String nodeTableJson = JSON.toJSONString(nodeTable, SerializerFeature.IgnoreErrorGetter);
+                for(MyNode node : nodeMap.values()){
+                    String nodeJson = JSON.toJSONString(node, SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
+                    fileWriter.write(nodeJson+"$");
+                }
+                fileWriter.write("@");
+                // 遍历nodeTable
+                for(int i = 0; i < tableH; i++){
+                    for(int j = 0; j < tableW; j++){
+                        String nodeJson = JSON.toJSONString(nodeTable[i][j], SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
+                        fileWriter.write(nodeJson+"$");
+                    }
+                }
+                fileWriter.write("@");
                 String varListJson = JSON.toJSONString(varList, SerializerFeature.IgnoreErrorGetter);
-                fileWriter.write(nodeMapJson+"%"+ nodeTableJson+"%"+ varListJson);
+                fileWriter.write(varListJson);
                 fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -935,40 +946,83 @@ public class RootLayoutController implements Initializable {
         if (file != null) {
             try {
                 FileReader fileReader = new FileReader(file);
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
-                String line;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(bufferedReader.readLine());
-                bufferedReader.close();
-                fileReader.close();
-                String[] jsonStrings = stringBuilder.toString().split("%");
-                System.out.println(jsonStrings[0]);
-                System.out.println(jsonStrings[1]);
-                System.out.println(jsonStrings[2]);
-                // 将jsonString[0]分解为[]
-
-                nodeMap = JSON.parseObject(jsonStrings[0], new TypeReference<HashMap<Integer, MyNode>>() {
-                });
-                for (int i = 0; i < nodeTable.length; i++) {
-                    for (int j = 0; j < nodeTable[i].length; j++) {
+                BufferedReader bufferReader = new BufferedReader(fileReader);
+                String json = bufferReader.readLine();
+                String[] jsonArgs = json.split("@");
+                String[] nodeMapJson = jsonArgs[0].split("\\$");
+                String[] nodeTableJson = jsonArgs[1].split("\\$");
+                String varListJson = jsonArgs[2];
+                nodeMap.clear();
+                for(String nodeJson : nodeMapJson){
+                    MyNode node = null;
+                    String nodeJsonWithout$ = nodeJson.replace("$", "");
+                    System.out.println(nodeJsonWithout$);
+                    if(nodeJson.contains("branchPreID")){
+                        node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
+                    }else if(nodeJson.contains("printText")) {
+                        node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
+                    }else if(nodeJson.contains("statementText")) {
+                        node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
+                    }else if(nodeJson.contains("mergeTrueID")){
+                        node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
+                    }else if(nodeJson.contains("loop_endPrePlace")){
+                        node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
+                    }else if(nodeJson.contains("loop_stPreID")) {
+                        node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
+                    }else if(nodeJson.contains("nxtPlace")){
+                        node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
+                    }else if(nodeJson.contains("prePlace")){
+                        node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
+                    }
+                    assert node != null;
+                    nodeMap.put(node.getFactoryID(), node);
+                }
+                for(int i = 0; i < tableH; i++){
+                    for(int j = 0; j < tableW; j++) {
                         if (nodeTable[i][j] != null) {
                             nodeTable[i][j].remove(drawingArea);
+                            nodeTable[i][j] = null;
                         }
                     }
                 }
-                nodeTable = JSON.parseObject(jsonStrings[1], new TypeReference<MyNode[][]>() {
-                });
-                // 遍历nodeTable, 调用draw方法
-                for (int i = 0; i < nodeTable.length; i++) {
-                    for (int j = 0; j < nodeTable[i].length; j++) {
-                        if (nodeTable[i][j] != null) {
+                for(int i = 0; i < tableH; i++) {
+                    for (int j = 0; j < tableW; j++) {
+                        String nodeJson = nodeTableJson[i * tableW + j];
+                        MyNode node = null;
+                        String nodeJsonWithout$ = nodeJson.replace("$", "");
+                        System.out.println(nodeJsonWithout$);
+                        if(nodeJson.contains("branchPreID")){
+                            node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
+                            System.out.println("recreate BranchNode in nodeTable");
+                        }else if(nodeJson.contains("printText")) {
+                            node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
+                            System.out.println("recreate PrintNode in nodeTable");
+                        }else if(nodeJson.contains("statementText")) {
+                            node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
+                            System.out.println("recreate StatementNode in nodeTable");
+                        }else if(nodeJson.contains("mergeTrueID")){
+                            node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
+                            System.out.println("recreate MergeNode in nodeTable");
+                        }else if(nodeJson.contains("loop_endPrePlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
+                            System.out.println("recreate LoopEndNode in nodeTable");
+                        }else if(nodeJson.contains("loop_stPreID")) {
+                            node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
+                            System.out.println("recreate LoopStNode in nodeTable");
+                        }else if(nodeJson.contains("nxtPlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
+                            System.out.println("recreate start node in nodeTable");
+                        }else if(nodeJson.contains("prePlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
+                            System.out.println("recreate end node in nodeTable");
+                        }
+                        if(node!=null){
+                            nodeTable[i][j] = node;
                             nodeTable[i][j].draw(drawingArea);
-                            System.out.println("placeX: " + i + " placeY: " + j +" Class: " + nodeTable[i][j].getClass().getName());
                         }
                     }
                 }
-                varList = JSON.parseObject(jsonStrings[2], new TypeReference<ArrayList<TableVar>>() {
-                });
+                varList = JSON.parseObject(varListJson, new TypeReference<ArrayList<TableVar>>() {});
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1000,6 +1054,11 @@ public class RootLayoutController implements Initializable {
 
     }
 
+    public void test(){
+        for(MyNode node : nodeMap.values()){
+            System.out.println(node.getClass().getName());
+        }
+    }
 
     public void stepRun(){
         System.out.println("stepRun");
@@ -1031,22 +1090,9 @@ public class RootLayoutController implements Initializable {
         }
         tableView.refresh();
     }
-    public void reset(){
-        System.out.println("reset");
-        Run.reset();
-    }
 
     public void commit(){
         propertyController.sendMessage();
-    }
-
-    public void menuSave(ActionEvent actionEvent) {
-    }
-
-    public void menuOpen(ActionEvent actionEvent) {
-    }
-
-    public void menuExport(ActionEvent actionEvent) {
     }
 }
 

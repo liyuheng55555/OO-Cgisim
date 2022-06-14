@@ -10,9 +10,11 @@ import static model.Constant.viewW;
 
 public class DownLeftLine extends MyNode {
     private ImageView line;
+    private String lineType;
 
     public DownLeftLine(int x,int y) {
         super(0,x,y);
+        this.lineType = "line_down_left";
         try{
             this.line = new ImageView(new Image("sources/img/draw_line_down_left.png"));
             this.line.setX(x);
@@ -40,5 +42,6 @@ public class DownLeftLine extends MyNode {
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.line);
     }
+
 
 }

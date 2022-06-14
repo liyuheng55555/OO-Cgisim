@@ -74,7 +74,13 @@ public class EndNode extends MyNode {
     }
 
     @JSONCreator
-    public EndNode(@JSONField(name="factoryID") int factoryID, @JSONField(name = "connectPlace") int[] connectPlace, @JSONField(name = "connectTo") int[] connectTo, @JSONField(name = "xIndex") double xIndex, @JSONField(name = "yIndex") double yIndex, @JSONField(name = "preID") int preID, @JSONField(name = "prePlace") int prePlace) {
+    public EndNode(@JSONField(name="factoryID") int factoryID,
+                   @JSONField(name = "connectPlace") int[] connectPlace,
+                   @JSONField(name = "connectTo") int[] connectTo,
+                   @JSONField(name = "xIndex") double xIndex,
+                   @JSONField(name = "yIndex") double yIndex,
+                   @JSONField(name = "preID") int preID,
+                   @JSONField(name = "prePlace") int prePlace) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
         this.preID = preID;
         this.prePlace = prePlace;

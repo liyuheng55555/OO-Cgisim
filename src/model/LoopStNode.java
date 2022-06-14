@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,6 +37,40 @@ public class LoopStNode extends MyNode {
             this.loop_st.setFitWidth(viewW);
             this.loop_st.setId("loop_st");
         }catch(Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading IfNode image");
+        }
+    }
+
+    @JSONCreator
+    public LoopStNode(@JSONField(name="factoryID") int factoryID,
+                       @JSONField(name = "connectPlace") int[] connectPlace,
+                       @JSONField(name = "connectTo") int[] connectTo,
+                       @JSONField(name = "xIndex") double xIndex,
+                       @JSONField(name = "yIndex") double yIndex,
+                       @JSONField(name = "loop_stPreID") int loop_stPreID,
+                       @JSONField(name = "loop_stPrePlace") int loop_stPrePlace,
+                       @JSONField(name = "loop_stNxtID") int loop_stNxtID,
+                       @JSONField(name = "loop_stNxtPlace") int loop_stNxtPlace,
+                      @JSONField(name = "loop_stText") String loop_stText) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.loop_stPreID = loop_stPreID;
+        this.loop_stPrePlace = loop_stPrePlace;
+        this.loop_stNxtID = loop_stNxtID;
+        this.loop_stNxtPlace = loop_stNxtPlace;
+        this.loop_stText = loop_stText;
+        this.text = new Text(loop_stText);
+        this.text.setX(xIndex + textRelativeX);
+        this.text.setY(yIndex + textRelativeY);
+        this.text.setFont(Constant.font);
+        try {
+            this.loop_st = new ImageView(new Image("sources/img/draw_node_loop_st.png"));
+            this.loop_st.setX(xIndex);
+            this.loop_st.setY(yIndex);
+            this.loop_st.setFitWidth(viewW);
+            this.loop_st.setFitHeight(viewH);
+            this.loop_st.setId("loop_st");
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("error in loading IfNode image");
         }

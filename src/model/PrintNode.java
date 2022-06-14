@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,6 +39,40 @@ public class PrintNode extends MyNode {
             this.print.setFitWidth(viewW);
             this.print.setId("print");
         }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("error in loading Print image");
+        }
+    }
+
+    @JSONCreator
+    public PrintNode(@JSONField(name="factoryID") int factoryID,
+                         @JSONField(name = "connectPlace") int[] connectPlace,
+                         @JSONField(name = "connectTo") int[] connectTo,
+                         @JSONField(name = "xIndex") double xIndex,
+                         @JSONField(name = "yIndex") double yIndex,
+                         @JSONField(name = "preID") int preID,
+                         @JSONField(name = "prePlace") int prePlace,
+                         @JSONField(name = "nxtID") int nxtID,
+                         @JSONField(name = "nxtPlace") int nxtPlace,
+                         @JSONField(name = "printText") String printText) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.preID = preID;
+        this.prePlace = prePlace;
+        this.nxtID = nxtID;
+        this.nxtPlace = nxtPlace;
+        this.printText = printText;
+        this.text = new Text(printText);
+        this.text.setX(xIndex);
+        this.text.setY(yIndex + viewH / 2);
+        this.text.setFont(Constant.font);
+        try {
+            this.print = new ImageView(new Image("sources/img/draw_node_print.png"));
+            this.print.setX(xIndex);
+            this.print.setY(yIndex);
+            this.print.setFitWidth(viewW);
+            this.print.setFitHeight(viewH);
+            this.print.setId("print");
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("error in loading Print image");
         }

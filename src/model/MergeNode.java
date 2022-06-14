@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -35,7 +36,39 @@ public class MergeNode extends MyNode{
             this.merge.setId("merge");
         }catch(Exception e) {
             e.printStackTrace();
-            System.out.println("error in loading IfNode image");
+            System.out.println("error in loading MergeNode image");
+        }
+    }
+
+    @JSONCreator
+    public MergeNode(@JSONField(name="factoryID") int factoryID,
+                     @JSONField(name = "connectPlace") int[] connectPlace,
+                     @JSONField(name = "connectTo") int[] connectTo,
+                     @JSONField(name = "xIndex") double xIndex,
+                     @JSONField(name = "yIndex") double yIndex,
+                     @JSONField(name = "mergeTrueID") int mergeTrueID,
+                     @JSONField(name = "mergeTruePlace") int mergeTruePlace,
+                     @JSONField(name = "mergeFalseID") int mergeFalseID,
+                     @JSONField(name = "mergeFalsePlace") int mergeFalsePlace,
+                     @JSONField(name = "mergeNxtID") int mergeNxtID,
+                     @JSONField(name = "mergeNxtPlace") int mergeNxtPlace) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.mergeTrueID = mergeTrueID;
+        this.mergeTruePlace = mergeTruePlace;
+        this.mergeFalseID = mergeFalseID;
+        this.mergeFalsePlace = mergeFalsePlace;
+        this.mergeNxtID = mergeNxtID;
+        this.mergeNxtPlace = mergeNxtPlace;
+        try {
+            this.merge = new ImageView(new Image("sources/img/draw_node_merge.png"));
+            this.merge.setX(xIndex);
+            this.merge.setY(yIndex);
+            this.merge.setFitWidth(viewW);
+            this.merge.setFitHeight(viewH);
+            this.merge.setId("merge");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading MergeNode image");
         }
     }
 

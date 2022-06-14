@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -37,6 +38,40 @@ public class StatementNode extends MyNode {
             this.statement.setFitWidth(viewW);
             this.statement.setId("statement");
         }catch(Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading StatementNode image");
+        }
+    }
+
+    @JSONCreator
+    public StatementNode(@JSONField(name="factoryID") int factoryID,
+                     @JSONField(name = "connectPlace") int[] connectPlace,
+                     @JSONField(name = "connectTo") int[] connectTo,
+                     @JSONField(name = "xIndex") double xIndex,
+                     @JSONField(name = "yIndex") double yIndex,
+                     @JSONField(name = "preID") int preID,
+                     @JSONField(name = "prePlace") int prePlace,
+                     @JSONField(name = "nxtID") int nxtID,
+                     @JSONField(name = "nxtPlace") int nxtPlace,
+                     @JSONField(name = "statementText") String statementText) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.preID = preID;
+        this.prePlace = prePlace;
+        this.nxtID = nxtID;
+        this.nxtPlace = nxtPlace;
+        this.statementText = statementText;
+        this.text = new Text(statementText);
+        this.text.setX(xIndex);
+        this.text.setY(yIndex + viewH / 2);
+        this.text.setFont(Constant.font);
+        try {
+            this.statement = new ImageView(new Image("sources/img/draw_node_statement.png"));
+            this.statement.setX(xIndex);
+            this.statement.setY(yIndex);
+            this.statement.setFitWidth(viewW);
+            this.statement.setFitHeight(viewH);
+            this.statement.setId("statement");
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("error in loading StatementNode image");
         }

@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -73,4 +74,27 @@ public class StartNode extends MyNode {
         drawingArea.getChildren().remove(this.start);
     }
 
+    @JSONCreator
+    public StartNode(@JSONField(name="factoryID") int factoryID,
+                     @JSONField(name = "connectPlace") int[] connectPlace,
+                     @JSONField(name = "connectTo") int[] connectTo,
+                     @JSONField(name = "xIndex") double xIndex,
+                     @JSONField(name = "yIndex") double yIndex,
+                     @JSONField(name = "nxtID") int nxtID,
+                     @JSONField(name = "nxtPlace") int nxtPlace) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.nxtID = nxtID;
+        this.nxtPlace = nxtPlace;
+        try {
+            this.start = new ImageView(new Image("sources/img/draw_node_start.png"));
+            this.start.setX(xIndex);
+            this.start.setY(yIndex);
+            this.start.setFitWidth(viewW);
+            this.start.setFitHeight(viewH);
+            this.start.setId("start");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading StartNode image");
+        }
+    }
 }
