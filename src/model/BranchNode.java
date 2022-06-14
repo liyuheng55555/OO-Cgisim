@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -16,6 +17,7 @@ public class BranchNode extends MyNode {
     private int branchTruePlace;
     private int branchFalseID;
     private int branchFalsePlace;
+    private String branchText; // branchText is the text of the branch node
     private ImageView branch;
 
 
@@ -27,11 +29,11 @@ public class BranchNode extends MyNode {
         this.branchTruePlace = -1;
         this.branchFalseID = -1;
         this.branchFalsePlace = -1;
+        this.branchText = "branch code!";
         this.text = new Text("branch code!");
         this.text.setX(x + textRelativeX);
         this.text.setY(y + textRelativeY);
         this.text.setFont(Constant.font);
-//        this.name = "if";
         try{
             this.branch = new ImageView(new Image("sources/img/draw_node_if.png"));
             this.branch.setId("branch");
@@ -45,6 +47,7 @@ public class BranchNode extends MyNode {
         }
     }
 
+    @JSONField(serialize=false)
     public Text getText() {
         return text;
     }
@@ -107,7 +110,15 @@ public class BranchNode extends MyNode {
         connectPlace[4] = branchFalsePlace;
     }
 
-    @Override
+    public String getBranchText() {
+        return branchText;
+    }
+
+    public void setBranchText(String branchText) {
+        this.branchText = branchText;
+    }
+
+    @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return this.branch;
     }
@@ -120,6 +131,8 @@ public class BranchNode extends MyNode {
 
     @Override
     public void draw(AnchorPane drawingArea, double x, double y) {
+        super.setxIndex(x);
+        super.setyIndex(y);
         this.branch.setX(x);
         this.branch.setY(y);
         this.text.setX(x + textRelativeX);

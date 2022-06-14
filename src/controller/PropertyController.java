@@ -18,12 +18,16 @@ public class PropertyController {
     public void sendMessage() {
         if(curNode instanceof BranchNode) {
             ((BranchNode) curNode).getText().setText(messageBox.getText());
+            ((BranchNode) curNode).setBranchText(messageBox.getText());
         } else if(curNode instanceof LoopStNode) {
             ((LoopStNode) curNode).getText().setText(messageBox.getText());
+            ((LoopStNode) curNode).setLoop_stText(messageBox.getText());
         } else if(curNode instanceof StatementNode) {
             ((StatementNode) curNode).getText().setText(messageBox.getText());
+            ((StatementNode) curNode).setStatementText(messageBox.getText());
         } else if(curNode instanceof PrintNode) {
             ((PrintNode) curNode).getText().setText(messageBox.getText());
+            ((PrintNode) curNode).setPrintText(messageBox.getText());
         }
     }
 

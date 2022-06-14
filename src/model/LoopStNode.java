@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -13,6 +14,7 @@ public class LoopStNode extends MyNode {
     private int loop_stPrePlace;
     private int loop_stNxtID;
     private int loop_stNxtPlace;
+    private String loop_stText; // loop_stText is the text of the loop start node
     private ImageView loop_st;
 
     public LoopStNode(int factoryID, int x, int y) {
@@ -21,6 +23,7 @@ public class LoopStNode extends MyNode {
         this.loop_stPrePlace = -1;
         this.loop_stNxtID = -1;
         this.loop_stNxtPlace = -1;
+        this.loop_stText = "loop start code!";
         this.text = new Text("loop code!");
         this.text.setX(x + textRelativeX);
         this.text.setY(y + textRelativeY);
@@ -38,6 +41,7 @@ public class LoopStNode extends MyNode {
         }
     }
 
+    @JSONField(serialize=false)
     public Text getText() {
         return text;
     }
@@ -82,7 +86,15 @@ public class LoopStNode extends MyNode {
         connectPlace[2] = loop_stNxtPlace;
     }
 
-    @Override
+    public String getLoop_stText() {
+        return loop_stText;
+    }
+
+    public void setLoop_stText(String loop_stText) {
+        this.loop_stText = loop_stText;
+    }
+
+    @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return loop_st;
     }
@@ -95,6 +107,8 @@ public class LoopStNode extends MyNode {
 
     @Override
     public void draw(AnchorPane drawingArea, double x, double y) {
+        super.setxIndex(x);
+        super.setyIndex(y);
         this.loop_st.setX(x);
         this.loop_st.setY(y);
         this.text.setX(x + textRelativeX);

@@ -5,7 +5,7 @@ import model.*;
 public class NodeFactory {
     private int factoryID;
     public NodeFactory() {
-        this.factoryID = 0;
+        this.factoryID = 1;
     }
 
     public MyNode produceNode(String selectNode, int x, int y) {

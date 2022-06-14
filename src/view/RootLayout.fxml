@@ -26,21 +26,23 @@
     <top>
       <SplitPane dividerPositions="0.3" orientation="VERTICAL" prefHeight="83.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
          <items>
-              <MenuBar styleClass="MenuBar" stylesheets="@../resources/css/style.css">
-                  <Menu mnemonicParsing="false" styleClass="menu" text="文件">
-                      <MenuItem mnemonicParsing="false" onAction="#menuNew" text="New" />
-                      <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save" />
-                      <MenuItem mnemonicParsing="false" onAction="#menuOpen" text="Open" />
-                      <MenuItem mnemonicParsing="false" onAction="#menuExport" text="Export" />
-                  </Menu>
-                  <Menu mnemonicParsing="false" text="程序">
-                      <MenuItem mnemonicParsing="false" onAction="#run" text="运行" />
-                      <MenuItem mnemonicParsing="false" text="暂停" />
-                      <MenuItem mnemonicParsing="false" text="debug" />
-                      <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步" />
-                      <MenuItem mnemonicParsing="false" text="重置" />
-                  </Menu>
-              </MenuBar>
+              <MenuBar styleClass="MenuBar" stylesheets="@../sources/css/style.css">
+                <Menu mnemonicParsing="false" styleClass="menu" text="文件">
+                    <MenuItem mnemonicParsing="false" onAction="#menuNew" text="新建" />
+                    <MenuItem mnemonicParsing="false" onAction="#menuJsonExport" text="保存" />
+                    <MenuItem mnemonicParsing="false" onAction="#menuJsonImport" text="打开新文件" />
+                    <MenuItem mnemonicParsing="false" onAction="#menuCodeExport" text="保存为代码" />
+               <MenuItem mnemonicParsing="false" onAction="#menuCodeImport" text="从代码导入" />
+               <MenuItem mnemonicParsing="false" onAction="#menuImageSave" text="保存为图片" />
+                </Menu>
+                <Menu mnemonicParsing="false" text="程序">
+                    <MenuItem mnemonicParsing="false" onAction="#run" text="运行" />
+                    <MenuItem mnemonicParsing="false" text="暂停" />
+                    <MenuItem mnemonicParsing="false" text="debug" />
+                    <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步" />
+                    <MenuItem mnemonicParsing="false" text="重置" />
+                </Menu>
+            </MenuBar>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF;">
               <buttons>
                   <ImageView id="run" fx:id="runButton" fitHeight="32.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
@@ -68,11 +70,10 @@
                   </ImageView>
               </buttons>
             </ButtonBar>
-         </items>
-      </SplitPane>
+        </SplitPane>
     </top>
     <center>
-        <ScrollPane id="scrollPane" prefHeight="844.0" prefWidth="773.0" stylesheets="@../resources/css/style.css" BorderPane.alignment="CENTER">
+        <ScrollPane id="scrollPane" prefHeight="844.0" prefWidth="773.0" stylesheets="@../sources/css/style.css" BorderPane.alignment="CENTER">
             <AnchorPane fx:id="drawingArea" minHeight="0.0" minWidth="0.0" prefHeight="3000.0" prefWidth="3000.0" style="-fx-background-color: #ffffff;">
                 <AnchorPane fx:id="keyBoardPane" layoutX="500.0" layoutY="750.0" prefHeight="200.0" prefWidth="200.0" />
                 <effect>
