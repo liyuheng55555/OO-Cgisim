@@ -19,16 +19,17 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
+<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
     <top>
       <SplitPane orientation="VERTICAL" prefHeight="30.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
          <items>
             <HBox prefHeight="30.0" prefWidth="1196.0">
                <children>
-                    <MenuBar prefHeight="30.0" style="-fx-background-radius: 5px;" styleClass="MenuBar" stylesheets="@../resources/css/style.css">
+                    <MenuBar prefHeight="30.0" style="-fx-background-radius: 5px;" styleClass="MenuBar" stylesheets="@../sources/css/style.css">
                         <Menu mnemonicParsing="false" styleClass="menu" text="文件">
                             <MenuItem mnemonicParsing="false" onAction="#menuNew" text="New" />
                             <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save" />
@@ -46,6 +47,7 @@
                         <Cursor fx:constant="S_RESIZE" />
                      </cursor>
                     </MenuBar>
+                  <Pane prefHeight="30.0" prefWidth="43.0" style="-fx-background-color: #ffffff;" />
                   <ImageView id="run" fx:id="runButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../sources/img/run.jpg" />
@@ -87,7 +89,7 @@
       </SplitPane>
     </top>
     <center>
-        <ScrollPane id="scrollPane" prefHeight="844.0" prefWidth="773.0" stylesheets="@../resources/css/style.css" BorderPane.alignment="CENTER">
+        <ScrollPane id="scrollPane" prefHeight="844.0" prefWidth="773.0" stylesheets="@../sources/css/style.css" BorderPane.alignment="CENTER">
             <AnchorPane fx:id="drawingArea" minHeight="0.0" minWidth="0.0" prefHeight="3000.0" prefWidth="3000.0" style="-fx-background-color: #ffffff;">
                 <AnchorPane fx:id="keyBoardPane" layoutX="500.0" layoutY="750.0" prefHeight="200.0" prefWidth="200.0" />
                 <effect>
@@ -99,28 +101,33 @@
     <left>
         <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
             <VBox fx:id="Nodes" alignment="TOP_CENTER" prefHeight="824.0" prefWidth="221.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
-                <ImageView id="choose_node_start" fx:id="choose_start" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView id="choose_node_start" fx:id="choose_start" fitHeight="107.0" fitWidth="189.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_start.png" />
                 </ImageView>
-                <ImageView id="choose_node_end" fx:id="choose_end" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+            <Pane prefHeight="9.0" prefWidth="216.0" />
+                <ImageView id="choose_node_end" fx:id="choose_end" fitHeight="111.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_end.png" />
                 </ImageView>
-                <ImageView id="choose_node_statement" fx:id="choose_statement" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+            <Pane prefHeight="8.0" prefWidth="216.0" />
+                <ImageView id="choose_node_statement" fx:id="choose_statement" fitHeight="114.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_statement.png" />
                 </ImageView>
+            <Pane prefHeight="24.0" prefWidth="216.0" />
                 <ImageView id="choose_node_branch" fx:id="choose_branch" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_branch.png" />
                 </ImageView>
                 <ImageView id="choose_node_merge" fx:id="choose_merge" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_merge.png" />
                 </ImageView>
+            <Pane prefHeight="23.0" prefWidth="216.0" />
                 <ImageView id="choose_node_loopStart" fx:id="choose_loop_start" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_loopStart.png" />
                 </ImageView>
                 <ImageView id="choose_node_loopEnd" fx:id="choose_loop_end" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_loopEnd.png" />
                 </ImageView>
-                <ImageView id="choose_node_print" fx:id="choose_print" fitHeight="133.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+            <Pane prefHeight="16.0" prefWidth="216.0" />
+                <ImageView id="choose_node_print" fx:id="choose_print" fitHeight="109.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../sources/img/choose_node_print.png" />
                 </ImageView>
             </VBox>

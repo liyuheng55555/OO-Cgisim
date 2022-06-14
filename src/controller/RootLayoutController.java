@@ -868,13 +868,15 @@ public class RootLayoutController implements Initializable {
             alert.show();
         });
         stepButton.setOnMouseClicked(e->{
-            alert.setContentText("step_success");
-            alert.show();
+//            alert.setContentText("step_success");
+//            alert.show();
+            stepRun();
         });
         runButton.setOnMouseClicked(e->{
-            alert.setContentText("run_success");
-            alert.show();
-            outText.setText("测试输出");
+//            alert.setContentText("run_success");
+//            alert.show();
+//            outText.setText("测试输出");
+            run();
         });
         pauseButton.setOnMouseClicked(e->{
             alert.setContentText("pause_success");
@@ -990,7 +992,7 @@ public class RootLayoutController implements Initializable {
     public void run(){
         System.out.println("run");
         try {
-            Run.setup(getStartID(), nodeMap, data);
+            Run.setup(getStartID(), nodeMap, data, outText);
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
