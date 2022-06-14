@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -862,25 +863,25 @@ public class RootLayoutController implements Initializable {
             alert.show();
             data.remove(moveIndex);
         });
-//        停止，暂停，单步，运行四个按钮点击事件测试
-//        stopButton.setOnMouseClicked(e->{
-//            alert.setContentText("stop_success");
-//            alert.show();
-//        });
-//        stepButton.setOnMouseClicked(e->{
-//            alert.setContentText("step_success");
-//            alert.show();
-//        });
-//        runButton.setOnMouseClicked(e->{
-//            alert.setContentText("run_success");
-//            alert.show();
-//            outText.setText("测试输出");
-//        });
-//        pauseButton.setOnMouseClicked(e->{
-//            alert.setContentText("pause_success");
-//            alert.show();
-//            outText.appendText("测试追加输出");
-//        });
+    //    停止，暂停，单步，运行四个按钮点击事件测试
+        stopButton.setOnMouseClicked(e->{
+            alert.setContentText("stop_success");
+            alert.show();
+        });
+        stepButton.setOnMouseClicked(e->{
+            alert.setContentText("step_success");
+            alert.show();
+        });
+        runButton.setOnMouseClicked(e->{
+            alert.setContentText("run_success");
+            alert.show();
+            outText.setText("测试输出");
+        });
+        pauseButton.setOnMouseClicked(e->{
+            alert.setContentText("pause_success");
+            alert.show();
+            outText.appendText("测试追加输出");
+        });
     }
     private int getStartID() {
         for (MyNode node : nodeMap.values()) {
@@ -989,6 +990,15 @@ public class RootLayoutController implements Initializable {
 
     public void commit(){
         propertyController.sendMessage();
+    }
+
+    public void menuSave(ActionEvent actionEvent) {
+    }
+
+    public void menuOpen(ActionEvent actionEvent) {
+    }
+
+    public void menuExport(ActionEvent actionEvent) {
     }
 }
 
