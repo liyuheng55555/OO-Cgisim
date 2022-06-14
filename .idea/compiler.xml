@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Cgisim" target="8" />
+      <module name="Cgisim" target="1.8" />
       <module name="OO-Cgisim" target="1.8" />
     </bytecodeTargetLevel>
   </component>

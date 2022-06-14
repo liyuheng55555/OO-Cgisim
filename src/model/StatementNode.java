@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -14,6 +15,7 @@ public class StatementNode extends MyNode {
     private int prePlace;
     private int nxtID;
     private int nxtPlace;
+    private String statementText; // statementText is the text of the statement node
     private ImageView statement;
 
     public StatementNode(int factoryID,int x,int y) {
@@ -22,6 +24,7 @@ public class StatementNode extends MyNode {
         this.prePlace = -1;
         this.nxtID = -1;
         this.nxtPlace = -1;
+        this.statementText = "statement code!";
         this.text = new Text("statement code!");
         this.text.setX(x);
         this.text.setY(y + viewH / 2);
@@ -39,6 +42,7 @@ public class StatementNode extends MyNode {
         }
     }
 
+    @JSONField(serialize=false)
     public Text getText() {
         return text;
     }
@@ -83,7 +87,15 @@ public class StatementNode extends MyNode {
         connectPlace[2] = nxtPlace;
     }
 
-    @Override
+    public String getStatementText() {
+        return statementText;
+    }
+
+    public void setStatementText(String statementText) {
+        this.statementText = statementText;
+    }
+
+    @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return statement;
     }
@@ -96,6 +108,8 @@ public class StatementNode extends MyNode {
 
     @Override
     public void draw(AnchorPane drawingArea, double x, double y) {
+        super.setxIndex(x);
+        super.setyIndex(y);
         this.statement.setX(x);
         this.statement.setY(y);
         this.text.setX(x + textRelativeX);

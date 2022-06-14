@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -92,7 +93,7 @@ public class MergeNode extends MyNode{
         connectPlace[2] = mergeNxtPlace;
     }
 
-    @Override
+    @Override @JSONField(serialize=false)
     public ImageView getImageView()  {
         return this.merge;
     }
@@ -104,6 +105,8 @@ public class MergeNode extends MyNode{
 
     @Override
     public void draw(AnchorPane drawingArea, double x, double y) {
+        super.setxIndex(x);
+        super.setyIndex(y);
         this.merge.setX(x);
         this.merge.setY(y);
         drawingArea.getChildren().add(this.merge);

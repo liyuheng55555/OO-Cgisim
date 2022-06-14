@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -48,7 +49,7 @@ public class StartNode extends MyNode {
         connectPlace[2] = nxtPlace;
     }
 
-    @Override
+    @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return start;
     }
@@ -60,6 +61,8 @@ public class StartNode extends MyNode {
 
     @Override
     public void draw(AnchorPane drawingArea, double x, double y) {
+        super.setxIndex(x);
+        super.setyIndex(y);
         this.start.setX(x);
         this.start.setY(y);
         drawingArea.getChildren().add(this.start);

@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -15,6 +16,7 @@ public class PrintNode extends MyNode {
     private int prePlace;
     private int nxtID;
     private int nxtPlace;
+    private String printText; // printText is the text of the print node
     private ImageView print;
 
     public PrintNode(int factoryID,int x,int y) {
@@ -23,6 +25,7 @@ public class PrintNode extends MyNode {
         this.prePlace = -1;
         this.nxtID = -1;
         this.nxtPlace = -1;
+        this.printText = "print code!";
         this.text = new Text("print code!");
         this.text.setX(x + textRelativeX);
         this.text.setY(y + textRelativeY);
@@ -40,6 +43,7 @@ public class PrintNode extends MyNode {
         }
     }
 
+    @JSONField(serialize=false)
     public Text getText() {
         return text;
     }
@@ -84,7 +88,15 @@ public class PrintNode extends MyNode {
         connectPlace[2] = nxtPlace;
     }
 
-    @Override
+    public String getPrintText() {
+        return printText;
+    }
+
+    public void setPrintText(String printText) {
+        this.printText = printText;
+    }
+
+    @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return print;
     }
@@ -97,6 +109,8 @@ public class PrintNode extends MyNode {
 
     @Override
     public void draw(AnchorPane drawingArea, double x, double y) {
+        super.setxIndex(x);
+        super.setyIndex(y);
         this.print.setX(x);
         this.print.setY(y);
         this.text.setX(x + textRelativeX);

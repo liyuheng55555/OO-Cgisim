@@ -1,5 +1,7 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -16,7 +18,6 @@ public class EndNode extends MyNode {
         super(factoryID,x,y);
         this.preID = -1;
         this.prePlace = -1;
-        this.name = "end";
         try{
             this.end = new ImageView(new Image("sources/img/draw_node_end.png"));
             this.end.setX(x);
@@ -48,7 +49,7 @@ public class EndNode extends MyNode {
         connectPlace[1] = prePlace;
     }
 
-    @Override
+    @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return this.end;
     }
@@ -60,6 +61,8 @@ public class EndNode extends MyNode {
 
     @Override
     public void draw(AnchorPane drawingArea, double x, double y) {
+        super.setxIndex(x);
+        super.setyIndex(y);
         this.end.setX(x);
         this.end.setY(y);
         drawingArea.getChildren().add(this.end);
@@ -68,6 +71,24 @@ public class EndNode extends MyNode {
     @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.end);
+    }
+
+    @JSONCreator
+    public EndNode(@JSONField(name="factoryID") int factoryID, @JSONField(name = "connectPlace") int[] connectPlace, @JSONField(name = "connectTo") int[] connectTo, @JSONField(name = "xIndex") double xIndex, @JSONField(name = "yIndex") double yIndex, @JSONField(name = "preID") int preID, @JSONField(name = "prePlace") int prePlace) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.preID = preID;
+        this.prePlace = prePlace;
+        try {
+            this.end = new ImageView(new Image("sources/img/draw_node_end.png"));
+            this.end.setX(xIndex);
+            this.end.setY(yIndex);
+            this.end.setFitWidth(viewW);
+            this.end.setFitHeight(viewH);
+            this.end.setId("end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading EndNode image");
+        }
     }
 
 }

@@ -51,7 +51,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TableVar {
-    static ArrayList<TableVar> varList = new ArrayList<>();
+    public static ArrayList<TableVar> varList = new ArrayList<>();
 
     private final StringProperty varName;
     private final StringProperty varType;
