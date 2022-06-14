@@ -2,8 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -22,52 +22,67 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="900.0" prefWidth="1200.0" style="-fx-background-color: #FBFBFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
+<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
     <top>
-      <SplitPane dividerPositions="0.3" orientation="VERTICAL" prefHeight="83.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+      <SplitPane orientation="VERTICAL" prefHeight="30.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
          <items>
-              <MenuBar styleClass="MenuBar" stylesheets="@../resources/css/style.css">
-                  <Menu mnemonicParsing="false" styleClass="menu" text="文件">
-                      <MenuItem mnemonicParsing="false" onAction="#menuNew" text="New" />
-                      <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save" />
-                      <MenuItem mnemonicParsing="false" onAction="#menuOpen" text="Open" />
-                      <MenuItem mnemonicParsing="false" onAction="#menuExport" text="Export" />
-                  </Menu>
-                  <Menu mnemonicParsing="false" text="程序">
-                      <MenuItem mnemonicParsing="false" onAction="#run" text="运行" />
-                      <MenuItem mnemonicParsing="false" text="暂停" />
-                      <MenuItem mnemonicParsing="false" text="debug" />
-                      <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步" />
-                      <MenuItem mnemonicParsing="false" text="重置" />
-                  </Menu>
-              </MenuBar>
-            <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF;">
-              <buttons>
-                  <ImageView id="run" fx:id="runButton" fitHeight="32.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+            <HBox prefHeight="30.0" prefWidth="1196.0">
+               <children>
+                    <MenuBar prefHeight="30.0" style="-fx-background-radius: 5px;" styleClass="MenuBar" stylesheets="@../resources/css/style.css">
+                        <Menu mnemonicParsing="false" styleClass="menu" text="文件">
+                            <MenuItem mnemonicParsing="false" onAction="#menuNew" text="New" />
+                            <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save" />
+                            <MenuItem mnemonicParsing="false" onAction="#menuOpen" text="Open" />
+                            <MenuItem mnemonicParsing="false" onAction="#menuExport" text="Export" />
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="程序">
+                            <MenuItem mnemonicParsing="false" onAction="#run" text="运行" />
+                            <MenuItem mnemonicParsing="false" text="暂停" />
+                            <MenuItem mnemonicParsing="false" text="debug" />
+                            <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步" />
+                            <MenuItem mnemonicParsing="false" text="重置" />
+                        </Menu>
+                     <cursor>
+                        <Cursor fx:constant="S_RESIZE" />
+                     </cursor>
+                    </MenuBar>
+                  <ImageView id="run" fx:id="runButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../sources/img/run.jpg" />
                      </image>
+                     <HBox.margin>
+                        <Insets left="3.0" />
+                     </HBox.margin>
                   </ImageView>
-                  <ImageView id="step" fx:id="stepButton" fitHeight="34.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView id="step" fx:id="stepButton" fitHeight="30.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../sources/img/step.jpg" />
                      </image>
                      <viewport>
                         <Rectangle2D />
                      </viewport>
+                     <HBox.margin>
+                        <Insets left="3.0" />
+                     </HBox.margin>
                   </ImageView>
-                  <ImageView id="pause" fx:id="pauseButton" fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView id="pause" fx:id="pauseButton" fitHeight="30.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../sources/img/pause.jpg" />
                      </image>
+                     <HBox.margin>
+                        <Insets left="3.0" />
+                     </HBox.margin>
                   </ImageView>
-                  <ImageView id="stop" fx:id="stopButton" fitHeight="34.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView id="stop" fx:id="stopButton" fitHeight="30.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../sources/img/stop.jpg" />
                      </image>
+                     <HBox.margin>
+                        <Insets left="3.0" />
+                     </HBox.margin>
                   </ImageView>
-              </buttons>
-            </ButtonBar>
+               </children>
+            </HBox>
          </items>
       </SplitPane>
     </top>
