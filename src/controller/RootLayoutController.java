@@ -863,24 +863,24 @@ public class RootLayoutController implements Initializable {
             data.remove(moveIndex);
         });
 //        停止，暂停，单步，运行四个按钮点击事件测试
-        stopButton.setOnMouseClicked(e->{
-            alert.setContentText("stop_success");
-            alert.show();
-        });
-        stepButton.setOnMouseClicked(e->{
-            alert.setContentText("step_success");
-            alert.show();
-        });
-        runButton.setOnMouseClicked(e->{
-            alert.setContentText("run_success");
-            alert.show();
-            outText.setText("测试输出");
-        });
-        pauseButton.setOnMouseClicked(e->{
-            alert.setContentText("pause_success");
-            alert.show();
-            outText.appendText("测试追加输出");
-        });
+//        stopButton.setOnMouseClicked(e->{
+//            alert.setContentText("stop_success");
+//            alert.show();
+//        });
+//        stepButton.setOnMouseClicked(e->{
+//            alert.setContentText("step_success");
+//            alert.show();
+//        });
+//        runButton.setOnMouseClicked(e->{
+//            alert.setContentText("run_success");
+//            alert.show();
+//            outText.setText("测试输出");
+//        });
+//        pauseButton.setOnMouseClicked(e->{
+//            alert.setContentText("pause_success");
+//            alert.show();
+//            outText.appendText("测试追加输出");
+//        });
     }
     private int getStartID() {
         for (MyNode node : nodeMap.values()) {
