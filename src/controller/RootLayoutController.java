@@ -29,6 +29,8 @@ import static model.Constant.tableW;
 import static model.Constant.viewH;
 import static model.Constant.viewW;
 import static model.Constant.connectorSize;
+import static model.TableVar.varList;
+
 import model.Constant.ClickStatus;
 import model.Constant.Status;
 
@@ -880,8 +882,10 @@ public class RootLayoutController implements Initializable {
         if (file != null) {
             try {
                 FileWriter fileWriter = new FileWriter(file);
-                String json = JSON.toJSONString(nodeMap, SerializerFeature.IgnoreErrorGetter);
-                fileWriter.write(json);
+                String nodeMapJson = JSON.toJSONString(nodeMap, SerializerFeature.IgnoreErrorGetter);
+                String nodeTableJson = JSON.toJSONString(nodeTable, SerializerFeature.IgnoreErrorGetter);
+                String varListJson = JSON.toJSONString(varList, SerializerFeature.IgnoreErrorGetter);
+                fileWriter.write(nodeMapJson+"\n"+ nodeTableJson+"\n"+ varListJson);
                 fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
