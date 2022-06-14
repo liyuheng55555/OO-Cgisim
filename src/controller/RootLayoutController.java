@@ -2,17 +2,14 @@ package controller;
 
 import java.io.*;
 import java.net.URL;
-import java.sql.Statement;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -135,8 +132,8 @@ public class RootLayoutController implements Initializable {
     inConnector记录每种节点的输入点，outConnector记录输出点
     1：上方    2：下方    3：左侧    4：右侧
      */
-    static Map<String, List<Integer>> inConnector = new HashMap<>();
-    static Map<String, List<Integer>> outConnector = new HashMap<>();
+    public static Map<String, List<Integer>> inConnector = new HashMap<>();
+    public static Map<String, List<Integer>> outConnector = new HashMap<>();
     static {
         inConnector.put("start", Collections.emptyList());
         inConnector.put("end", Collections.singletonList(1));
