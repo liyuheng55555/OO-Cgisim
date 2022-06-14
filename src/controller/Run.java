@@ -2,10 +2,13 @@ package controller;
 
 import Parse.Main;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TextArea;
 import model.*;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 public class Run {
@@ -14,6 +17,8 @@ public class Run {
     static int nowID = -1;
     static Map<Integer, MyNode> nodeMap = null;
     static Map<String, Object> varMap = null;
+    static TextArea outText = null;
+    Stack<LoopStNode> loopStack = null;
 
     /**
      * 使用此函数设定运行所需的环境
@@ -22,10 +27,15 @@ public class Run {
      * @param data  变量表格
      * @throws Exception    变量表格中的不合法情况
      */
-    static public void setup(int sID, Map<Integer, MyNode> nMap, ObservableList<TableVar> data) throws Exception {
+    static public void setup(int sID,
+                             Map<Integer, MyNode> nMap,
+                             ObservableList<TableVar> data,
+                             TextArea outText
+    ) throws Exception {
         setStartID(sID);
         setNodeMap(nMap);
         setVarMap(data);
+        setTextArea(outText);
     }
 
     static public void setStartID(int sID) {
@@ -34,8 +44,8 @@ public class Run {
     static public void setNodeMap(Map<Integer, MyNode> nMap) {
         nodeMap = nMap;
     }
-    static private Pattern namePat = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*$");
-    static private Pattern boolPat = Pattern.compile("^(true|false|True|False)$");
+    static private final Pattern namePat = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*$");
+    static private final Pattern boolPat = Pattern.compile("^(true|false|True|False)$");
 
     /**
      * 检查并设定dataMap，检查内容包括：<br/>
@@ -75,6 +85,10 @@ public class Run {
             }
             varMap.put(name, value);
         }
+    }
+
+    static public void setTextArea(TextArea oText) {
+        outText = oText;
     }
 
     /**
@@ -125,6 +139,25 @@ public class Run {
                 expression += "\n";
             Main.run(expression, varMap);
             nowID = stateNode.getNxtID();
+        }
+        else if (now instanceof MergeNode) {
+            MergeNode mergeNode = (MergeNode) now;
+            nowID = mergeNode.getMergeNxtID();
+        }
+        else if (now instanceof PrintNode) {
+            PrintNode printNode = (PrintNode) now;
+            String expression = printNode.getText().getText();
+            if (expression.charAt(expression.length()-1)!='\n')
+                expression += "\n";
+            Object result = Main.run(expression, varMap);
+            outText.appendText(result.toString()+"\n");
+            nowID = printNode.getNxtID();
+        }
+        else if (now instanceof LoopStNode) {
+
+        }
+        else if (now instanceof LoopEndNode) {
+
         }
         else {
             throw new Exception(nowID+"号节点类型未知，也许是"+now.getClass().toString());
