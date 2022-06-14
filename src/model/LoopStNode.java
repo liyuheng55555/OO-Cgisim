@@ -10,12 +10,11 @@ import javafx.scene.text.Text;
 import static model.Constant.*;
 
 public class LoopStNode extends MyNode {
-    private Text text;
+
     private int loop_stPreID;
     private int loop_stPrePlace;
     private int loop_stNxtID;
     private int loop_stNxtPlace;
-    private String loop_stText; // loop_stText is the text of the loop start node
     private ImageView loop_st;
 
     public LoopStNode(int factoryID, int x, int y) {
@@ -24,11 +23,6 @@ public class LoopStNode extends MyNode {
         this.loop_stPrePlace = -1;
         this.loop_stNxtID = -1;
         this.loop_stNxtPlace = -1;
-        this.loop_stText = "loop start code!";
-        this.text = new Text("loop code!");
-        this.text.setX(x + LoopTextRelativeX);
-        this.text.setY(y + LoopTextRelativeY);
-        this.text.setFont(Constant.font);
         try{
             this.loop_st = new ImageView(new Image("sources/img/draw_node_loop_st.png"));
             this.loop_st.setX(x);
@@ -58,11 +52,6 @@ public class LoopStNode extends MyNode {
         this.loop_stPrePlace = loop_stPrePlace;
         this.loop_stNxtID = loop_stNxtID;
         this.loop_stNxtPlace = loop_stNxtPlace;
-        this.loop_stText = loop_stText;
-        this.text = new Text(loop_stText);
-        this.text.setX(xIndex + LoopTextRelativeX);
-        this.text.setY(yIndex + LoopTextRelativeY);
-        this.text.setFont(Constant.font);
         try {
             this.loop_st = new ImageView(new Image("sources/img/draw_node_loop_st.png"));
             this.loop_st.setX(xIndex);
@@ -74,15 +63,6 @@ public class LoopStNode extends MyNode {
             e.printStackTrace();
             System.out.println("error in loading IfNode image");
         }
-    }
-
-    @JSONField(serialize=false)
-    public Text getText() {
-        return text;
-    }
-
-    public void setText(Text text) {
-        this.text = text;
     }
 
     public int getLoop_stPreID() {
@@ -121,14 +101,6 @@ public class LoopStNode extends MyNode {
         connectPlace[2] = loop_stNxtPlace;
     }
 
-    public String getLoop_stText() {
-        return loop_stText;
-    }
-
-    public void setLoop_stText(String loop_stText) {
-        this.loop_stText = loop_stText;
-    }
-
     @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return loop_st;
@@ -137,7 +109,6 @@ public class LoopStNode extends MyNode {
     @Override
     public void draw(AnchorPane drawingArea) {
         drawingArea.getChildren().add(this.loop_st);
-        drawingArea.getChildren().add(this.text);
     }
 
     @Override
@@ -146,16 +117,12 @@ public class LoopStNode extends MyNode {
         super.setyIndex(y);
         this.loop_st.setX(x);
         this.loop_st.setY(y);
-        this.text.setX(x + LoopTextRelativeX);
-        this.text.setY(y + LoopTextRelativeY);
         drawingArea.getChildren().add(this.loop_st);
-        drawingArea.getChildren().add(this.text);
     }
 
     @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.loop_st);
-        drawingArea.getChildren().remove(this.text);
     }
 
 }

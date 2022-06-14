@@ -11,7 +11,7 @@ public class Constant {
     public static final int tableW = 10;
     public static final int branchTextRelativeX = 30;
     public static final int branchTextRelativeY = 55;
-    public static final int LoopTextRelativeX = 30;
+    public static final int LoopTextRelativeX = 25;
     public static final int LoopTextRelativeY = 30;
     public static final int printTextRelativeX = 30;
     public static final int printTextRelativeY = 58;
