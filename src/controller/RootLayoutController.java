@@ -895,8 +895,14 @@ public class RootLayoutController implements Initializable {
 
     public void menuNew(){
         System.out.println("New");
-//        Thread thread = new Thread();
-//        while(true);
+        nodeMap.clear();
+        data.clear();
+        outText.setText("");
+        for(int i = 0; i < tableH; i++){
+            for(int j = 0; j < tableW; j++){
+                nodeTable[i][j] = null;
+            }
+        }
     }
 
     /**
