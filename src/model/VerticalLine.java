@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,9 +12,10 @@ import static model.Constant.viewW;
 
 public class VerticalLine extends MyNode {
     private ImageView line;
-
+    private String lineType;
     public VerticalLine(int x,int y) {
         super(0,x,y);
+        this.lineType = "line_vertical";
         try{
             this.line = new ImageView(new Image("sources/img/draw_line_vertical.png"));
             this.line.setX(x);
@@ -22,6 +24,28 @@ public class VerticalLine extends MyNode {
             this.line.setFitWidth(viewW);
             this.line.setId("line_vertical");
         }catch(Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading LineNode image");
+        }
+    }
+
+    @JSONCreator
+    public VerticalLine(@JSONField(name="factoryID") int factoryID,
+                         @JSONField(name = "connectPlace") int[] connectPlace,
+                         @JSONField(name = "connectTo") int[] connectTo,
+                         @JSONField(name = "xIndex") double xIndex,
+                         @JSONField(name = "yIndex") double yIndex,
+                         @JSONField(name = "lineType") String lineType) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.lineType = lineType;
+        try {
+            this.line = new ImageView(new Image("sources/img/draw_line_vertical.png"));
+            this.line.setX(xIndex);
+            this.line.setY(yIndex);
+            this.line.setFitWidth(viewW);
+            this.line.setFitHeight(viewH);
+            this.line.setId("line_vertical");
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("error in loading LineNode image");
         }
@@ -42,4 +66,11 @@ public class VerticalLine extends MyNode {
         drawingArea.getChildren().remove(this.line);
     }
 
+    public String getLineType() {
+        return lineType;
+    }
+
+    public void setLineType(String lineType) {
+        this.lineType = lineType;
+    }
 }

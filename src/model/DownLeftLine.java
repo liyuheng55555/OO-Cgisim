@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +29,28 @@ public class DownLeftLine extends MyNode {
         }
     }
 
+    @JSONCreator
+    public DownLeftLine(@JSONField(name="factoryID") int factoryID,
+                        @JSONField(name = "connectPlace") int[] connectPlace,
+                        @JSONField(name = "connectTo") int[] connectTo,
+                        @JSONField(name = "xIndex") double xIndex,
+                        @JSONField(name = "yIndex") double yIndex,
+                        @JSONField(name = "lineType") String lineType) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.lineType = lineType;
+        try {
+            this.line = new ImageView(new Image("sources/img/draw_line_down_left.png"));
+            this.line.setX(xIndex);
+            this.line.setY(yIndex);
+            this.line.setFitWidth(viewW);
+            this.line.setFitHeight(viewH);
+            this.line.setId("line_down_left");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading LineNode image");
+        }
+    }
+
     @Override @JSONField(serialize=false)
     public ImageView getImageView() {
         return line;
@@ -43,5 +66,11 @@ public class DownLeftLine extends MyNode {
         drawingArea.getChildren().remove(this.line);
     }
 
+    public String getLineType() {
+        return lineType;
+    }
 
+    public void setLineType(String lineType) {
+        this.lineType = lineType;
+    }
 }

@@ -5,7 +5,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
 
 import static model.Constant.viewH;
 import static model.Constant.viewW;

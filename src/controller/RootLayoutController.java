@@ -944,6 +944,14 @@ public class RootLayoutController implements Initializable {
         fileChooser.setTitle("打开文件");
         File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
         if (file != null) {
+            for(int i = 0; i < tableH; i++){
+                for(int j = 0; j < tableW; j++) {
+                    if (nodeTable[i][j] != null) {
+                        nodeTable[i][j].remove(drawingArea);
+                    }
+                    nodeTable[i][j] = null;
+                }
+            }
             try {
                 FileReader fileReader = new FileReader(file);
                 BufferedReader bufferReader = new BufferedReader(fileReader);
@@ -956,7 +964,6 @@ public class RootLayoutController implements Initializable {
                 for(String nodeJson : nodeMapJson){
                     MyNode node = null;
                     String nodeJsonWithout$ = nodeJson.replace("$", "");
-                    System.out.println(nodeJsonWithout$);
                     if(nodeJson.contains("branchPreID")){
                         node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
                     }else if(nodeJson.contains("printText")) {
@@ -977,20 +984,12 @@ public class RootLayoutController implements Initializable {
                     assert node != null;
                     nodeMap.put(node.getFactoryID(), node);
                 }
-                for(int i = 0; i < tableH; i++){
-                    for(int j = 0; j < tableW; j++) {
-                        if (nodeTable[i][j] != null) {
-                            nodeTable[i][j].remove(drawingArea);
-                            nodeTable[i][j] = null;
-                        }
-                    }
-                }
+
                 for(int i = 0; i < tableH; i++) {
                     for (int j = 0; j < tableW; j++) {
                         String nodeJson = nodeTableJson[i * tableW + j];
                         MyNode node = null;
                         String nodeJsonWithout$ = nodeJson.replace("$", "");
-                        System.out.println(nodeJsonWithout$);
                         if(nodeJson.contains("branchPreID")){
                             node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
                             System.out.println("recreate BranchNode in nodeTable");
@@ -1015,6 +1014,24 @@ public class RootLayoutController implements Initializable {
                         }else if(nodeJson.contains("prePlace")){
                             node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
                             System.out.println("recreate end node in nodeTable");
+                        }else if(nodeJson.contains("line_down_right")){
+                            node = JSON.parseObject(nodeJsonWithout$, DownRightLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_horizon")){
+                            node = JSON.parseObject(nodeJsonWithout$, HorizonLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_left_down")){
+                            node = JSON.parseObject(nodeJsonWithout$, LeftDownLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_right_down")){
+                            node = JSON.parseObject(nodeJsonWithout$, RightDownLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_vertical")){
+                            node = JSON.parseObject(nodeJsonWithout$, VerticalLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_down_left")){
+                            node = JSON.parseObject(nodeJsonWithout$, DownLeftLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
                         }
                         if(node!=null){
                             nodeTable[i][j] = node;
