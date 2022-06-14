@@ -1,12 +1,11 @@
 package controller;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -189,7 +188,7 @@ public class RootLayoutController implements Initializable {
     private double relativeY = -1;
 
     MyNode[][] nodeTable = new MyNode[tableH][tableW];
-    private final HashMap<Integer, MyNode> nodeMap = new HashMap<>();
+    private HashMap<Integer, MyNode> nodeMap = new HashMap<>();
     int startConnectionID;
     int startConnectionPlace;
     int endConnectionID;
@@ -885,7 +884,7 @@ public class RootLayoutController implements Initializable {
                 String nodeMapJson = JSON.toJSONString(nodeMap, SerializerFeature.IgnoreErrorGetter);
                 String nodeTableJson = JSON.toJSONString(nodeTable, SerializerFeature.IgnoreErrorGetter);
                 String varListJson = JSON.toJSONString(varList, SerializerFeature.IgnoreErrorGetter);
-                fileWriter.write(nodeMapJson+"\n"+ nodeTableJson+"\n"+ varListJson);
+                fileWriter.write(nodeMapJson+"%"+ nodeTableJson+"%"+ varListJson);
                 fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -894,8 +893,57 @@ public class RootLayoutController implements Initializable {
 
     }
 
+    /**
+     * 将nodeMap和nodeTable和varList从JSON String反序列化为java对象。
+     * 打开一个文件选择窗口，选择一个本地文件作为JSON的输入文本。
+     * 使用Fastjson库
+     */
     public void menuJsonImport(){
         System.out.println("menuJsonImport");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("打开文件");
+        File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
+        if (file != null) {
+            try {
+                FileReader fileReader = new FileReader(file);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                String line;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(bufferedReader.readLine());
+                bufferedReader.close();
+                fileReader.close();
+                String[] jsonStrings = stringBuilder.toString().split("%");
+                System.out.println(jsonStrings[0]);
+                System.out.println(jsonStrings[1]);
+                System.out.println(jsonStrings[2]);
+                // 将jsonString[0]分解为[]
+
+                nodeMap = JSON.parseObject(jsonStrings[0], new TypeReference<HashMap<Integer, MyNode>>() {
+                });
+                for (int i = 0; i < nodeTable.length; i++) {
+                    for (int j = 0; j < nodeTable[i].length; j++) {
+                        if (nodeTable[i][j] != null) {
+                            nodeTable[i][j].remove(drawingArea);
+                        }
+                    }
+                }
+                nodeTable = JSON.parseObject(jsonStrings[1], new TypeReference<MyNode[][]>() {
+                });
+                // 遍历nodeTable, 调用draw方法
+                for (int i = 0; i < nodeTable.length; i++) {
+                    for (int j = 0; j < nodeTable[i].length; j++) {
+                        if (nodeTable[i][j] != null) {
+                            nodeTable[i][j].draw(drawingArea);
+                            System.out.println("placeX: " + i + " placeY: " + j +" Class: " + nodeTable[i][j].getClass().getName());
+                        }
+                    }
+                }
+                varList = JSON.parseObject(jsonStrings[2], new TypeReference<ArrayList<TableVar>>() {
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void menuCodeExport(){

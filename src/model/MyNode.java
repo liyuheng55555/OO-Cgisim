@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -72,4 +73,12 @@ public class MyNode {
         this.yIndex = yIndex;
     }
 
+    @JSONCreator
+    public MyNode(@JSONField(name="factoryID") int factoryID, @JSONField(name = "connectPlace") int[] connectPlace, @JSONField(name = "connectTo") int[] connectTo, @JSONField(name = "xIndex") double xIndex, @JSONField(name = "yIndex") double yIndex) {
+        this.factoryID = factoryID;
+        this.connectTo = connectTo;
+        this.connectPlace = connectPlace;
+        this.xIndex = xIndex;
+        this.yIndex = yIndex;
+    }
 }

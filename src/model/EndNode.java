@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -70,6 +71,24 @@ public class EndNode extends MyNode {
     @Override
     public void remove(AnchorPane drawingArea) {
         drawingArea.getChildren().remove(this.end);
+    }
+
+    @JSONCreator
+    public EndNode(@JSONField(name="factoryID") int factoryID, @JSONField(name = "connectPlace") int[] connectPlace, @JSONField(name = "connectTo") int[] connectTo, @JSONField(name = "xIndex") double xIndex, @JSONField(name = "yIndex") double yIndex, @JSONField(name = "preID") int preID, @JSONField(name = "prePlace") int prePlace) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+        this.preID = preID;
+        this.prePlace = prePlace;
+        try {
+            this.end = new ImageView(new Image("sources/img/draw_node_end.png"));
+            this.end.setX(xIndex);
+            this.end.setY(yIndex);
+            this.end.setFitWidth(viewW);
+            this.end.setFitHeight(viewH);
+            this.end.setId("end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading EndNode image");
+        }
     }
 
 }
