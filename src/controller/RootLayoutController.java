@@ -1,8 +1,13 @@
 package controller;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,6 +21,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import model.*;
 
 import static model.Constant.tableH;
@@ -428,46 +434,31 @@ public class RootLayoutController implements Initializable {
             int y = path.get(i).get(1);
             int nextX = path.get(i+1).get(0);
             int nextY = path.get(i+1).get(1);
-            ImageView view = new ImageView();
-            nodeTable[y][x] = new MyNode();
-            nodeTable[y][x].imageView = view;
-            view.setFitHeight(viewH);
-            view.setFitWidth(viewW);
-            view.setY(y*viewH);
-            view.setX(x*viewW);
-            view.setId("line");
-            String imgRoot = "sources/img/";
             if (nextY==preY+2) { // 竖线
-                view.setImage(new Image(imgRoot+"draw_line_vertical.png"));
-                view.setId("line_vertical");
+                nodeTable[y][x] = new VerticalLine(x*viewW, y*viewH);
             }
             else if (nextY==preY+1) { // 弯折线
                 if (nextX==preX+1) {
                     if (x==preX) { // ⤵
-                        view.setImage(new Image(imgRoot + "draw_line_down_right.png"));
-                        view.setId("line_down_right");
+                        nodeTable[y][x] = new DownRightLine(x*viewW, y*viewH);
                     }
                     else { // ⤷
-                        view.setImage(new Image(imgRoot + "draw_line_right_down.png"));
-                        view.setId("line_right_down");
+                        nodeTable[y][x] = new RightDownLine(x*viewW, y*viewH);
                     }
                 }
                 else {
                     if (x==preX) {// ⤶
-                        view.setImage(new Image(imgRoot + "draw_line_down_left.png"));
-                        view.setId("line_down_left");
+                        nodeTable[y][x] = new DownLeftLine(x*viewW, y*viewH);
                     }
                     else { // 左转下，没找到这个符号
-                        view.setImage(new Image(imgRoot + "draw_line_left_down.png"));
-                        view.setId("line_left_down");
+                        nodeTable[y][x] = new LeftDownLine(x*viewW, y*viewH);
                     }
                 }
             }
             else if (nextY==preY) { // 横线
-                view.setImage(new Image(imgRoot+"draw_line_horizon.png"));
-                view.setId("line_horizon");
+                nodeTable[y][x] = new HorizonLine(x*viewW, y*viewH);
             }
-            drawingArea.getChildren().add(view);
+            nodeTable[y][x].draw(drawingArea);
         }
     }
 
@@ -488,8 +479,8 @@ public class RootLayoutController implements Initializable {
         if (!ss[0].equals("line")) {
             return;
         }
+        nodeTable[sy][sx].remove(drawingArea);
         nodeTable[sy][sx] = null;
-        drawingArea.getChildren().remove(node.getImageView());
         if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
         }
@@ -707,7 +698,7 @@ public class RootLayoutController implements Initializable {
             int y = (int)(event.getY()/viewH);
             int x = (int)(event.getX()/viewW);
             selection = nodeTable[y][x];
-            if(selection != null) {
+            if(selection != null && !selection.getImageView().getId().contains("line")) {
                 eraseAllPath(selection);
                 showSelection.clear();
                 System.out.println("Selection is: " + selection.getClass().getName());
@@ -723,7 +714,7 @@ public class RootLayoutController implements Initializable {
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
             status = Status.dragging;
-            if (event.isPrimaryButtonDown() && selection!=null) {
+            if (event.isPrimaryButtonDown() && selection!=null && !selection.getImageView().getId().contains("line")) {
                 shadow.setX((int) event.getX() - (int) event.getX()%viewW);
                 shadow.setY((int) event.getY() - (int) event.getY()%viewH);
                 selection.remove(drawingArea);
@@ -732,7 +723,7 @@ public class RootLayoutController implements Initializable {
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
-            if (selection!=null) {
+            if (selection!=null && !selection.getImageView().getId().contains("line")) {
                 selection.remove(drawingArea);
                 selection.draw(drawingArea, (int) event.getX() - (int) event.getX()%viewW, (int) event.getY() - (int) event.getY()%viewH);
                 selection.putInTable(nodeTable);
@@ -869,22 +860,52 @@ public class RootLayoutController implements Initializable {
         return -1;
     }
 
-
     public void menuNew(){
         System.out.println("New");
 //        Thread thread = new Thread();
 //        while(true);
     }
-    public void menuSave(){
 
-        System.out.println("Save");
+    /**
+     * 将nodeMap和nodeTable和varList中的节点信息转换为String。
+     * 打开一个文件选择窗口，在本地新建一个文件保存这些信息。
+     * 使用Fastjson库
+     */
+    public void menuJsonExport(){
+        System.out.println("menuJsonExport");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("保存文件");
+        fileChooser.setInitialFileName("new.json");
+        File file = fileChooser.showSaveDialog(Main.getPrimaryStage());
+        if (file != null) {
+            try {
+                FileWriter fileWriter = new FileWriter(file);
+                String json = JSON.toJSONString(nodeMap, SerializerFeature.IgnoreErrorGetter);
+                fileWriter.write(json);
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
-    public void menuOpen(){
-        System.out.println("Open");
+
+    public void menuJsonImport(){
+        System.out.println("menuJsonImport");
     }
-    public void menuExport(){
-        System.out.println("Export");
+
+    public void menuCodeExport(){
+        System.out.println("menuCodeExport");
     }
+
+    public void menuCodeImport(){
+        System.out.println("menuCodeImport");
+    }
+
+    public void menuImageSave(){
+        System.out.println("menuImageSave");
+    }
+
     public void run(){
         System.out.println("run");
         try {
@@ -897,12 +918,8 @@ public class RootLayoutController implements Initializable {
         }
 
     }
-    public void stop(){
-        System.out.println("stop");
-    }
-    public void debug(){
-        System.out.println("debug");
-    }
+
+
     public void stepRun(){
         System.out.println("stepRun");
         int next = -2;
