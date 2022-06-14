@@ -27,8 +27,8 @@ public class StatementNode extends MyNode {
         this.nxtPlace = -1;
         this.statementText = "statement code!";
         this.text = new Text("statement code!");
-        this.text.setX(x);
-        this.text.setY(y + viewH / 2);
+        this.text.setX(x + statementTextRelativeX);
+        this.text.setY(y + statementTextRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.statement = new ImageView(new Image("sources/img/draw_node_statement.png"));
@@ -61,8 +61,8 @@ public class StatementNode extends MyNode {
         this.nxtPlace = nxtPlace;
         this.statementText = statementText;
         this.text = new Text(statementText);
-        this.text.setX(xIndex);
-        this.text.setY(yIndex + viewH / 2);
+        this.text.setX(xIndex + statementTextRelativeX);
+        this.text.setY(yIndex + statementTextRelativeY);
         this.text.setFont(Constant.font);
         try {
             this.statement = new ImageView(new Image("sources/img/draw_node_statement.png"));
@@ -147,8 +147,8 @@ public class StatementNode extends MyNode {
         super.setyIndex(y);
         this.statement.setX(x);
         this.statement.setY(y);
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + statementTextRelativeX);
+        this.text.setY(y + statementTextRelativeY);
         drawingArea.getChildren().add(this.statement);
         drawingArea.getChildren().add(this.text);
     }

@@ -26,8 +26,8 @@ public class LoopStNode extends MyNode {
         this.loop_stNxtPlace = -1;
         this.loop_stText = "loop start code!";
         this.text = new Text("loop code!");
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + LoopTextRelativeX);
+        this.text.setY(y + LoopTextRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.loop_st = new ImageView(new Image("sources/img/draw_node_loop_st.png"));
@@ -60,8 +60,8 @@ public class LoopStNode extends MyNode {
         this.loop_stNxtPlace = loop_stNxtPlace;
         this.loop_stText = loop_stText;
         this.text = new Text(loop_stText);
-        this.text.setX(xIndex + textRelativeX);
-        this.text.setY(yIndex + textRelativeY);
+        this.text.setX(xIndex + LoopTextRelativeX);
+        this.text.setY(yIndex + LoopTextRelativeY);
         this.text.setFont(Constant.font);
         try {
             this.loop_st = new ImageView(new Image("sources/img/draw_node_loop_st.png"));
@@ -146,8 +146,8 @@ public class LoopStNode extends MyNode {
         super.setyIndex(y);
         this.loop_st.setX(x);
         this.loop_st.setY(y);
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + LoopTextRelativeX);
+        this.text.setY(y + LoopTextRelativeY);
         drawingArea.getChildren().add(this.loop_st);
         drawingArea.getChildren().add(this.text);
     }

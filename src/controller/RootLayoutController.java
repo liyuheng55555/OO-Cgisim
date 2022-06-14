@@ -11,6 +11,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,6 +36,8 @@ import static model.TableVar.varList;
 
 import model.Constant.ClickStatus;
 import model.Constant.Status;
+
+import javax.imageio.ImageIO;
 
 public class RootLayoutController implements Initializable {
     //创建数据源
@@ -1063,8 +1066,23 @@ public class RootLayoutController implements Initializable {
         System.out.println("menuCodeImport");
     }
 
+    /**
+     * 打开文件选择器并选择文件
+     * 将drawingArea的图形保存为图片，并保存为png格式
+     */
     public void menuImageSave(){
         System.out.println("menuImageSave");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("保存图片");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("png", "*.png"));
+        File file = fileChooser.showSaveDialog(drawingArea.getScene().getWindow());
+        if(file != null){
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(drawingArea.snapshot(null, null), null), "png", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void run(){

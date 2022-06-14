@@ -6,6 +6,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import static model.Constant.*;
@@ -28,9 +29,10 @@ public class PrintNode extends MyNode {
         this.nxtPlace = -1;
         this.printText = "print code!";
         this.text = new Text("print code!");
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + printTextRelativeX);
+        this.text.setY(y + printTextRelativeY);
         this.text.setFont(Constant.font);
+        text.setFill(Color.RED);
         try{
             this.print = new ImageView(new Image("sources/img/draw_node_print.png"));
             this.print.setX(x);
@@ -62,9 +64,10 @@ public class PrintNode extends MyNode {
         this.nxtPlace = nxtPlace;
         this.printText = printText;
         this.text = new Text(printText);
-        this.text.setX(xIndex);
-        this.text.setY(yIndex + viewH / 2);
+        this.text.setX(xIndex + printTextRelativeX);
+        this.text.setY(yIndex + printTextRelativeY);
         this.text.setFont(Constant.font);
+        text.setFill(Color.WHITE);
         try {
             this.print = new ImageView(new Image("sources/img/draw_node_print.png"));
             this.print.setX(xIndex);
@@ -148,8 +151,8 @@ public class PrintNode extends MyNode {
         super.setyIndex(y);
         this.print.setX(x);
         this.print.setY(y);
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + printTextRelativeX);
+        this.text.setY(y + printTextRelativeY);
         drawingArea.getChildren().add(this.print);
         drawingArea.getChildren().add(this.text);
     }

@@ -32,8 +32,8 @@ public class BranchNode extends MyNode {
         this.branchFalsePlace = -1;
         this.branchText = "branch code!";
         this.text = new Text("branch code!");
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + branchTextRelativeX);
+        this.text.setY(y + branchTextRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.branch = new ImageView(new Image("sources/img/draw_node_if.png"));
@@ -136,8 +136,8 @@ public class BranchNode extends MyNode {
         super.setyIndex(y);
         this.branch.setX(x);
         this.branch.setY(y);
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + branchTextRelativeX);
+        this.text.setY(y + branchTextRelativeY);
         drawingArea.getChildren().add(this.branch);
         drawingArea.getChildren().add(this.text);
     }
@@ -168,8 +168,8 @@ public class BranchNode extends MyNode {
         this.branchFalsePlace = branchFalsePlace;
         this.branchText = branchText;
         this.text = new Text(branchText);
-        this.text.setX(xIndex + textRelativeX);
-        this.text.setY(yIndex + textRelativeY);
+        this.text.setX(xIndex + branchTextRelativeX);
+        this.text.setY(yIndex + branchTextRelativeY);
         this.text.setFont(Constant.font);
         try {
             this.branch = new ImageView(new Image("sources/img/draw_node_if.png"));
