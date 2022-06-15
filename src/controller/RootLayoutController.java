@@ -35,7 +35,6 @@ import model.Constant.ClickStatus;
 import model.Constant.Status;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class RootLayoutController implements Initializable {
     //创建数据源
@@ -46,6 +45,8 @@ public class RootLayoutController implements Initializable {
     );
     @FXML
     private TextArea outText;
+    @FXML
+    private ImageView buildButton;
     @FXML
     private ImageView stopButton;
     @FXML
@@ -112,7 +113,7 @@ public class RootLayoutController implements Initializable {
      * 设置所有ShowAnything对象；
      * 因为initialize函数已经太长了，所以单独写一个函数
      */
-    void showAnythingInitialize() {
+    void showAnythingInit() {
         // 选中位置
         Image selectPng = new Image("sources/img/select.png");
         ImageView selectView = new ImageView(selectPng);
@@ -127,6 +128,30 @@ public class RootLayoutController implements Initializable {
         showRunPosition = new ShowAnything(runView, drawingArea, 0, 0);
         // 结构错误、语法错误等
 
+    }
+
+    void buttonInit() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        //    停止，暂停，单步，运行四个按钮点击事件测试
+        buildButton.setOnMouseClicked(e-> build());
+        stopButton.setOnMouseClicked(e->{
+            reset();
+        });
+        stepButton.setOnMouseClicked(e->{
+//            alert.setContentText("step_success");
+//            alert.show();
+            stepRun();
+        });
+        runButton.setOnMouseClicked(e->{
+//            alert.setContentText("run_success");
+//            alert.show();
+//            outText.setText("测试输出");
+            run();
+        });
+        pauseButton.setOnMouseClicked(e->{
+            alert.setContentText("pause_success");
+            alert.show();
+        });
     }
 
     /*
@@ -150,6 +175,7 @@ public class RootLayoutController implements Initializable {
         outConnector.put("branch", Arrays.asList(2,4));
         outConnector.put("merge", Collections.singletonList(2));
         outConnector.put("loop_st", Collections.singletonList(2));
+        outConnector.put("loop_end", Collections.singletonList(2));
         outConnector.put("statement", Collections.singletonList(2));
         outConnector.put("print", Collections.singletonList(2));
     }
@@ -220,7 +246,6 @@ public class RootLayoutController implements Initializable {
      */
     int[][] tableToCost() {
         int[][] cost = new int[200][200];
-        int nb = 0;
         for (int i=0; i<tableH; i++) {
             for (int j = 0; j < tableW; j++) {
                 int s = i * tableW + j;
@@ -233,7 +258,6 @@ public class RootLayoutController implements Initializable {
                         ) {
                             cost[s][e] = 1;
 //                            System.out.printf("%d %d  %d %d\n",i,j,k,l);
-                            nb++;
                         } else {
                             cost[s][e] = 999999;
                         }
@@ -343,6 +367,73 @@ public class RootLayoutController implements Initializable {
                 }
             }
         }
+    }
+
+
+
+    private void tryConnectNeighborHelp(int x0, int y0, int x1, int y1) throws Exception {
+        if (x0<0 || x0>= Constant.tableW || y0<0 || y0>=Constant.tableH)
+            throw new Exception("x或y错误");
+        if (x1<0 || x1>= Constant.tableW || y1<0 || y1>=Constant.tableH)
+            throw new Exception("x或y错误");
+        if (!(x0==x1 && Math.abs(y0-y1)==1) && !(y0==y1 && Math.abs(x0-x1)==1))
+            throw new Exception("不相邻");
+        MyNode node0 = nodeTable[y0][x0];
+        MyNode node1 = nodeTable[y1][x1];
+        if (node0==null || node1==null)
+            return;
+        String name0 = node0.getImageView().getId();
+        String name1 = node1.getImageView().getId();
+        List<Integer> inC0 = inConnector.get(name0);
+        List<Integer> outC0 = outConnector.get(name0);
+        List<Integer> inC1 = inConnector.get(name1);
+        List<Integer> outC1 = outConnector.get(name1);
+        if (outC0!=null && inC1!=null && outC0.contains(2) && inC1.contains(1)) { // 0->1
+            node0.connectTo[2] = node1.getFactoryID();
+            node0.connectPlace[2] = 1;
+            node1.connectTo[1] = node0.getFactoryID();
+            node1.connectPlace[1] = 2;
+            System.out.println("good!");
+        }
+        if (outC1!=null && inC0!=null && inC0.contains(1) && outC1.contains(2)) { // 0<-1
+            node0.connectTo[1] = node1.getFactoryID();
+            node0.connectPlace[1] = 2;
+            node1.connectTo[2] = node0.getFactoryID();
+            node1.connectPlace[2] = 1;
+            System.out.println("very good!");
+        }
+    }
+
+    /**
+     * 查看一个MyNode是否和上下左右的邻居存在直接相连<br/>
+     * 如果直接相连，就修改前驱后继关系
+//     * @param x  待检查的MyNode
+     */
+    public void tryConnectNeighbor(MyNode node) {
+        int y = (int)(node.getImageView().getY()/viewH);
+        int x = (int)(node.getImageView().getX()/viewW);
+        try {
+            tryConnectNeighborHelp(x,y,x+1,y);
+        } catch (Exception ignored) {ignored.printStackTrace();}
+        try {
+            tryConnectNeighborHelp(x,y,x-1,y);
+        } catch (Exception ignored) {ignored.printStackTrace();}
+        try {
+            tryConnectNeighborHelp(x,y,x,y+1);
+        } catch (Exception ignored) {ignored.printStackTrace();}
+        try {
+            tryConnectNeighborHelp(x,y,x,y-1);
+        } catch (Exception ignored) {ignored.printStackTrace();}
+
+
+//        if (x<0 || x>= Constant.tableW || y<0 || y>=Constant.tableH)
+//            throw new Exception("x或y错误");
+//        if (nodeTable[y][x]==null)
+//            return;
+//        MyNode node = nodeTable[y][x];
+//        List<Integer> inC = inConnector.get(node.getImageView().getId());
+//        List<Integer> outC = outConnector.get(node.getImageView().getId());
+//        for
     }
 
     /**
@@ -516,7 +607,8 @@ public class RootLayoutController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        showAnythingInitialize();
+        buildButton.setAccessibleText("ok");
+        showAnythingInit();
         propertyController = new PropertyController(messageBox);
         nodeFactory = new NodeFactory();
 
@@ -631,10 +723,13 @@ public class RootLayoutController implements Initializable {
             keyBoardPane.requestFocus();
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectNode != null) {
-                    MyNode node = nodeFactory.produceNode(selectNode, (int)(event.getX()-event.getX()%viewW), (int)(event.getY()-event.getY()%viewH));
+                    int x = (int)(event.getX()-event.getX()%viewW);
+                    int y = (int)(event.getY()-event.getY()%viewH);
+                    MyNode node = nodeFactory.produceNode(selectNode, x, y);
                     if(node.putInTable(nodeTable)){
                         nodeMap.put(node.getFactoryID(), node);
                         node.draw(drawingArea);
+                        tryConnectNeighbor(node);
                     }
                 }
                 if (event.getClickCount() == 1) {
@@ -747,6 +842,8 @@ public class RootLayoutController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                tryConnectNeighbor(selection);
                 selection = null;
                 shadow.setX(-1000);
                 shadow.setY(-1000);
@@ -865,26 +962,7 @@ public class RootLayoutController implements Initializable {
             alert.show();
             data.remove(moveIndex);
         });
-    //    停止，暂停，单步，运行四个按钮点击事件测试
-        stopButton.setOnMouseClicked(e->{
-            alert.setContentText("stop_success");
-            alert.show();
-        });
-        stepButton.setOnMouseClicked(e->{
-//            alert.setContentText("step_success");
-//            alert.show();
-            stepRun();
-        });
-        runButton.setOnMouseClicked(e->{
-//            alert.setContentText("run_success");
-//            alert.show();
-//            outText.setText("测试输出");
-            run();
-        });
-        pauseButton.setOnMouseClicked(e->{
-            alert.setContentText("pause_success");
-            alert.show();
-        });
+        buttonInit();
     }
     private int getStartID() {
         for (MyNode node : nodeMap.values()) {
@@ -1177,8 +1255,8 @@ public class RootLayoutController implements Initializable {
         }
     }
 
-    public void run(){
-        System.out.println("run");
+    public void build() {
+        System.out.println("build");
         try {
             Run.setup(getStartID(), nodeMap, data, outText);
         } catch (Exception e) {
@@ -1186,23 +1264,19 @@ public class RootLayoutController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText(e.getMessage());
             alert.show();
+            outText.appendText("构建失败："+e.getMessage()+"\n");
+            return;
         }
-
+        outText.appendText("构建成功\n");
     }
 
-    public void test(){
-        for(MyNode node : nodeMap.values()){
-            System.out.println(node.getClass().getName());
-        }
-    }
-
-    public void stepRun(){
-        System.out.println("stepRun");
-        int next = -2;
+    public void run(){
+        System.out.println("run");
+        int next;
         try {
-            next = Run.stepRun();
+            next = Run.continuousRun();
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             Alert alert =new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText(e.getMessage());
             alert.show();
@@ -1225,6 +1299,51 @@ public class RootLayoutController implements Initializable {
             tVar.setVarValue(varMap.get(name).toString());
         }
         tableView.refresh();
+    }
+
+    public void test(){
+        for(MyNode node : nodeMap.values()){
+            System.out.println(node.getClass().getName());
+        }
+    }
+
+    public void stepRun(){
+        System.out.println("stepRun");
+        int next = -2;
+        try {
+            next = Run.stepRun();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert =new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(e.getMessage());
+            alert.show();
+            return;
+        }
+        // stepRun success, update run position
+        MyNode node = nodeMap.get(next);
+        if (node==null)
+            System.out.println(next);
+        assert node!=null;
+        int x = (int) (node.getImageView().getX()/viewW);
+        int y = (int) (node.getImageView().getY()/viewH);
+        showRunPosition.clear();
+        try {
+            showRunPosition.draw(x,y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // update data table
+        Map<String, Object> varMap = Run.varMap;
+        for (TableVar tVar : data) {
+            String name = tVar.getVarName();
+            tVar.setVarValue(varMap.get(name).toString());
+        }
+        tableView.refresh();
+    }
+
+    public void reset() {
+        showRunPosition.clear();
+        Run.reset();
     }
 
     public void commit(){

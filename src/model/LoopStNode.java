@@ -75,7 +75,7 @@ public class LoopStNode extends MyNode {
     }
 
     public int getLoop_stNxtID() {
-        return loop_stNxtID;
+        return connectTo[2];
     }
 
     public void setLoop_stNxtID(int loop_stNxtID) {

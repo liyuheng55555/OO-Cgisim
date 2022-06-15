@@ -18,7 +18,7 @@ public class Run {
     static Map<Integer, MyNode> nodeMap = null;
     static Map<String, Object> varMap = null;
     static TextArea outText = null;
-    Stack<LoopStNode> loopStack = null;
+    static Stack<LoopStNode> loopStack = null;
 
     /**
      * 使用此函数设定运行所需的环境
@@ -32,6 +32,7 @@ public class Run {
                              ObservableList<TableVar> data,
                              TextArea outText
     ) throws Exception {
+        loopStack = new Stack<>();
         setStartID(sID);
         setNodeMap(nMap);
         setVarMap(data);
@@ -154,10 +155,35 @@ public class Run {
             nowID = printNode.getNxtID();
         }
         else if (now instanceof LoopStNode) {
-
+            LoopStNode loopStNode = (LoopStNode) now;
+            loopStack.push(loopStNode);
+            nowID = loopStNode.getLoop_stNxtID();
         }
         else if (now instanceof LoopEndNode) {
-
+            LoopEndNode loopEndNode = (LoopEndNode) now;
+            String expression = loopEndNode.getText().getText();
+            if (!expression.endsWith("\n"))
+                expression += "\n";
+            Object result = Main.run(expression, varMap);
+            if (!(result instanceof Boolean))
+                throw new Exception(
+                        nowID+"号节点是LoopEndNode，"+
+                                "但表达式运算结果不是Boolean，"+
+                                "而是"+result.getClass().toString()+
+                                "，值为"+result.toString()
+                );
+            Boolean b = (Boolean) result;
+            if (b) {
+                MyNode next;
+                try {
+                    next = loopStack.pop();
+                } catch (Exception e) {
+                    throw new Exception(nowID+"号节点是LoopEndNode，表达式结果为True，但找不到可供跳转的LoopStNode");
+                }
+                nowID = next.getFactoryID();
+            }
+            else
+                nowID = loopEndNode.getLoop_endNxtID();
         }
         else {
             throw new Exception(nowID+"号节点类型未知，也许是"+now.getClass().toString());
@@ -171,7 +197,7 @@ public class Run {
      */
     static public void reset() {
         nowID = -1;
-        varMap = null;
+//        varMap = null;
     }
     static public int getNowID() {
         return nowID;
@@ -179,7 +205,11 @@ public class Run {
     static public boolean isRunning() {
         return nowID!=-1;
     }
-    static public void continuousRun() {
-
+    static public int continuousRun() throws Exception {
+        int id;
+        do {
+            id = stepRun();
+        } while(!(nodeMap.get(id) instanceof EndNode));
+        return id;
     }
 }

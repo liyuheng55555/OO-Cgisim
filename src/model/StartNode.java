@@ -11,14 +11,14 @@ import static model.Constant.viewH;
 import static model.Constant.viewW;
 
 public class StartNode extends MyNode {
-    private int nxtID;
-    private int nxtPlace;
+//    private int nxtID;
+//    private int nxtPlace;
     private ImageView start;
 
     public StartNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
-        this.nxtID = -1;
-        this.nxtPlace = -1;
+        this.connectTo[2] = -1;
+        this.connectPlace[2] = -1;
         try{
             this.start = new ImageView(new Image("sources/img/draw_node_start.png"));
             this.start.setX(x);
@@ -33,20 +33,20 @@ public class StartNode extends MyNode {
     }
 
     public int getNxtID() {
-        return nxtID;
+        return connectTo[2];
     }
 
     public void setNxtID(int nxtID) {
-        this.nxtID = nxtID;
+//        this.connectTo[2] = nxtID;
         connectTo[2] = nxtID;
     }
 
     public int getNxtPlace() {
-        return nxtPlace;
+        return connectPlace[2];
     }
 
     public void setNxtPlace(int nxtPlace) {
-        this.nxtPlace = nxtPlace;
+//        this.nxtPlace = nxtPlace;
         connectPlace[2] = nxtPlace;
     }
 
@@ -83,8 +83,8 @@ public class StartNode extends MyNode {
                      @JSONField(name = "nxtID") int nxtID,
                      @JSONField(name = "nxtPlace") int nxtPlace) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
-        this.nxtID = nxtID;
-        this.nxtPlace = nxtPlace;
+        this.connectTo[2] = nxtID;
+        this.connectPlace[2] = nxtPlace;
         try {
             this.start = new ImageView(new Image("sources/img/draw_node_start.png"));
             this.start.setX(xIndex);
