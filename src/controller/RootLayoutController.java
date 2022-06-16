@@ -43,6 +43,18 @@ public class RootLayoutController implements Initializable {
             new TableVar("b", "float", "2.3"),
             new TableVar("c", "bool", "true")
     );
+    private List<TableVar> dataBackup = new ArrayList<>();
+    private void saveData() {
+//        dataBackup = new ArrayList<>();
+        dataBackup.clear();
+        for (TableVar var : data)
+            dataBackup.add(new TableVar(var));
+    }
+    private void recoverData() {
+        data.clear();
+        for (TableVar var : dataBackup)
+            data.add(new TableVar(var));
+    }
     @FXML
     private TextArea outText;
     @FXML
@@ -304,6 +316,56 @@ public class RootLayoutController implements Initializable {
     }
 
     /**
+     * 删除node0与node1之间的所有关系
+     */
+    public void deleteConnection(MyNode node0, MyNode node1) {
+        for(int i=1; i<=4; i++) {
+            if (node0.connectTo[i]==node1.getFactoryID()) {
+                node0.connectTo[i] = -1;
+                node0.connectPlace[i] = -1;
+            }
+            if (node1.connectTo[i]==node0.getFactoryID()) {
+                node1.connectTo[i] = -1;
+                node1.connectPlace[i] = -1;
+            }
+        }
+    }
+
+    /**
+     * 删除一个节点，实现步骤为： <br/>
+     * （1）用{@link #eraseAllPath}把它的连线擦掉 <br/>
+     * （2）把它的前驱后继关系取消 <br/>
+     * （3）修改drawingArea把它自身擦掉 <br/>
+     * （4）从nodeTable中注销 <br/>
+     * （5）从nodeMap中注销 <br/>
+     * （6）把选框清除 <br/>
+     *
+     *
+     * @param node  待删除节点
+     */
+    public void deleteNode(MyNode node) {
+        // 擦掉连线
+        eraseAllPath(node);
+        // 删关系
+        for (int i=1; i<=4; i++) {
+            int id = node.connectTo[i];
+            MyNode node1 = nodeMap.get(id);
+            if (node1!=null)
+                deleteConnection(node, node1);
+        }
+        // 擦自身
+        node.remove(drawingArea);
+        // 从nodeTable注销
+        int x = (int) (node.getImageView().getX() / viewW);
+        int y = (int) (node.getImageView().getY() / viewH);
+        nodeTable[y][x] = null;
+        // 从nodeMap注销
+        nodeMap.remove(node.getFactoryID());
+        // 清除选框
+        showSelection.clear();
+    }
+
+    /**
      * 擦除所有与node相连的线，不影响前驱后继
      * @param node
      */
@@ -312,6 +374,7 @@ public class RootLayoutController implements Initializable {
         int y = (int) (node.getImageView().getY()/viewH);
         for (int c=1; c<=4; c++) {
             if (node.connectTo[c]!=-1) {
+                System.out.println("eraseAllPath:"+c);
                 switch (c) {
                     case 1: erasePath(x,y-1); break;
                     case 2: erasePath(x,y+1); break;
@@ -334,6 +397,17 @@ public class RootLayoutController implements Initializable {
                 int inOut = checkInOrOut(node, c);
                 int sx = 0, sy = 0, sc = 0, ex = 0, ey = 0, ec = 0;
                 MyNode toNode = nodeMap.get(id);
+//                sx = (int)(node.getImageView().getX()/viewW);
+//                sy = (int)(node.getImageView().getY()/viewH);
+//                sc = c;
+//                ex = (int)(toNode.getImageView().getX()/viewW);
+//                ey = (int)(toNode.getImageView().getY()/viewH);
+//                ec = node.connectPlace[c];
+                ArrayList<ArrayList<Integer>> path = null;
+//                if (sy<ey)
+//                    path = getPath(sx, sy, sc, ex, ey, ec);
+//                else
+//                    path = getPath(ex, ey, ec, sx, sy, sc);
                 if (inOut==1) { // 输出点
                     sx = (int)(node.getImageView().getX()/viewW);
                     sy = (int)(node.getImageView().getY()/viewH);
@@ -352,7 +426,7 @@ public class RootLayoutController implements Initializable {
                 }
                 else
                     bad();  // 在不应该有连接存在的地方，却有连接存在
-                ArrayList<ArrayList<Integer>> path = getPath(sx, sy, sc, ex, ey, ec);
+                path = getPath(sx, sy, sc, ex, ey, ec);
                 if (path==null) { // 绘制失败，清除前驱后继
                     int toC = node.connectPlace[c];
                     toNode.connectTo[toC] = -1;
@@ -373,10 +447,10 @@ public class RootLayoutController implements Initializable {
 
     private void tryConnectNeighborHelp(int x0, int y0, int x1, int y1) throws Exception {
         if (x0<0 || x0>= Constant.tableW || y0<0 || y0>=Constant.tableH)
-            throw new Exception("x或y错误");
+            return;
         if (x1<0 || x1>= Constant.tableW || y1<0 || y1>=Constant.tableH)
-            throw new Exception("x或y错误");
-        if (!(x0==x1 && Math.abs(y0-y1)==1) && !(y0==y1 && Math.abs(x0-x1)==1))
+            return;
+        if (!(x0==x1 && Math.abs(y0-y1)==1))
             throw new Exception("不相邻");
         MyNode node0 = nodeTable[y0][x0];
         MyNode node1 = nodeTable[y1][x1];
@@ -388,14 +462,14 @@ public class RootLayoutController implements Initializable {
         List<Integer> outC0 = outConnector.get(name0);
         List<Integer> inC1 = inConnector.get(name1);
         List<Integer> outC1 = outConnector.get(name1);
-        if (outC0!=null && inC1!=null && outC0.contains(2) && inC1.contains(1)) { // 0->1
+        if (outC0!=null && inC1!=null && y0+1==y1 && outC0.contains(2) && inC1.contains(1)) { // 0->1
             node0.connectTo[2] = node1.getFactoryID();
             node0.connectPlace[2] = 1;
             node1.connectTo[1] = node0.getFactoryID();
             node1.connectPlace[1] = 2;
             System.out.println("good!");
         }
-        if (outC1!=null && inC0!=null && inC0.contains(1) && outC1.contains(2)) { // 0<-1
+        if (outC1!=null && inC0!=null && y1+1==y0 && inC0.contains(1) && outC1.contains(2)) { // 0<-1
             node0.connectTo[1] = node1.getFactoryID();
             node0.connectPlace[1] = 2;
             node1.connectTo[2] = node0.getFactoryID();
@@ -412,12 +486,12 @@ public class RootLayoutController implements Initializable {
     public void tryConnectNeighbor(MyNode node) {
         int y = (int)(node.getImageView().getY()/viewH);
         int x = (int)(node.getImageView().getX()/viewW);
-        try {
-            tryConnectNeighborHelp(x,y,x+1,y);
-        } catch (Exception ignored) {ignored.printStackTrace();}
-        try {
-            tryConnectNeighborHelp(x,y,x-1,y);
-        } catch (Exception ignored) {ignored.printStackTrace();}
+//        try {
+//            tryConnectNeighborHelp(x,y,x+1,y);
+//        } catch (Exception ignored) {ignored.printStackTrace();}
+//        try {
+//            tryConnectNeighborHelp(x,y,x-1,y);
+//        } catch (Exception ignored) {ignored.printStackTrace();}
         try {
             tryConnectNeighborHelp(x,y,x,y+1);
         } catch (Exception ignored) {ignored.printStackTrace();}
@@ -583,9 +657,11 @@ public class RootLayoutController implements Initializable {
         }
         String[] ss = node.getImageView().getId().split("_", 2);
         if (!ss[0].equals("line")) {
+
             return;
         }
-        nodeTable[sy][sx].remove(drawingArea);
+//        nodeTable[sy][sx].remove(drawingArea);
+        drawingArea.getChildren().remove(node.getImageView());
         nodeTable[sy][sx] = null;
         if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
@@ -753,10 +829,11 @@ public class RootLayoutController implements Initializable {
                 int y = (int) event.getY();
                 MyNode node = nodeTable[y/viewH][x/viewW];
                 if (node!=null) {
-                    eraseAllPath(node);
-                    node.removeFromTable(nodeTable);
-                    nodeMap.remove(node.getFactoryID());
-                    node.remove(drawingArea);
+                    deleteNode(node);
+//                    eraseAllPath(node);
+//                    node.removeFromTable(nodeTable);
+//                    nodeMap.remove(node.getFactoryID());
+//                    node.remove(drawingArea);
                 }
             }
 //            updateConnection();
@@ -804,6 +881,8 @@ public class RootLayoutController implements Initializable {
 
         // ---------------------- 拖动响应，分为按下鼠标、拖动、松开鼠标，三个阶段 ---------------------------
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_PRESSED, event -> {
+            if (!event.getButton().name().equals("PRIMARY"))
+                return;
             System.out.println("MOUSE_PRESSED");
             int y = (int)(event.getY()/viewH);
             int x = (int)(event.getX()/viewW);
@@ -823,6 +902,8 @@ public class RootLayoutController implements Initializable {
 
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
+            if (!event.getButton().name().equals("PRIMARY"))
+                return;
             status = Status.dragging;
             if (event.isPrimaryButtonDown() && selection!=null && !selection.getImageView().getId().contains("line")) {
                 shadow.setX((int) event.getX() - (int) event.getX()%viewW);
@@ -833,7 +914,17 @@ public class RootLayoutController implements Initializable {
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
+            if (!event.getButton().name().equals("PRIMARY"))
+                return;
             if (selection!=null && !selection.getImageView().getId().contains("line")) {
+                int x = (int) event.getX() / viewW;
+                int y = (int) event.getY() / viewH;
+                if (nodeTable[y][x] != null && nodeTable[y][x].getFactoryID() == selection.getFactoryID()) // 没移动
+                    return;
+                if (nodeTable[y][x] != null) {
+                    deleteNode(nodeTable[y][x]);
+                }
+
                 selection.remove(drawingArea);
                 selection.draw(drawingArea, (int) event.getX() - (int) event.getX()%viewW, (int) event.getY() - (int) event.getY()%viewH);
                 selection.putInTable(nodeTable);
@@ -1257,6 +1348,11 @@ public class RootLayoutController implements Initializable {
 
     public void build() {
         System.out.println("build");
+        if (Run.isRunning()) {
+            outText.appendText("运行已停止");
+            reset();
+        }
+        saveData();
         try {
             Run.setup(getStartID(), nodeMap, data, outText);
         } catch (Exception e) {
@@ -1271,6 +1367,7 @@ public class RootLayoutController implements Initializable {
     }
 
     public void run(){
+        build();
         System.out.println("run");
         int next;
         try {
@@ -1308,6 +1405,8 @@ public class RootLayoutController implements Initializable {
     }
 
     public void stepRun(){
+        if (!Run.isRunning())
+            build();
         System.out.println("stepRun");
         int next = -2;
         try {
@@ -1344,6 +1443,7 @@ public class RootLayoutController implements Initializable {
     public void reset() {
         showRunPosition.clear();
         Run.reset();
+        recoverData();
     }
 
     public void commit(){

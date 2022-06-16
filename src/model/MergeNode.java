@@ -10,22 +10,22 @@ import static model.Constant.viewH;
 import static model.Constant.viewW;
 
 public class MergeNode extends MyNode{
-    private int mergeTrueID;
-    private int mergeTruePlace;
-    private int mergeFalseID;
-    private int mergeFalsePlace;
-    private int mergeNxtID;
-    private int mergeNxtPlace;
+//    private int mergeTrueID;
+//    private int mergeTruePlace;
+//    private int mergeFalseID;
+//    private int mergeFalsePlace;
+//    private int mergeNxtID;
+//    private int mergeNxtPlace;
     private ImageView merge;
 
     public MergeNode(int factoryID, int x, int y) {
         super(factoryID,x,y);
-        this.mergeTrueID = -1;
-        this.mergeTruePlace = -1;
-        this.mergeFalseID = -1;
-        this.mergeFalsePlace = -1;
-        this.mergeNxtID = -1;
-        this.mergeNxtPlace = -1;
+//        this.mergeTrueID = -1;
+//        this.mergeTruePlace = -1;
+//        this.mergeFalseID = -1;
+//        this.mergeFalsePlace = -1;
+//        this.mergeNxtID = -1;
+//        this.mergeNxtPlace = -1;
         try{
             this.merge = new ImageView(new Image("sources/img/draw_node_merge.png"));
             this.merge.setId("merge");
@@ -53,12 +53,12 @@ public class MergeNode extends MyNode{
                      @JSONField(name = "mergeNxtID") int mergeNxtID,
                      @JSONField(name = "mergeNxtPlace") int mergeNxtPlace) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
-        this.mergeTrueID = mergeTrueID;
-        this.mergeTruePlace = mergeTruePlace;
-        this.mergeFalseID = mergeFalseID;
-        this.mergeFalsePlace = mergeFalsePlace;
-        this.mergeNxtID = mergeNxtID;
-        this.mergeNxtPlace = mergeNxtPlace;
+//        this.mergeTrueID = mergeTrueID;
+//        this.mergeTruePlace = mergeTruePlace;
+//        this.mergeFalseID = mergeFalseID;
+//        this.mergeFalsePlace = mergeFalsePlace;
+//        this.mergeNxtID = mergeNxtID;
+//        this.mergeNxtPlace = mergeNxtPlace;
         try {
             this.merge = new ImageView(new Image("sources/img/draw_node_merge.png"));
             this.merge.setX(xIndex);
@@ -73,56 +73,62 @@ public class MergeNode extends MyNode{
     }
 
     public int getMergeTrueID() {
-        return mergeTrueID;
+//        return mergeTrueID;
+        return connectTo[1];
     }
 
     public void setMergeTrueID(int mergeTrueID) {
-        this.mergeTrueID = mergeTrueID;
+//        this.mergeTrueID = mergeTrueID;
         connectTo[1] = mergeTrueID;
     }
 
     public int getMergeFalseID() {
-        return mergeFalseID;
+//        return mergeFalseID;
+        return connectTo[4];
     }
 
     public void setMergeFalseID(int mergeFalseID) {
-        this.mergeFalseID = mergeFalseID;
+//        this.mergeFalseID = mergeFalseID;
         connectTo[4] = mergeFalseID;
     }
 
     public int getMergeNxtID() {
-        return mergeNxtID;
+//        return mergeNxtID;
+        return connectTo[2];
     }
 
     public void setMergeNxtID(int mergeNxtID) {
-        this.mergeNxtID = mergeNxtID;
+//        this.mergeNxtID = mergeNxtID;
         connectTo[2] = mergeNxtID;
     }
 
     public int getMergeTruePlace() {
-        return mergeTruePlace;
+//        return mergeTruePlace;
+        return connectPlace[1];
     }
 
     public void setMergeTruePlace(int mergeTruePlace) {
-        this.mergeTruePlace = mergeTruePlace;
+//        this.mergeTruePlace = mergeTruePlace;
         connectPlace[1] = mergeTruePlace;
     }
 
     public int getMergeFalsePlace() {
-        return mergeFalsePlace;
+//        return mergeFalsePlace;
+        return connectPlace[4];
     }
 
     public void setMergeFalsePlace(int mergeFalsePlace) {
-        this.mergeFalsePlace = mergeFalsePlace;
+//        this.mergeFalsePlace = mergeFalsePlace;
         connectPlace[4] = mergeFalsePlace;
     }
 
     public int getMergeNxtPlace() {
-        return mergeNxtPlace;
+//        return mergeNxtPlace;
+        return connectPlace[2];
     }
 
     public void setMergeNxtPlace(int mergeNxtPlace) {
-        this.mergeNxtPlace = mergeNxtPlace;
+//        this.mergeNxtPlace = mergeNxtPlace;
         connectPlace[2] = mergeNxtPlace;
     }
 

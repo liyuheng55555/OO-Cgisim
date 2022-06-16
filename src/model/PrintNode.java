@@ -14,19 +14,19 @@ import static model.Constant.*;
 
 public class PrintNode extends MyNode {
     private Text text;
-    private int preID;
-    private int prePlace;
-    private int nxtID;
-    private int nxtPlace;
+//    private int preID;
+//    private int prePlace;
+//    private int nxtID;
+//    private int nxtPlace;
     private String printText; // printText is the text of the print node
     private ImageView print;
 
     public PrintNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
-        this.preID = -1;
-        this.prePlace = -1;
-        this.nxtID = -1;
-        this.nxtPlace = -1;
+//        this.preID = -1;
+//        this.prePlace = -1;
+//        this.nxtID = -1;
+//        this.nxtPlace = -1;
         this.printText = "print code!";
         this.text = new Text("print code!");
         this.text.setX(x + printTextRelativeX);
@@ -52,16 +52,16 @@ public class PrintNode extends MyNode {
                          @JSONField(name = "connectTo") int[] connectTo,
                          @JSONField(name = "xIndex") double xIndex,
                          @JSONField(name = "yIndex") double yIndex,
-                         @JSONField(name = "preID") int preID,
-                         @JSONField(name = "prePlace") int prePlace,
-                         @JSONField(name = "nxtID") int nxtID,
-                         @JSONField(name = "nxtPlace") int nxtPlace,
+//                         @JSONField(name = "preID") int preID,
+//                         @JSONField(name = "prePlace") int prePlace,
+//                         @JSONField(name = "nxtID") int nxtID,
+//                         @JSONField(name = "nxtPlace") int nxtPlace,
                          @JSONField(name = "printText") String printText) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
-        this.preID = preID;
-        this.prePlace = prePlace;
-        this.nxtID = nxtID;
-        this.nxtPlace = nxtPlace;
+//        this.preID = preID;
+//        this.prePlace = prePlace;
+//        this.nxtID = nxtID;
+//        this.nxtPlace = nxtPlace;
         this.printText = printText;
         this.text = new Text(printText);
         this.text.setX(xIndex + printTextRelativeX);
@@ -91,38 +91,42 @@ public class PrintNode extends MyNode {
     }
 
     public int getPreID() {
-        return preID;
+//        return preID;
+        return connectTo[1];
     }
 
     public void setPreID(int preID) {
-        this.preID = preID;
+//        this.preID = preID;
         connectTo[1] = preID;
     }
 
     public int getNxtID() {
-        return nxtID;
+//        return nxtID;
+        return connectTo[2];
     }
 
     public void setNxtID(int nxtID) {
-        this.nxtID = nxtID;
+//        this.nxtID = nxtID;
         connectTo[2] = nxtID;
     }
 
     public int getPrePlace() {
-        return prePlace;
+//        return prePlace;
+        return connectPlace[1];
     }
 
     public void setPrePlace(int prePlace) {
-        this.prePlace = prePlace;
+//        this.prePlace = prePlace;
         connectPlace[1] = prePlace;
     }
 
     public int getNxtPlace() {
-        return nxtPlace;
+//        return nxtPlace;
+        return connectPlace[2];
     }
 
     public void setNxtPlace(int nxtPlace) {
-        this.nxtPlace = nxtPlace;
+//        this.nxtPlace = nxtPlace;
         connectPlace[2] = nxtPlace;
     }
 

@@ -12,19 +12,19 @@ import static model.Constant.*;
 
 public class StatementNode extends MyNode {
     private Text text;
-    private int preID;
-    private int prePlace;
-    private int nxtID;
-    private int nxtPlace;
+//    private int preID;
+//    private int prePlace;
+//    private int nxtID;
+//    private int nxtPlace;
     private String statementText; // statementText is the text of the statement node
     private ImageView statement;
 
     public StatementNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
-        this.preID = -1;
-        this.prePlace = -1;
-        this.nxtID = -1;
-        this.nxtPlace = -1;
+//        this.preID = -1;
+//        this.prePlace = -1;
+//        this.nxtID = -1;
+//        this.nxtPlace = -1;
         this.statementText = "statement code!";
         this.text = new Text("statement code!");
         this.text.setX(x + statementTextRelativeX);
@@ -49,16 +49,17 @@ public class StatementNode extends MyNode {
                      @JSONField(name = "connectTo") int[] connectTo,
                      @JSONField(name = "xIndex") double xIndex,
                      @JSONField(name = "yIndex") double yIndex,
-                     @JSONField(name = "preID") int preID,
-                     @JSONField(name = "prePlace") int prePlace,
-                     @JSONField(name = "nxtID") int nxtID,
-                     @JSONField(name = "nxtPlace") int nxtPlace,
+//                     @JSONField(name = "preID") int preID,
+//                     @JSONField(name = "prePlace") int prePlace,
+//                     @JSONField(name = "nxtID") int nxtID,
+//                     @JSONField(name = "nxtPlace") int nxtPlace,
                      @JSONField(name = "statementText") String statementText) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
-        this.preID = preID;
-        this.prePlace = prePlace;
-        this.nxtID = nxtID;
-        this.nxtPlace = nxtPlace;
+//        this.preID = preID;
+//        this.prePlace = prePlace;
+//        this.nxtID = nxtID;
+//        this.nxtPlace = nxtPlace;
+//        recoverConnect(connectTo, connectPlace);
         this.statementText = statementText;
         this.text = new Text(statementText);
         this.text.setX(xIndex + statementTextRelativeX);
@@ -87,38 +88,44 @@ public class StatementNode extends MyNode {
     }
 
     public int getPreID() {
-        return preID;
+//        return preID;
+        return connectTo[1];
     }
 
+
     public void setPreID(int preID) {
-        this.preID = preID;
+//        this.preID = preID;
         connectTo[1] = preID;
     }
 
     public int getNxtID() {
-        return nxtID;
+//        return nxtID;
+        return connectTo[2];
     }
 
     public void setNxtID(int nxtID) {
-        this.nxtID = nxtID;
+//        this.nxtID = nxtID;
         connectTo[2] = nxtID;
     }
 
     public int getPrePlace() {
-        return prePlace;
+//        return prePlace;
+        return connectTo[2];
     }
 
     public void setPrePlace(int prePlace) {
-        this.prePlace = prePlace;
+//        this.prePlace = prePlace;
         connectPlace[1] = prePlace;
     }
 
     public int getNxtPlace() {
-        return nxtPlace;
+//        return nxtPlace;
+        return connectPlace[1];
     }
 
+
     public void setNxtPlace(int nxtPlace) {
-        this.nxtPlace = nxtPlace;
+//        this.nxtPlace = nxtPlace;
         connectPlace[2] = nxtPlace;
     }
 

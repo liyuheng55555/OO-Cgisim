@@ -79,12 +79,14 @@ public class StartNode extends MyNode {
                      @JSONField(name = "connectPlace") int[] connectPlace,
                      @JSONField(name = "connectTo") int[] connectTo,
                      @JSONField(name = "xIndex") double xIndex,
-                     @JSONField(name = "yIndex") double yIndex,
-                     @JSONField(name = "nxtID") int nxtID,
-                     @JSONField(name = "nxtPlace") int nxtPlace) {
+                     @JSONField(name = "yIndex") double yIndex
+//                     @JSONField(name = "nxtID") int nxtID,
+//                     @JSONField(name = "nxtPlace") int nxtPlace
+    ) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
-        this.connectTo[2] = nxtID;
-        this.connectPlace[2] = nxtPlace;
+//        this.connectTo[2] = nxtID;
+//        this.connectPlace[2] = nxtPlace;
+//        recoverConnect(connectTo, connectPlace);
         try {
             this.start = new ImageView(new Image("sources/img/draw_node_start.png"));
             this.start.setX(xIndex);

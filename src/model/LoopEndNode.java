@@ -11,19 +11,19 @@ import static model.Constant.*;
 
 public class LoopEndNode extends MyNode {
     private Text text;
-    private int loop_endPreID;
-    private int loop_endPrePlace;
-    private int loop_endNxtID;
-    private int loop_endNxtPlace;
+//    private int loop_endPreID;
+//    private int loop_endPrePlace;
+//    private int loop_endNxtID;
+//    private int loop_endNxtPlace;
     private String loop_endText; // loop_endText is the text of the loop end node
     private ImageView loop_end;
 
     public LoopEndNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
-        this.loop_endPreID = -1;
-        this.loop_endPrePlace = -1;
-        this.loop_endNxtID = -1;
-        this.loop_endNxtPlace = -1;
+//        this.loop_endPreID = -1;
+//        this.loop_endPrePlace = -1;
+//        this.loop_endNxtID = -1;
+//        this.loop_endNxtPlace = -1;
         this.loop_endText = "loop end code!";
         this.text = new Text("loop end code!");
         this.text.setX(x + LoopTextRelativeX);
@@ -48,16 +48,17 @@ public class LoopEndNode extends MyNode {
                      @JSONField(name = "connectTo") int[] connectTo,
                      @JSONField(name = "xIndex") double xIndex,
                      @JSONField(name = "yIndex") double yIndex,
-                     @JSONField(name = "loop_endPreID") int loop_endPreID,
-                     @JSONField(name = "loop_endPrePlace") int loop_endPrePlace,
-                     @JSONField(name = "loop_endNxtID") int loop_endNxtID,
-                     @JSONField(name = "loop_endNxtPlace") int loop_endNxtPlace,
+//                     @JSONField(name = "loop_endPreID") int loop_endPreID,
+//                     @JSONField(name = "loop_endPrePlace") int loop_endPrePlace,
+//                     @JSONField(name = "loop_endNxtID") int loop_endNxtID,
+//                     @JSONField(name = "loop_endNxtPlace") int loop_endNxtPlace,
                        @JSONField(name = "loop_endText") String loop_endText) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
-        this.loop_endPreID = loop_endPreID;
-        this.loop_endPrePlace = loop_endPrePlace;
-        this.loop_endNxtID = loop_endNxtID;
-        this.loop_endNxtPlace = loop_endNxtPlace;
+//        this.loop_endPreID = loop_endPreID;
+//        this.loop_endPrePlace = loop_endPrePlace;
+//        this.loop_endNxtID = loop_endNxtID;
+//        this.loop_endNxtPlace = loop_endNxtPlace;
+
         try {
             this.loop_end = new ImageView(new Image("sources/img/draw_node_loop_end.png"));
             this.loop_end.setX(xIndex);
@@ -86,38 +87,42 @@ public class LoopEndNode extends MyNode {
     }
 
     public int getLoop_endPreID() {
-        return loop_endPreID;
+//        return loop_endPreID;
+        return connectTo[1];
     }
 
     public int getLoop_endNxtID() {
-        return loop_endNxtID;
+//        return loop_endNxtID;
+        return connectTo[2];
     }
 
     public void setLoop_endPreID(int loop_endPreID) {
-        this.loop_endPreID = loop_endPreID;
+//        this.loop_endPreID = loop_endPreID;
         connectTo[1] = loop_endPreID;
     }
 
     public void setLoop_endNxtID(int loop_endNxtID) {
-        this.loop_endNxtID = loop_endNxtID;
+//        this.loop_endNxtID = loop_endNxtID;
         connectTo[2] = loop_endNxtID;
     }
 
     public int getLoop_endPrePlace() {
-        return loop_endPrePlace;
+//        return loop_endPrePlace;
+        return connectPlace[1];
     }
 
     public void setLoop_endPrePlace(int loop_endPrePlace) {
-        this.loop_endPrePlace = loop_endPrePlace;
+//        this.loop_endPrePlace = loop_endPrePlace;
         connectPlace[1] = loop_endPrePlace;
     }
 
     public int getLoop_endNxtPlace() {
-        return loop_endNxtPlace;
+//        return loop_endNxtPlace;
+        return connectPlace[2];
     }
 
     public void setLoop_endNxtPlace(int loop_endNxtPlace) {
-        this.loop_endNxtPlace = loop_endNxtPlace;
+//        this.loop_endNxtPlace = loop_endNxtPlace;
         connectPlace[2] = loop_endNxtPlace;
     }
 
