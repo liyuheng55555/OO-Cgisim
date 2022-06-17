@@ -706,7 +706,7 @@ public class RootLayoutController implements Initializable {
         drawingArea.getChildren().addAll(shadow, connector);
 
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (status == Status.normal && selectNode==null) {
+            if ((status == Status.normal || status == Status.prepareToDrag) && selectNode==null) {
                 MyNode node = nodeTable[(int) event.getY()/viewH][(int) event.getX()/viewW];
                 if (node!=null) {
                     if(clickStatus == ClickStatus.choosingStart) {
@@ -796,6 +796,8 @@ public class RootLayoutController implements Initializable {
                 status = Status.normal;
                 return;
             }
+            if (status == Status.prepareToDrag)
+                status = Status.normal;
             keyBoardPane.requestFocus();
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectNode != null) {
@@ -884,18 +886,13 @@ public class RootLayoutController implements Initializable {
             if (!event.getButton().name().equals("PRIMARY"))
                 return;
             System.out.println("MOUSE_PRESSED");
+            status = Status.prepareToDrag;
             int y = (int)(event.getY()/viewH);
             int x = (int)(event.getX()/viewW);
             selection = nodeTable[y][x];
-            if(selection != null && !selection.getImageView().getId().contains("line")) {
-                eraseAllPath(selection);
-                showSelection.clear();
-                System.out.println("Selection is: " + selection.getClass().getName());
-                selection.remove(drawingArea);
-                selection.draw(drawingArea);
-                relativeX = event.getX() -selection.getImageView().getX();
+            if (selection!=null) {
+                relativeX = event.getX() - selection.getImageView().getX();
                 relativeY = event.getY() - selection.getImageView().getY();
-                selection.removeFromTable(nodeTable);
             }
         });
 
@@ -904,7 +901,30 @@ public class RootLayoutController implements Initializable {
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
             if (!event.getButton().name().equals("PRIMARY"))
                 return;
-            status = Status.dragging;
+            if (selection==null)
+                return;
+            if (status == Status.prepareToDrag) {
+                if (distance(relativeX, relativeY,
+                        event.getX() -selection.getImageView().getX(),
+                        event.getY() - selection.getImageView().getY())>Constant.dragThreshold) {
+                    status = Status.dragging;
+                    if(selection != null && !selection.getImageView().getId().contains("line")) {
+                        eraseAllPath(selection);
+                        System.out.println("Selection is: " + selection.getClass().getName());
+                        selection.remove(drawingArea);
+                        selection.draw(drawingArea);
+                        selection.removeFromTable(nodeTable);
+                    }
+                    showSelection.clear();
+                }
+
+                else return;
+            }
+
+//                status = Status.dragging;
+//            if (showSelection.hasDraw())
+//                showSelection.clear();
+//            status = Status.dragging;
             if (event.isPrimaryButtonDown() && selection!=null && !selection.getImageView().getId().contains("line")) {
                 shadow.setX((int) event.getX() - (int) event.getX()%viewW);
                 shadow.setY((int) event.getY() - (int) event.getY()%viewH);
@@ -915,6 +935,8 @@ public class RootLayoutController implements Initializable {
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
             if (!event.getButton().name().equals("PRIMARY"))
+                return;
+            if (status!=Status.dragging)
                 return;
             if (selection!=null && !selection.getImageView().getId().contains("line")) {
                 int x = (int) event.getX() / viewW;
