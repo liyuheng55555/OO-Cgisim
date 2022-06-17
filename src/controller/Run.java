@@ -1,17 +1,21 @@
 package controller;
 
 import Parse.Main;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TextArea;
 import model.*;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-public class Run {
+public class Run extends Thread{
+    static volatile boolean pauseSig = false;  // 主线程将此设置为false以暂停运行
+    static volatile Exception exception = null;  // 连续运行过程中出现异常，异常信息存到这里
+    static SimpleIntegerProperty inform = null;  // 连续运行结束或出现异常，修改这玩意儿以通知主线程
+    static Object lock = null;  // 如果连续运行暂停，使用lock.wait()，等待被主线程唤醒
     Run() {}
     static int startID = -1;
     static int nowID = -1;
@@ -30,13 +34,17 @@ public class Run {
     static public void setup(int sID,
                              Map<Integer, MyNode> nMap,
                              ObservableList<TableVar> data,
-                             TextArea outText
+                             TextArea outText,
+                             SimpleIntegerProperty info,
+                             Object lck
     ) throws Exception {
         loopStack = new Stack<>();
         setStartID(sID);
         setNodeMap(nMap);
         setVarMap(data);
         setTextArea(outText);
+        inform = info;
+        lock = lck;
     }
 
     static public void setStartID(int sID) {
@@ -59,7 +67,6 @@ public class Run {
      */
     static public void setVarMap(ObservableList<TableVar> data) throws Exception {
         varMap = new HashMap<>();
-        int cnt = 0;
         for (TableVar var : data) {
             String name = var.getVarName();
             String type = var.getVarType();
@@ -126,7 +133,7 @@ public class Run {
                         nowID+"号节点是IfNode，"+
                                 "但表达式运算结果不是Boolean，"+
                                 "而是"+result.getClass().toString()+
-                                "，值为"+result.toString()
+                                "，值为"+ result
                 );
             if ((Boolean)result)
                 nowID = ifNode.getBranchTrueID();
@@ -170,7 +177,7 @@ public class Run {
                         nowID+"号节点是LoopEndNode，"+
                                 "但表达式运算结果不是Boolean，"+
                                 "而是"+result.getClass().toString()+
-                                "，值为"+result.toString()
+                                "，值为"+ result
                 );
             Boolean b = (Boolean) result;
             if (b) {
@@ -199,9 +206,7 @@ public class Run {
         nowID = -1;
 //        varMap = null;
     }
-    static public int getNowID() {
-        return nowID;
-    }
+
     static public boolean isRunning() {
         return nowID!=-1;
     }
@@ -211,6 +216,38 @@ public class Run {
             id = stepRun();
         } while(!(nodeMap.get(id) instanceof EndNode));
         return id;
+    }
+    static public int getNow() {
+        return nowID;
+    }
+
+
+    @Override
+    public void run() {
+        System.out.println("开始多线程运行");
+        int id;
+        do {
+            if (pauseSig) {
+                synchronized (lock) {
+                    try {
+                        System.out.println("暂停多线程运行");
+                        lock.wait();
+                        System.out.println("恢复多线程运行");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            try {
+                id = stepRun();
+            } catch (Exception e) {
+                exception = e;
+                inform.set(inform.get()+1);
+                return;
+            }
+        } while(!(nodeMap.get(id) instanceof EndNode));
+        inform.set(inform.get()+1);
+//        return id;
     }
 }
 

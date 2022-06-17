@@ -56,8 +56,12 @@ public class ShowAnything {
     public void draw(int x, int y) throws Exception {
         if (x<0 || x>= Constant.tableW || y<0 || y>=Constant.tableH)
             throw new Exception("x»òy´íÎó");
-        if (table[y][x]!=null)
+        if (table[y][x]!=null) {
+            drawingArea.getChildren().remove(table[y][x]);
+            drawingArea.getChildren().add(table[y][x]);
             return;
+        }
+
         table[y][x] = copyImageView();
         table[y][x].setX(x*Constant.viewW+relativeX);
         table[y][x].setY(y*Constant.viewH+relativeY);

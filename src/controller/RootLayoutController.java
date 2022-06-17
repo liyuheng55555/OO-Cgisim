@@ -7,6 +7,9 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -158,11 +161,11 @@ public class RootLayoutController implements Initializable {
 //            alert.setContentText("run_success");
 //            alert.show();
 //            outText.setText("测试输出");
-            run();
+//            run();
+            continiousRun();
         });
         pauseButton.setOnMouseClicked(e->{
-            alert.setContentText("pause_success");
-            alert.show();
+            pause();
         });
     }
 
@@ -494,10 +497,10 @@ public class RootLayoutController implements Initializable {
 //        } catch (Exception ignored) {ignored.printStackTrace();}
         try {
             tryConnectNeighborHelp(x,y,x,y+1);
-        } catch (Exception ignored) {ignored.printStackTrace();}
+        } catch (Exception e) {e.printStackTrace();}
         try {
             tryConnectNeighborHelp(x,y,x,y-1);
-        } catch (Exception ignored) {ignored.printStackTrace();}
+        } catch (Exception e) {e.printStackTrace();}
 
 
 //        if (x<0 || x>= Constant.tableW || y<0 || y>=Constant.tableH)
@@ -852,12 +855,7 @@ public class RootLayoutController implements Initializable {
                     int c2 = touchConnector(node, event.getX(), event.getY(), outConnector);
                     int c;
                     if(c1 == -1){
-                        if(c2 == -1){
-                            found = false;
-                            c = -1;
-                        }else{
-                            c = c2;
-                        }
+                        c = c2;
                     }else {
                         c = c1;
                     }
@@ -1386,7 +1384,14 @@ public class RootLayoutController implements Initializable {
         }
         saveData();
         try {
-            Run.setup(getStartID(), nodeMap, data, outText);
+            Run.setup(
+                    getStartID(),
+                    nodeMap,
+                    data,
+                    outText,
+                    inform,
+                    lock
+            );
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -1398,28 +1403,61 @@ public class RootLayoutController implements Initializable {
         outText.appendText("构建成功\n");
     }
 
-    public void run(){
-        build();
-        System.out.println("run");
-        int next;
-        try {
-            next = Run.continuousRun();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Alert alert =new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText(e.getMessage());
-            alert.show();
-            return;
+    /*
+    -----------------------------------  多线程 --------------------------------------------
+     */
+    private final Object lock = new Object(); // 继续运行的时候使用lock.notify()通知运算线程，让它继续运行
+    private void continue_() {
+        Run.pauseSig = false;
+        synchronized (lock) {
+            lock.notify();
         }
-        // stepRun success, update run position
-        MyNode node = nodeMap.get(next);
-        int x = (int) (node.getImageView().getX()/viewW);
-        int y = (int) (node.getImageView().getY()/viewH);
-        showRunPosition.clear();
+    }
+
+    private void pause() {
+        Run.pauseSig = true;
         try {
-            showRunPosition.draw(x,y);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Thread.sleep(100);
+        } catch (Exception ignored) {}
+        int now = Run.getNow();
+//        Exception exception = Run.getException();
+        updateEveryThing(now, null);
+    }
+
+    /**
+     * inform的作用是，让运算线程通知主线程运算已经告一段落
+     */
+    private final SimpleIntegerProperty inform = new SimpleIntegerProperty(0);
+    private void setInform() {
+        inform.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                int now = Run.getNow();
+                Exception exception = Run.exception;
+                updateEveryThing(now, exception);
+            }
+        });
+    }
+
+    /**
+     * 运算出了结果，调用此函数以更新图形界面；<br/>
+     * 不管是单步运行还是连续运行，都用这个<br/>
+     * @param now   当前运行位置的id
+     * @param exception  如果不为null，说明运行中出现了异常，导致运行终止，于是应该显示这个异常信息
+     */
+    private void updateEveryThing(int now, Exception exception) {
+        // stepRun success, update run position
+        if (now!=-1) {
+            MyNode node = nodeMap.get(now);
+            int x = (int) (node.getImageView().getX()/viewW);
+            int y = (int) (node.getImageView().getY()/viewH);
+            System.out.println(x+" "+y);
+            showRunPosition.clear();
+            try {
+                showRunPosition.draw(x,y);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         // update data table
         Map<String, Object> varMap = Run.varMap;
@@ -1428,6 +1466,56 @@ public class RootLayoutController implements Initializable {
             tVar.setVarValue(varMap.get(name).toString());
         }
         tableView.refresh();
+        if (exception!=null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(exception.getMessage());
+            alert.show();
+        }
+    }
+
+    private void continiousRun() {
+        if (Run.isRunning()) {
+            continue_();
+            return;
+        }
+        build();
+        System.out.println("cRun");
+        int next;
+        Run run = new Run();
+        run.start();
+    }
+
+    public void run(){
+        continiousRun();
+//        build();
+//        System.out.println("run");
+//        int next;
+//        try {
+//            next = Run.continuousRun();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Alert alert =new Alert(Alert.AlertType.INFORMATION);
+//            alert.setContentText(e.getMessage());
+//            alert.show();
+//            return;
+//        }
+//        // stepRun success, update run position
+//        MyNode node = nodeMap.get(next);
+//        int x = (int) (node.getImageView().getX()/viewW);
+//        int y = (int) (node.getImageView().getY()/viewH);
+//        showRunPosition.clear();
+//        try {
+//            showRunPosition.draw(x,y);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        // update data table
+//        Map<String, Object> varMap = Run.varMap;
+//        for (TableVar tVar : data) {
+//            String name = tVar.getVarName();
+//            tVar.setVarValue(varMap.get(name).toString());
+//        }
+//        tableView.refresh();
     }
 
     public void test(){
@@ -1451,25 +1539,7 @@ public class RootLayoutController implements Initializable {
             return;
         }
         // stepRun success, update run position
-        MyNode node = nodeMap.get(next);
-        if (node==null)
-            System.out.println(next);
-        assert node!=null;
-        int x = (int) (node.getImageView().getX()/viewW);
-        int y = (int) (node.getImageView().getY()/viewH);
-        showRunPosition.clear();
-        try {
-            showRunPosition.draw(x,y);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // update data table
-        Map<String, Object> varMap = Run.varMap;
-        for (TableVar tVar : data) {
-            String name = tVar.getVarName();
-            tVar.setVarValue(varMap.get(name).toString());
-        }
-        tableView.refresh();
+        updateEveryThing(next, null);
     }
 
     public void reset() {
