@@ -1085,6 +1085,11 @@ public class RootLayoutController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("保存文件");
         fileChooser.setInitialFileName("new.json");
+        File defaultDir = new File("save");
+        if (!defaultDir.exists())
+            if (defaultDir.mkdir())
+                System.out.println("创建了save文件夹");
+        fileChooser.setInitialDirectory(defaultDir);
         File file = fileChooser.showSaveDialog(Main.getPrimaryStage());
         if (file != null) {
             try {
@@ -1121,6 +1126,11 @@ public class RootLayoutController implements Initializable {
         System.out.println("menuJsonImport");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("打开文件");
+        File defaultDir = new File("save");
+        if (!defaultDir.exists())
+            if (defaultDir.mkdir())
+                System.out.println("创建了save文件夹");
+        fileChooser.setInitialDirectory(defaultDir);
         File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
         if (file != null) {
             for(int i = 0; i < tableH; i++){
