@@ -3,9 +3,12 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/Parse/CgisimBaseListener.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/Parse/CgisimBaseVisitor.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/Parse/TypeEval.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/controller/Check.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/controller/NodeFactory.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/controller/RootLayoutController.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/controller/Run.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/model/MyNode.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/model/TableVar.java" charset="UTF-8" />
     <file url="PROJECT" charset="GBK" />
   </component>

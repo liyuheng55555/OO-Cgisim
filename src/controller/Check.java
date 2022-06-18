@@ -2,9 +2,11 @@ package controller;
 
 import com.sun.scenario.effect.Merge;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TextArea;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,20 @@ import static controller.RootLayoutController.outConnector;
 import static model.Constant.viewW;
 
 public class Check {
+    static TextArea outText;
+    void setup(TextArea text) {
+        outText = text;
+    }
+
+    /**
+     * 在右下角的控制台打印一行报错信息
+     * @param y 纵坐标
+     * @param x 横坐标
+     * @param string    报错信息
+     */
+    static private void appendErrorMessage(int y, int x, String string) {
+        outText.appendText("("+y+","+x+") "+string+"\n");
+    }
     /**
      * check whether the startNode is unique in the list
      *
@@ -97,6 +113,62 @@ public class Check {
         }
         if(result.size() == 0){
             result = null;
+        }
+        return result;
+    }
+
+//    private boolean instanceOfList(Object object, Class<?>... types) {
+//        boolean result = true;
+//        for (Class<?> type : types) {
+//            if (object instanceof type.getClass())
+//        }
+//    }
+
+    /**
+     * 分析所有node中是否存在语法错误，顺便在右下角打出错误信息
+     * @param nodeTable 你懂得
+     * @return  出错node的坐标List，按[[y0,x0],[y1,x1]...]这样
+     */
+    public static List<List<Integer>> checkSyntaxError(MyNode[][] nodeTable) {
+        List<List<Integer>> result = new ArrayList<>();
+        for (int i=0; i<nodeTable.length; i++) {
+            for (int j=0; j<nodeTable[0].length; j++) {
+                MyNode node = nodeTable[i][j];
+                try {
+                    if (node instanceof BranchNode) {
+                        BranchNode b = (BranchNode) node;
+                        String type = Run.getType(b.getBranchText());
+                        if (!type.equals("bool")) {
+                            appendErrorMessage(i,j,"分支语句需要bool类型结果，目前结果为"+type);
+                            result.add(Arrays.asList(i,j));
+                        }
+
+                    }
+                    else if (node instanceof StatementNode) {
+                        StatementNode s = (StatementNode) node;
+                        Run.getType(s.getStatementText());
+//                        if (!type.equals("bool"))
+//                            appendErrorMessage(i,j,"分支语句需要bool类型结果，目前结果为"+type);
+                    }
+                    else if (node instanceof PrintNode) {
+                        PrintNode p = (PrintNode) node;
+                        Run.getType(p.getPrintText());
+                    }
+                    else if (node instanceof LoopEndNode) {
+                        LoopEndNode l = (LoopEndNode) node;
+                        String type = Run.getType(l.getLoop_endText());
+                        if (!type.equals("bool")) {
+                            appendErrorMessage(i,j,"循环语句需要bool类型结果，目前结果为"+type);
+                            result.add(Arrays.asList(i,j));
+                        }
+
+                    }
+                } catch (Exception e) {
+                    appendErrorMessage(i,j,"解析错误："+e.getMessage());
+                    result.add(Arrays.asList(i,j));
+                }
+
+            }
         }
         return result;
     }

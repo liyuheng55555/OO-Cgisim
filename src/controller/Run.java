@@ -249,5 +249,11 @@ public class Run extends Thread{
         inform.set(inform.get()+1);
 //        return id;
     }
+
+    static public String getType(String expression) throws Exception {
+        if (!expression.endsWith("\n"))
+            expression += "\n";
+        return Main.getType(expression, varMap);
+    }
 }
 

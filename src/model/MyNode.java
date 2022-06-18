@@ -12,9 +12,9 @@ public class MyNode {
     private int factoryID;
     private double xIndex;
     private double yIndex;
-    // connectTo[1] = 100 ÒâË¼ÊÇ±¾½ÚµãµÄÉÏ·½Á¬½Ó×Å100ºÅ½Úµã
+    // connectTo[1] = 100 æ„æ€æ˜¯æœ¬èŠ‚ç‚¹çš„ä¸Šæ–¹è¿æ¥ç€100å·èŠ‚ç‚¹
     public int[] connectTo = new int[]{-1, -1, -1, -1, -1};
-    // connectPlace[1] = 2 ÒâË¼ÊÇ±¾½ÚµãµÄÉÏ·½Á¬½Ó×ÅÁíÒ»¸ö½ÚµãµÄÏÂ·½
+    // connectPlace[1] = 2 æ„æ€æ˜¯æœ¬èŠ‚ç‚¹çš„ä¸Šæ–¹è¿æ¥ç€å¦ä¸€ä¸ªèŠ‚ç‚¹çš„ä¸‹æ–¹
     public int[] connectPlace = new int []{-1, -1, -1, -1, -1};
 
     public MyNode(int factoryID, double x, double y) {

@@ -686,6 +686,7 @@ public class RootLayoutController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Check.outText = outText;
         buildButton.setAccessibleText("ok");
         showAnythingInit();
         propertyController = new PropertyController(messageBox);
@@ -1400,7 +1401,11 @@ public class RootLayoutController implements Initializable {
             outText.appendText("构建失败："+e.getMessage()+"\n");
             return;
         }
-        outText.appendText("构建成功\n");
+        List<List<Integer>> errList = Check.checkSyntaxError(nodeTable);
+        if (errList.isEmpty())
+            outText.appendText("构建成功\n");
+        else
+            outText.appendText("构建失败，编辑区有"+errList.size()+"个错误\n");
     }
 
     /*
