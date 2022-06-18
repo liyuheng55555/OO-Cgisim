@@ -23,171 +23,176 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
-    <top>
-      <SplitPane orientation="VERTICAL" prefHeight="30.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
-         <items>
-            <HBox prefHeight="30.0" prefWidth="1196.0">
-               <children>
-                    <MenuBar prefHeight="30.0" style="-fx-background-radius: 5px;" styleClass="MenuBar" stylesheets="@../sources/css/style.css">
-                        <Menu mnemonicParsing="false" styleClass="menu" text="文件">
-                            <MenuItem mnemonicParsing="false" onAction="#menuNew" text="New" />
-                            <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save" />
-                            <MenuItem mnemonicParsing="false" onAction="#menuOpen" text="Open" />
-                            <MenuItem mnemonicParsing="false" onAction="#menuExport" text="Export" />
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="程序">
-                            <MenuItem mnemonicParsing="false" onAction="#run" text="运行" />
-                            <MenuItem mnemonicParsing="false" text="暂停" />
-                            <MenuItem mnemonicParsing="false" text="debug" />
-                            <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步" />
-                            <MenuItem mnemonicParsing="false" text="重置" />
-                        </Menu>
-                     <cursor>
-                        <Cursor fx:constant="S_RESIZE" />
-                     </cursor>
-                    </MenuBar>
-                  <Pane prefHeight="30.0" prefWidth="43.0" style="-fx-background-color: #ffffff;">
-                     <children>
-                        <ImageView id="build" fx:id="buildButton" fitHeight="30.0" fitWidth="38.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../sources/img/build.jpg" />
-                           </image>
-                        </ImageView>
-                     </children></Pane>
-                  <ImageView id="run" fx:id="runButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../sources/img/run.jpg" />
-                     </image>
-                     <HBox.margin>
-                        <Insets left="3.0" />
-                     </HBox.margin>
-                  </ImageView>
-                  <ImageView id="step" fx:id="stepButton" fitHeight="30.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../sources/img/step.jpg" />
-                     </image>
-                     <viewport>
-                        <Rectangle2D />
-                     </viewport>
-                     <HBox.margin>
-                        <Insets left="3.0" />
-                     </HBox.margin>
-                  </ImageView>
-                  <ImageView id="pause" fx:id="pauseButton" fitHeight="30.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../sources/img/pause.jpg" />
-                     </image>
-                     <HBox.margin>
-                        <Insets left="3.0" />
-                     </HBox.margin>
-                  </ImageView>
-                  <ImageView id="stop" fx:id="stopButton" fitHeight="30.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../sources/img/stop.jpg" />
-                     </image>
-                     <HBox.margin>
-                        <Insets left="3.0" />
-                     </HBox.margin>
-                  </ImageView>
-               </children>
-            </HBox>
-         </items>
-      </SplitPane>
-    </top>
-    <center>
-        <ScrollPane id="scrollPane" prefHeight="844.0" prefWidth="773.0" stylesheets="@../sources/css/style.css" BorderPane.alignment="CENTER">
-            <AnchorPane fx:id="drawingArea" minHeight="0.0" minWidth="0.0" prefHeight="3000.0" prefWidth="3000.0" style="-fx-background-color: #ffffff;">
-                <AnchorPane fx:id="keyBoardPane" layoutX="500.0" layoutY="750.0" prefHeight="200.0" prefWidth="200.0" />
-                <effect>
-                    <Blend />
-                </effect>
-            </AnchorPane>
-        </ScrollPane>
-    </center>
-    <left>
-        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
-            <VBox fx:id="Nodes" alignment="TOP_CENTER" prefHeight="824.0" prefWidth="221.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
-                <ImageView id="choose_node_start" fx:id="choose_start" fitHeight="107.0" fitWidth="189.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_start.png" />
+<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
+<top>
+    <SplitPane orientation="VERTICAL" prefHeight="30.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+        <HBox prefHeight="30.0" prefWidth="1196.0">
+            <children>
+                <MenuBar prefHeight="30.0" style="-fx-background-radius: 5px;" styleClass="MenuBar"
+                         stylesheets="@../sources/css/style.css">
+                    <Menu mnemonicParsing="false" styleClass="menu" text="文件">
+                        <MenuItem mnemonicParsing="false" onAction="#menuNew" text="新建"/>
+                        <MenuItem mnemonicParsing="false" onAction="#menuJsonExport" text="保存"/>
+                        <MenuItem mnemonicParsing="false" onAction="#menuJsonImport" text="打开新文件"/>
+                        <MenuItem mnemonicParsing="false" onAction="#menuCodeExport" text="保存为代码"/>
+                        <MenuItem mnemonicParsing="false" onAction="#menuCodeImport" text="从代码导入"/>
+                        <MenuItem mnemonicParsing="false" onAction="#menuImageSave" text="保存为图片"/>
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="程序">
+                        <MenuItem mnemonicParsing="false" onAction="#run" text="运行"/>
+                        <MenuItem mnemonicParsing="false" onAction="#test" text="暂停"/>
+                        <MenuItem mnemonicParsing="false" text="debug"/>
+                        <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步"/>
+                        <MenuItem mnemonicParsing="false" text="重置"/>
+                    </Menu>
+                    <cursor>
+                        <Cursor fx:constant="S_RESIZE"/>
+                    </cursor>
+                </MenuBar>
+                <Pane prefHeight="30.0" prefWidth="43.0" style="-fx-background-color: #ffffff;"/>
+                <ImageView id="build" fx:id="buildButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                    <Image url="@../sources/img/button_build.png"/>
+                    </image>
                 </ImageView>
-            <Pane prefHeight="9.0" prefWidth="216.0" />
-                <ImageView id="choose_node_end" fx:id="choose_end" fitHeight="111.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_end.png" />
+                <ImageView id="run" fx:id="runButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../sources/img/run.jpg"/>
+                    </image>
+                    <HBox.margin>
+                        <Insets left="3.0"/>
+                    </HBox.margin>
                 </ImageView>
-            <Pane prefHeight="8.0" prefWidth="216.0" />
-                <ImageView id="choose_node_statement" fx:id="choose_statement" fitHeight="114.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_statement.png" />
+                <ImageView id="step" fx:id="stepButton" fitHeight="30.0" fitWidth="36.0" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../sources/img/step.jpg"/>
+                    </image>
+                    <viewport>
+                        <Rectangle2D/>
+                    </viewport>
+                    <HBox.margin>
+                        <Insets left="3.0"/>
+                    </HBox.margin>
                 </ImageView>
-            <Pane prefHeight="24.0" prefWidth="216.0" />
-                <ImageView id="choose_node_branch" fx:id="choose_branch" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_branch.png" />
+                <ImageView id="pause" fx:id="pauseButton" fitHeight="30.0" fitWidth="38.0" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../sources/img/pause.jpg"/>
+                    </image>
+                    <HBox.margin>
+                        <Insets left="3.0"/>
+                    </HBox.margin>
                 </ImageView>
-                <ImageView id="choose_node_merge" fx:id="choose_merge" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_merge.png" />
+                <ImageView id="stop" fx:id="stopButton" fitHeight="30.0" fitWidth="78.0" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../sources/img/stop.jpg"/>
+                    </image>
+                    <HBox.margin>
+                        <Insets left="3.0"/>
+                    </HBox.margin>
                 </ImageView>
-            <Pane prefHeight="23.0" prefWidth="216.0" />
-                <ImageView id="choose_node_loopStart" fx:id="choose_loop_start" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_loopStart.png" />
-                </ImageView>
-                <ImageView id="choose_node_loopEnd" fx:id="choose_loop_end" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_loopEnd.png" />
-                </ImageView>
-            <Pane prefHeight="16.0" prefWidth="216.0" />
-                <ImageView id="choose_node_print" fx:id="choose_print" fitHeight="109.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../sources/img/choose_node_print.png" />
-                </ImageView>
-            </VBox>
-        </AnchorPane>
-    </left>
-    <right>
-        <AnchorPane blendMode="SRC_ATOP" prefHeight="868.0" prefWidth="237.0" BorderPane.alignment="CENTER">
-            <VBox fx:id="VarTableArea" prefHeight="800.0" prefWidth="240.0" style="-fx-background-color: #ECF5FF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <TableView id="tableview" fx:id="tableView" accessibleRole="BUTTON" prefHeight="500.0" prefWidth="246.0" style="-fx-max-width: 300; -fx-padding: 0 5px 0 5px; -fx-background-color: #ECF5FF;" styleClass="tableview" stylesheets="@../sources/css/style.css">
-                    <columns>
-                        <TableColumn fx:id="VarType" prefWidth="75.0" sortable="false" text="变量类型" />
-                        <TableColumn fx:id="VarValue" prefWidth="75.0" sortable="false" text="变量值" />
-                        <TableColumn fx:id="VarName" prefWidth="75.0" sortable="false" text="变量名" />
-                    </columns>
-                </TableView>
-                <HBox prefHeight="50.0" prefWidth="200.0">
-                    <VBox.margin>
-                        <Insets top="10.0" />
-                    </VBox.margin>
-                    <padding>
-                        <Insets top="10.0" />
-                    </padding>
-                    <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="变量类型" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
-                        <font>
-                            <Font name="System Italic" size="13.0" />
-                        </font>
-                    </TextField>
-                    <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="变量名" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
-                    <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="变量值" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
-                </HBox>
-                <HBox minHeight="40.0" prefHeight="60.0" prefWidth="235.0">
-                    <Button fx:id="add" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #00BB00; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="add">
-                        <HBox.margin>
-                            <Insets left="100.0" top="2.0" />
-                        </HBox.margin>
-                    </Button>
-                    <Button fx:id="delete" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #EA0000; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="delete" textFill="#f5eeee">
-                        <HBox.margin>
-                            <Insets left="10.0" top="2.0" />
-                        </HBox.margin>
-                    </Button>
-                </HBox>
-            <HBox layoutX="10.0" layoutY="507.0" prefHeight="244.0" prefWidth="237.0">
-               <children>
-                  <TextArea id="outTextArea" fx:id="outText" promptText="输出框" style="-fx-background-color: #FFFFFF;" />
-               </children></HBox>
-            </VBox>
-        </AnchorPane>
-    </right>
-    <bottom>
-        <HBox prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ECFFFF;" BorderPane.alignment="CENTER">
-            <Button mnemonicParsing="false" onAction="#commit" prefHeight="40.0" style="-fx-background-color: #F75000; -fx-text-fill: white;" text="commit" />
-            <TextField fx:id="messageBox" layoutY="10.0" prefHeight="40.0" prefWidth="700.0" style="-fx-background-color: #ECFFFF;" text="Coding to Change the Node..." />
+
+            </children>
         </HBox>
-    </bottom>
+    </SplitPane>
+</top>
+<center>
+    <ScrollPane id="scrollPane" prefHeight="844.0" prefWidth="773.0" stylesheets="@../sources/css/style.css" BorderPane.alignment="CENTER">
+        <AnchorPane fx:id="drawingArea" minHeight="0.0" minWidth="0.0" prefHeight="3000.0" prefWidth="3000.0" style="-fx-background-color: #ffffff;">
+            <AnchorPane fx:id="keyBoardPane" layoutX="500.0" layoutY="750.0" prefHeight="200.0" prefWidth="200.0" />
+            <effect>
+                <Blend />
+            </effect>
+        </AnchorPane>
+    </ScrollPane>
+</center>
+<left>
+    <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+        <VBox fx:id="Nodes" alignment="TOP_CENTER" prefHeight="824.0" prefWidth="221.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+            <ImageView id="choose_node_start" fx:id="choose_start" fitHeight="107.0" fitWidth="189.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_start.png" />
+            </ImageView>
+            <Pane prefHeight="9.0" prefWidth="216.0" />
+            <ImageView id="choose_node_end" fx:id="choose_end" fitHeight="111.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_end.png" />
+            </ImageView>
+            <Pane prefHeight="8.0" prefWidth="216.0" />
+            <ImageView id="choose_node_statement" fx:id="choose_statement" fitHeight="114.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_statement.png" />
+            </ImageView>
+            <Pane prefHeight="24.0" prefWidth="216.0" />
+            <ImageView id="choose_node_branch" fx:id="choose_branch" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_branch.png" />
+            </ImageView>
+            <ImageView id="choose_node_merge" fx:id="choose_merge" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_merge.png" />
+            </ImageView>
+            <Pane prefHeight="23.0" prefWidth="216.0" />
+            <ImageView id="choose_node_loopStart" fx:id="choose_loop_start" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_loopStart.png" />
+            </ImageView>
+            <ImageView id="choose_node_loopEnd" fx:id="choose_loop_end" fitHeight="65.15" fitWidth="221.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_loopEnd.png" />
+            </ImageView>
+            <Pane prefHeight="16.0" prefWidth="216.0" />
+            <ImageView id="choose_node_print" fx:id="choose_print" fitHeight="109.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../sources/img/choose_node_print.png" />
+            </ImageView>
+        </VBox>
+    </AnchorPane>
+</left>
+<right>
+    <AnchorPane blendMode="SRC_ATOP" prefHeight="868.0" prefWidth="237.0" BorderPane.alignment="CENTER">
+        <VBox fx:id="VarTableArea" prefHeight="800.0" prefWidth="240.0" style="-fx-background-color: #ECF5FF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <TableView id="tableview" fx:id="tableView" accessibleRole="BUTTON" prefHeight="500.0" prefWidth="246.0" style="-fx-max-width: 300; -fx-padding: 0 5px 0 5px; -fx-background-color: #ECF5FF;" styleClass="tableview" stylesheets="@../sources/css/style.css">
+                <columns>
+                    <TableColumn fx:id="VarType" prefWidth="75.0" sortable="false" text="变量类型" />
+                    <TableColumn fx:id="VarValue" prefWidth="75.0" sortable="false" text="变量值" />
+                    <TableColumn fx:id="VarName" prefWidth="75.0" sortable="false" text="变量名" />
+                </columns>
+            </TableView>
+            <HBox prefHeight="50.0" prefWidth="200.0">
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+                <padding>
+                    <Insets top="10.0" />
+                </padding>
+                <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="varName" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
+                    <font>
+                        <Font name="System Italic" size="13.0" />
+                    </font>
+                </TextField>
+                <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="varType" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
+                <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="varValue" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
+            </HBox>
+            <HBox minHeight="40.0" prefHeight="60.0" prefWidth="235.0">
+                <Button fx:id="add" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #00BB00; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="add">
+                    <HBox.margin>
+                        <Insets left="100.0" top="2.0" />
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="delete" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #EA0000; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="delete" textFill="#f5eeee">
+                    <HBox.margin>
+                        <Insets left="10.0" top="2.0" />
+                    </HBox.margin>
+                </Button>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="507.0" prefHeight="244.0" prefWidth="237.0">
+                <children>
+                    <TextArea id="outTextArea" fx:id="outText" promptText="输出框" style="-fx-background-color: #FFFFFF;" />
+                </children></HBox>
+        </VBox>
+    </AnchorPane>
+</right>
+<bottom>
+    <HBox prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ECFFFF;" BorderPane.alignment="CENTER">
+        <Button mnemonicParsing="false" onAction="#commit" prefHeight="40.0" style="-fx-background-color: #F75000; -fx-text-fill: white;" text="commit" />
+        <TextField fx:id="messageBox" layoutY="10.0" prefHeight="40.0" prefWidth="700.0" style="-fx-background-color: #ECFFFF;" text="Coding to Change the Node..." />
+    </HBox>
+</bottom>
 </BorderPane>

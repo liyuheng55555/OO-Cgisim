@@ -19,9 +19,9 @@ public class PropertyController {
         if(curNode instanceof BranchNode) {
             ((BranchNode) curNode).getText().setText(messageBox.getText());
             ((BranchNode) curNode).setBranchText(messageBox.getText());
-        } else if(curNode instanceof LoopStNode) {
-            ((LoopStNode) curNode).getText().setText(messageBox.getText());
-            ((LoopStNode) curNode).setLoop_stText(messageBox.getText());
+        } else if(curNode instanceof LoopEndNode) {
+            ((LoopEndNode) curNode).getText().setText(messageBox.getText());
+            ((LoopEndNode) curNode).setLoop_endText(messageBox.getText());
         } else if(curNode instanceof StatementNode) {
             ((StatementNode) curNode).getText().setText(messageBox.getText());
             ((StatementNode) curNode).setStatementText(messageBox.getText());
@@ -35,8 +35,8 @@ public class PropertyController {
         this.curNode = curNode;
         if(curNode instanceof BranchNode) {
             messageBox.setText(((BranchNode) curNode).getText().getText());
-        } else if(curNode instanceof LoopStNode) {
-            messageBox.setText(((LoopStNode) curNode).getText().getText());
+        } else if(curNode instanceof LoopEndNode) {
+            messageBox.setText(((LoopEndNode) curNode).getText().getText());
         } else if(curNode instanceof StatementNode) {
             System.out.println("StatementNode debug");
             messageBox.setText(((StatementNode) curNode).getText().getText());

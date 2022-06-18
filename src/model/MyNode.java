@@ -23,6 +23,7 @@ public class MyNode {
         this.yIndex = y;
     }
 
+
     public ImageView getImageView() {
         return null;
     }
@@ -37,11 +38,14 @@ public class MyNode {
     }
 
     public boolean putInTable(MyNode[][] nodeTable) {
-        if(nodeTable[(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] != null) {
-            System.out.println("error in StatementNode putInTable");
+        int x = (int)(this.getImageView().getX()/viewW);
+        int y = (int)(this.getImageView().getY()/viewH);
+        if(nodeTable[y][x] != null) {
+            System.out.println("error in putInTable");
             return false;
+
         }
-        nodeTable[(int)(this.getImageView().getY()/viewH)][(int)(this.getImageView().getX()/viewW)] = this;
+        nodeTable[y][x] = this;
         return true;
     }
 

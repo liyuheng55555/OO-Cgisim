@@ -65,6 +65,12 @@ public class TableVar {
         varList.add(this);
     }
 
+    public TableVar(TableVar var) {
+        this.varName = new SimpleStringProperty(var.varName.get());
+        this.varType = new SimpleStringProperty(var.varType.get());
+        this.varValue = new SimpleStringProperty(var.varValue.get());
+    }
+
 
     public String getVarName() {
         return varName.get();

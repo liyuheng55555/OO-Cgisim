@@ -10,14 +10,14 @@ import static model.Constant.viewH;
 import static model.Constant.viewW;
 
 public class EndNode extends MyNode {
-    private int preID;
-    private int prePlace;
+//    private int preID;
+//    private int prePlace;
     private ImageView end;
 
     public EndNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
-        this.preID = -1;
-        this.prePlace = -1;
+//        this.preID = -1;
+//        this.prePlace = -1;
         try{
             this.end = new ImageView(new Image("sources/img/draw_node_end.png"));
             this.end.setX(x);
@@ -32,20 +32,22 @@ public class EndNode extends MyNode {
     }
 
     public int getPreID() {
-        return preID;
+//        return preID;
+        return connectTo[1];
     }
 
     public void setPreID(int preID) {
-        this.preID = preID;
+//        this.preID = preID;
         connectTo[1] = preID;
     }
 
     public int getPrePlace() {
-        return prePlace;
+//        return prePlace;
+        return connectPlace[1];
     }
 
     public void setPrePlace(int prePlace) {
-        this.prePlace = prePlace;
+//        this.prePlace = prePlace;
         connectPlace[1] = prePlace;
     }
 
@@ -74,10 +76,17 @@ public class EndNode extends MyNode {
     }
 
     @JSONCreator
-    public EndNode(@JSONField(name="factoryID") int factoryID, @JSONField(name = "connectPlace") int[] connectPlace, @JSONField(name = "connectTo") int[] connectTo, @JSONField(name = "xIndex") double xIndex, @JSONField(name = "yIndex") double yIndex, @JSONField(name = "preID") int preID, @JSONField(name = "prePlace") int prePlace) {
+    public EndNode(@JSONField(name="factoryID") int factoryID,
+                   @JSONField(name = "connectPlace") int[] connectPlace,
+                   @JSONField(name = "connectTo") int[] connectTo,
+                   @JSONField(name = "xIndex") double xIndex,
+                   @JSONField(name = "yIndex") double yIndex
+//                   @JSONField(name = "preID") int preID,
+//                   @JSONField(name = "prePlace") int prePlace
+    ) {
         super(factoryID,connectPlace,connectTo,xIndex,yIndex);
-        this.preID = preID;
-        this.prePlace = prePlace;
+//        this.preID = preID;
+//        this.prePlace = prePlace;
         try {
             this.end = new ImageView(new Image("sources/img/draw_node_end.png"));
             this.end.setX(xIndex);

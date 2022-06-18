@@ -7,9 +7,12 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -34,6 +37,8 @@ import static model.TableVar.varList;
 import model.Constant.ClickStatus;
 import model.Constant.Status;
 
+import javax.imageio.ImageIO;
+
 public class RootLayoutController implements Initializable {
     //创建数据源
     final ObservableList<TableVar> data = FXCollections.observableArrayList(
@@ -41,6 +46,18 @@ public class RootLayoutController implements Initializable {
             new TableVar("b", "float", "2.3"),
             new TableVar("c", "bool", "true")
     );
+    private List<TableVar> dataBackup = new ArrayList<>();
+    private void saveData() {
+//        dataBackup = new ArrayList<>();
+        dataBackup.clear();
+        for (TableVar var : data)
+            dataBackup.add(new TableVar(var));
+    }
+    private void recoverData() {
+        data.clear();
+        for (TableVar var : dataBackup)
+            data.add(new TableVar(var));
+    }
     @FXML
     private TextArea outText;
     @FXML
@@ -111,7 +128,7 @@ public class RootLayoutController implements Initializable {
      * 设置所有ShowAnything对象；
      * 因为initialize函数已经太长了，所以单独写一个函数
      */
-    void showAnythingInitialize() {
+    void showAnythingInit() {
         // 选中位置
         Image selectPng = new Image("sources/img/select.png");
         ImageView selectView = new ImageView(selectPng);
@@ -128,12 +145,36 @@ public class RootLayoutController implements Initializable {
 
     }
 
+    void buttonInit() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        //    停止，暂停，单步，运行四个按钮点击事件测试
+        buildButton.setOnMouseClicked(e-> build());
+        stopButton.setOnMouseClicked(e->{
+            reset();
+        });
+        stepButton.setOnMouseClicked(e->{
+//            alert.setContentText("step_success");
+//            alert.show();
+            stepRun();
+        });
+        runButton.setOnMouseClicked(e->{
+//            alert.setContentText("run_success");
+//            alert.show();
+//            outText.setText("测试输出");
+//            run();
+            continiousRun();
+        });
+        pauseButton.setOnMouseClicked(e->{
+            pause();
+        });
+    }
+
     /*
     inConnector记录每种节点的输入点，outConnector记录输出点
     1：上方    2：下方    3：左侧    4：右侧
      */
-    static Map<String, List<Integer>> inConnector = new HashMap<>();
-    static Map<String, List<Integer>> outConnector = new HashMap<>();
+    public static Map<String, List<Integer>> inConnector = new HashMap<>();
+    public static Map<String, List<Integer>> outConnector = new HashMap<>();
     static {
         inConnector.put("start", Collections.emptyList());
         inConnector.put("end", Collections.singletonList(1));
@@ -149,6 +190,7 @@ public class RootLayoutController implements Initializable {
         outConnector.put("branch", Arrays.asList(2,4));
         outConnector.put("merge", Collections.singletonList(2));
         outConnector.put("loop_st", Collections.singletonList(2));
+        outConnector.put("loop_end", Collections.singletonList(2));
         outConnector.put("statement", Collections.singletonList(2));
         outConnector.put("print", Collections.singletonList(2));
     }
@@ -219,7 +261,6 @@ public class RootLayoutController implements Initializable {
      */
     int[][] tableToCost() {
         int[][] cost = new int[200][200];
-        int nb = 0;
         for (int i=0; i<tableH; i++) {
             for (int j = 0; j < tableW; j++) {
                 int s = i * tableW + j;
@@ -232,7 +273,6 @@ public class RootLayoutController implements Initializable {
                         ) {
                             cost[s][e] = 1;
 //                            System.out.printf("%d %d  %d %d\n",i,j,k,l);
-                            nb++;
                         } else {
                             cost[s][e] = 999999;
                         }
@@ -279,6 +319,56 @@ public class RootLayoutController implements Initializable {
     }
 
     /**
+     * 删除node0与node1之间的所有关系
+     */
+    public void deleteConnection(MyNode node0, MyNode node1) {
+        for(int i=1; i<=4; i++) {
+            if (node0.connectTo[i]==node1.getFactoryID()) {
+                node0.connectTo[i] = -1;
+                node0.connectPlace[i] = -1;
+            }
+            if (node1.connectTo[i]==node0.getFactoryID()) {
+                node1.connectTo[i] = -1;
+                node1.connectPlace[i] = -1;
+            }
+        }
+    }
+
+    /**
+     * 删除一个节点，实现步骤为： <br/>
+     * （1）用{@link #eraseAllPath}把它的连线擦掉 <br/>
+     * （2）把它的前驱后继关系取消 <br/>
+     * （3）修改drawingArea把它自身擦掉 <br/>
+     * （4）从nodeTable中注销 <br/>
+     * （5）从nodeMap中注销 <br/>
+     * （6）把选框清除 <br/>
+     *
+     *
+     * @param node  待删除节点
+     */
+    public void deleteNode(MyNode node) {
+        // 擦掉连线
+        eraseAllPath(node);
+        // 删关系
+        for (int i=1; i<=4; i++) {
+            int id = node.connectTo[i];
+            MyNode node1 = nodeMap.get(id);
+            if (node1!=null)
+                deleteConnection(node, node1);
+        }
+        // 擦自身
+        node.remove(drawingArea);
+        // 从nodeTable注销
+        int x = (int) (node.getImageView().getX() / viewW);
+        int y = (int) (node.getImageView().getY() / viewH);
+        nodeTable[y][x] = null;
+        // 从nodeMap注销
+        nodeMap.remove(node.getFactoryID());
+        // 清除选框
+        showSelection.clear();
+    }
+
+    /**
      * 擦除所有与node相连的线，不影响前驱后继
      * @param node
      */
@@ -287,6 +377,7 @@ public class RootLayoutController implements Initializable {
         int y = (int) (node.getImageView().getY()/viewH);
         for (int c=1; c<=4; c++) {
             if (node.connectTo[c]!=-1) {
+                System.out.println("eraseAllPath:"+c);
                 switch (c) {
                     case 1: erasePath(x,y-1); break;
                     case 2: erasePath(x,y+1); break;
@@ -309,6 +400,17 @@ public class RootLayoutController implements Initializable {
                 int inOut = checkInOrOut(node, c);
                 int sx = 0, sy = 0, sc = 0, ex = 0, ey = 0, ec = 0;
                 MyNode toNode = nodeMap.get(id);
+//                sx = (int)(node.getImageView().getX()/viewW);
+//                sy = (int)(node.getImageView().getY()/viewH);
+//                sc = c;
+//                ex = (int)(toNode.getImageView().getX()/viewW);
+//                ey = (int)(toNode.getImageView().getY()/viewH);
+//                ec = node.connectPlace[c];
+                ArrayList<ArrayList<Integer>> path = null;
+//                if (sy<ey)
+//                    path = getPath(sx, sy, sc, ex, ey, ec);
+//                else
+//                    path = getPath(ex, ey, ec, sx, sy, sc);
                 if (inOut==1) { // 输出点
                     sx = (int)(node.getImageView().getX()/viewW);
                     sy = (int)(node.getImageView().getY()/viewH);
@@ -327,7 +429,7 @@ public class RootLayoutController implements Initializable {
                 }
                 else
                     bad();  // 在不应该有连接存在的地方，却有连接存在
-                ArrayList<ArrayList<Integer>> path = getPath(sx, sy, sc, ex, ey, ec);
+                path = getPath(sx, sy, sc, ex, ey, ec);
                 if (path==null) { // 绘制失败，清除前驱后继
                     int toC = node.connectPlace[c];
                     toNode.connectTo[toC] = -1;
@@ -342,6 +444,73 @@ public class RootLayoutController implements Initializable {
                 }
             }
         }
+    }
+
+
+
+    private void tryConnectNeighborHelp(int x0, int y0, int x1, int y1) throws Exception {
+        if (x0<0 || x0>= Constant.tableW || y0<0 || y0>=Constant.tableH)
+            return;
+        if (x1<0 || x1>= Constant.tableW || y1<0 || y1>=Constant.tableH)
+            return;
+        if (!(x0==x1 && Math.abs(y0-y1)==1))
+            throw new Exception("不相邻");
+        MyNode node0 = nodeTable[y0][x0];
+        MyNode node1 = nodeTable[y1][x1];
+        if (node0==null || node1==null)
+            return;
+        String name0 = node0.getImageView().getId();
+        String name1 = node1.getImageView().getId();
+        List<Integer> inC0 = inConnector.get(name0);
+        List<Integer> outC0 = outConnector.get(name0);
+        List<Integer> inC1 = inConnector.get(name1);
+        List<Integer> outC1 = outConnector.get(name1);
+        if (outC0!=null && inC1!=null && y0+1==y1 && outC0.contains(2) && inC1.contains(1)) { // 0->1
+            node0.connectTo[2] = node1.getFactoryID();
+            node0.connectPlace[2] = 1;
+            node1.connectTo[1] = node0.getFactoryID();
+            node1.connectPlace[1] = 2;
+            System.out.println("good!");
+        }
+        if (outC1!=null && inC0!=null && y1+1==y0 && inC0.contains(1) && outC1.contains(2)) { // 0<-1
+            node0.connectTo[1] = node1.getFactoryID();
+            node0.connectPlace[1] = 2;
+            node1.connectTo[2] = node0.getFactoryID();
+            node1.connectPlace[2] = 1;
+            System.out.println("very good!");
+        }
+    }
+
+    /**
+     * 查看一个MyNode是否和上下左右的邻居存在直接相连<br/>
+     * 如果直接相连，就修改前驱后继关系
+//     * @param x  待检查的MyNode
+     */
+    public void tryConnectNeighbor(MyNode node) {
+        int y = (int)(node.getImageView().getY()/viewH);
+        int x = (int)(node.getImageView().getX()/viewW);
+//        try {
+//            tryConnectNeighborHelp(x,y,x+1,y);
+//        } catch (Exception ignored) {ignored.printStackTrace();}
+//        try {
+//            tryConnectNeighborHelp(x,y,x-1,y);
+//        } catch (Exception ignored) {ignored.printStackTrace();}
+        try {
+            tryConnectNeighborHelp(x,y,x,y+1);
+        } catch (Exception e) {e.printStackTrace();}
+        try {
+            tryConnectNeighborHelp(x,y,x,y-1);
+        } catch (Exception e) {e.printStackTrace();}
+
+
+//        if (x<0 || x>= Constant.tableW || y<0 || y>=Constant.tableH)
+//            throw new Exception("x或y错误");
+//        if (nodeTable[y][x]==null)
+//            return;
+//        MyNode node = nodeTable[y][x];
+//        List<Integer> inC = inConnector.get(node.getImageView().getId());
+//        List<Integer> outC = outConnector.get(node.getImageView().getId());
+//        for
     }
 
     /**
@@ -491,9 +660,11 @@ public class RootLayoutController implements Initializable {
         }
         String[] ss = node.getImageView().getId().split("_", 2);
         if (!ss[0].equals("line")) {
+
             return;
         }
-        nodeTable[sy][sx].remove(drawingArea);
+//        nodeTable[sy][sx].remove(drawingArea);
+        drawingArea.getChildren().remove(node.getImageView());
         nodeTable[sy][sx] = null;
         if (ss[1].equals("vertical") || ss[1].equals("down_left") || ss[1].equals("down_right")) {
             erasePath(sx, sy-1);  // 向上擦除
@@ -515,7 +686,8 @@ public class RootLayoutController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        showAnythingInitialize();
+        buildButton.setAccessibleText("ok");
+        showAnythingInit();
         propertyController = new PropertyController(messageBox);
         nodeFactory = new NodeFactory();
 
@@ -537,7 +709,7 @@ public class RootLayoutController implements Initializable {
         drawingArea.getChildren().addAll(shadow, connector);
 
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (status == Status.normal && selectNode==null) {
+            if ((status == Status.normal || status == Status.prepareToDrag) && selectNode==null) {
                 MyNode node = nodeTable[(int) event.getY()/viewH][(int) event.getX()/viewW];
                 if (node!=null) {
                     if(clickStatus == ClickStatus.choosingStart) {
@@ -627,13 +799,18 @@ public class RootLayoutController implements Initializable {
                 status = Status.normal;
                 return;
             }
+            if (status == Status.prepareToDrag)
+                status = Status.normal;
             keyBoardPane.requestFocus();
             if (event.getButton().name().equals("PRIMARY")) {
                 if (event.getClickCount() == 1 && selectNode != null) {
-                    MyNode node = nodeFactory.produceNode(selectNode, (int)(event.getX()-event.getX()%viewW), (int)(event.getY()-event.getY()%viewH));
+                    int x = (int)(event.getX()-event.getX()%viewW);
+                    int y = (int)(event.getY()-event.getY()%viewH);
+                    MyNode node = nodeFactory.produceNode(selectNode, x, y);
                     if(node.putInTable(nodeTable)){
                         nodeMap.put(node.getFactoryID(), node);
                         node.draw(drawingArea);
+                        tryConnectNeighbor(node);
                     }
                 }
                 if (event.getClickCount() == 1) {
@@ -657,10 +834,11 @@ public class RootLayoutController implements Initializable {
                 int y = (int) event.getY();
                 MyNode node = nodeTable[y/viewH][x/viewW];
                 if (node!=null) {
-                    eraseAllPath(node);
-                    node.removeFromTable(nodeTable);
-                    nodeMap.remove(node.getFactoryID());
-                    node.remove(drawingArea);
+                    deleteNode(node);
+//                    eraseAllPath(node);
+//                    node.removeFromTable(nodeTable);
+//                    nodeMap.remove(node.getFactoryID());
+//                    node.remove(drawingArea);
                 }
             }
 //            updateConnection();
@@ -677,12 +855,7 @@ public class RootLayoutController implements Initializable {
                     int c2 = touchConnector(node, event.getX(), event.getY(), outConnector);
                     int c;
                     if(c1 == -1){
-                        if(c2 == -1){
-                            found = false;
-                            c = -1;
-                        }else{
-                            c = c2;
-                        }
+                        c = c2;
                     }else {
                         c = c1;
                     }
@@ -708,26 +881,48 @@ public class RootLayoutController implements Initializable {
 
         // ---------------------- 拖动响应，分为按下鼠标、拖动、松开鼠标，三个阶段 ---------------------------
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_PRESSED, event -> {
+            if (!event.getButton().name().equals("PRIMARY"))
+                return;
             System.out.println("MOUSE_PRESSED");
+            status = Status.prepareToDrag;
             int y = (int)(event.getY()/viewH);
             int x = (int)(event.getX()/viewW);
             selection = nodeTable[y][x];
-            if(selection != null && !selection.getImageView().getId().contains("line")) {
-                eraseAllPath(selection);
-                showSelection.clear();
-                System.out.println("Selection is: " + selection.getClass().getName());
-                selection.remove(drawingArea);
-                selection.draw(drawingArea);
-                relativeX = event.getX() -selection.getImageView().getX();
+            if (selection!=null) {
+                relativeX = event.getX() - selection.getImageView().getX();
                 relativeY = event.getY() - selection.getImageView().getY();
-                selection.removeFromTable(nodeTable);
             }
         });
 
 
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
-            status = Status.dragging;
+            if (!event.getButton().name().equals("PRIMARY"))
+                return;
+            if (selection==null)
+                return;
+            if (status == Status.prepareToDrag) {
+                if (distance(relativeX, relativeY,
+                        event.getX() -selection.getImageView().getX(),
+                        event.getY() - selection.getImageView().getY())>Constant.dragThreshold) {
+                    status = Status.dragging;
+                    if(selection != null && !selection.getImageView().getId().contains("line")) {
+                        eraseAllPath(selection);
+                        System.out.println("Selection is: " + selection.getClass().getName());
+                        selection.remove(drawingArea);
+                        selection.draw(drawingArea);
+                        selection.removeFromTable(nodeTable);
+                    }
+                    showSelection.clear();
+                }
+
+                else return;
+            }
+
+//                status = Status.dragging;
+//            if (showSelection.hasDraw())
+//                showSelection.clear();
+//            status = Status.dragging;
             if (event.isPrimaryButtonDown() && selection!=null && !selection.getImageView().getId().contains("line")) {
                 shadow.setX((int) event.getX() - (int) event.getX()%viewW);
                 shadow.setY((int) event.getY() - (int) event.getY()%viewH);
@@ -737,7 +932,19 @@ public class RootLayoutController implements Initializable {
         });
 
         drawingArea.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
+            if (!event.getButton().name().equals("PRIMARY"))
+                return;
+            if (status!=Status.dragging)
+                return;
             if (selection!=null && !selection.getImageView().getId().contains("line")) {
+                int x = (int) event.getX() / viewW;
+                int y = (int) event.getY() / viewH;
+                if (nodeTable[y][x] != null && nodeTable[y][x].getFactoryID() == selection.getFactoryID()) // 没移动
+                    return;
+                if (nodeTable[y][x] != null) {
+                    deleteNode(nodeTable[y][x]);
+                }
+
                 selection.remove(drawingArea);
                 selection.draw(drawingArea, (int) event.getX() - (int) event.getX()%viewW, (int) event.getY() - (int) event.getY()%viewH);
                 selection.putInTable(nodeTable);
@@ -746,6 +953,8 @@ public class RootLayoutController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                tryConnectNeighbor(selection);
                 selection = null;
                 shadow.setX(-1000);
                 shadow.setY(-1000);
@@ -864,39 +1073,7 @@ public class RootLayoutController implements Initializable {
             alert.show();
             data.remove(moveIndex);
         });
-    //    停止，暂停，单步，运行四个按钮点击事件测试
-        stopButton.setOnMouseClicked(e->{
-            alert.setContentText("stop_success");
-            alert.show();
-        });
-        stepButton.setOnMouseClicked(e->{
-//            alert.setContentText("step_success");
-//            alert.show();
-            stepRun();
-        });
-        runButton.setOnMouseClicked(e->{
-//            alert.setContentText("run_success");
-//            alert.show();
-//            outText.setText("测试输出");
-            run();
-        });
-        pauseButton.setOnMouseClicked(e->{
-            alert.setContentText("pause_success");
-            alert.show();
-            outText.appendText("测试追加输出");
-        });
-        buildButton.setOnMouseClicked(e->{
-            alert.setContentText("build_success");
-            alert.show();
-           ImageView imageView = new ImageView();
-           Image image = new Image("/sources/img/build.jpg");
-           imageView.setImage(image);
-           imageView.setFitWidth(100);
-           imageView.setFitHeight(100);
-           imageView.setX(5);
-           imageView.setY(4);
-           drawingArea.getChildren().add(imageView);
-        });
+        buttonInit();
     }
     private int getStartID() {
         for (MyNode node : nodeMap.values()) {
@@ -908,8 +1085,14 @@ public class RootLayoutController implements Initializable {
 
     public void menuNew(){
         System.out.println("New");
-//        Thread thread = new Thread();
-//        while(true);
+        nodeMap.clear();
+        data.clear();
+        outText.setText("");
+        for(int i = 0; i < tableH; i++){
+            for(int j = 0; j < tableW; j++){
+                nodeTable[i][j] = null;
+            }
+        }
     }
 
     /**
@@ -922,14 +1105,30 @@ public class RootLayoutController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("保存文件");
         fileChooser.setInitialFileName("new.json");
+        File defaultDir = new File("save");
+        if (!defaultDir.exists())
+            if (defaultDir.mkdir())
+                System.out.println("创建了save文件夹");
+        fileChooser.setInitialDirectory(defaultDir);
         File file = fileChooser.showSaveDialog(Main.getPrimaryStage());
         if (file != null) {
             try {
                 FileWriter fileWriter = new FileWriter(file);
-                String nodeMapJson = JSON.toJSONString(nodeMap, SerializerFeature.IgnoreErrorGetter);
-                String nodeTableJson = JSON.toJSONString(nodeTable, SerializerFeature.IgnoreErrorGetter);
+                for(MyNode node : nodeMap.values()){
+                    String nodeJson = JSON.toJSONString(node, SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
+                    fileWriter.write(nodeJson+"$");
+                }
+                fileWriter.write("@");
+                // 遍历nodeTable
+                for(int i = 0; i < tableH; i++){
+                    for(int j = 0; j < tableW; j++){
+                        String nodeJson = JSON.toJSONString(nodeTable[i][j], SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
+                        fileWriter.write(nodeJson+"$");
+                    }
+                }
+                fileWriter.write("@");
                 String varListJson = JSON.toJSONString(varList, SerializerFeature.IgnoreErrorGetter);
-                fileWriter.write(nodeMapJson+"%"+ nodeTableJson+"%"+ varListJson);
+                fileWriter.write(varListJson);
                 fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -947,97 +1146,318 @@ public class RootLayoutController implements Initializable {
         System.out.println("menuJsonImport");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("打开文件");
+        File defaultDir = new File("save");
+        if (!defaultDir.exists())
+            if (defaultDir.mkdir())
+                System.out.println("创建了save文件夹");
+        fileChooser.setInitialDirectory(defaultDir);
         File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
         if (file != null) {
+            for(int i = 0; i < tableH; i++){
+                for(int j = 0; j < tableW; j++) {
+                    if (nodeTable[i][j] != null) {
+                        nodeTable[i][j].remove(drawingArea);
+                    }
+                    nodeTable[i][j] = null;
+                }
+            }
             try {
                 FileReader fileReader = new FileReader(file);
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
-                String line;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(bufferedReader.readLine());
-                bufferedReader.close();
-                fileReader.close();
-                String[] jsonStrings = stringBuilder.toString().split("%");
-                System.out.println(jsonStrings[0]);
-                System.out.println(jsonStrings[1]);
-                System.out.println(jsonStrings[2]);
-                // 将jsonString[0]分解为[]
+                BufferedReader bufferReader = new BufferedReader(fileReader);
+                String json = bufferReader.readLine();
+                String[] jsonArgs = json.split("@");
+                String[] nodeMapJson = jsonArgs[0].split("\\$");
+                String[] nodeTableJson = jsonArgs[1].split("\\$");
+                String varListJson = jsonArgs[2];
+                nodeMap.clear();
+                for(String nodeJson : nodeMapJson){
+                    MyNode node = null;
+                    String nodeJsonWithout$ = nodeJson.replace("$", "");
+                    if(nodeJson.contains("branchPreID")){
+                        node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
+                    }else if(nodeJson.contains("printText")) {
+                        node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
+                    }else if(nodeJson.contains("statementText")) {
+                        node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
+                    }else if(nodeJson.contains("mergeTrueID")){
+                        node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
+                    }else if(nodeJson.contains("loop_endPrePlace")){
+                        node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
+                    }else if(nodeJson.contains("loop_stPreID")) {
+                        node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
+                    }else if(nodeJson.contains("nxtPlace")){
+                        node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
+                    }else if(nodeJson.contains("prePlace")){
+                        node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
+                    }
+                    assert node != null;
+                    nodeMap.put(node.getFactoryID(), node);
+                }
 
-                nodeMap = JSON.parseObject(jsonStrings[0], new TypeReference<HashMap<Integer, MyNode>>() {
-                });
-                for (int i = 0; i < nodeTable.length; i++) {
-                    for (int j = 0; j < nodeTable[i].length; j++) {
-                        if (nodeTable[i][j] != null) {
-                            nodeTable[i][j].remove(drawingArea);
+                for(int i = 0; i < tableH; i++) {
+                    for (int j = 0; j < tableW; j++) {
+                        String nodeJson = nodeTableJson[i * tableW + j];
+                        MyNode node = null;
+                        String nodeJsonWithout$ = nodeJson.replace("$", "");
+                        if(nodeJson.contains("branchPreID")){
+                            node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
+                            System.out.println("recreate BranchNode in nodeTable");
+                        }else if(nodeJson.contains("printText")) {
+                            node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
+                            System.out.println("recreate PrintNode in nodeTable");
+                        }else if(nodeJson.contains("statementText")) {
+                            node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
+                            System.out.println("recreate StatementNode in nodeTable");
+                        }else if(nodeJson.contains("mergeTrueID")){
+                            node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
+                            System.out.println("recreate MergeNode in nodeTable");
+                        }else if(nodeJson.contains("loop_endPrePlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
+                            System.out.println("recreate LoopEndNode in nodeTable");
+                        }else if(nodeJson.contains("loop_stPreID")) {
+                            node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
+                            System.out.println("recreate LoopStNode in nodeTable");
+                        }else if(nodeJson.contains("nxtPlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
+                            System.out.println("recreate start node in nodeTable");
+                        }else if(nodeJson.contains("prePlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
+                            System.out.println("recreate end node in nodeTable");
+                        }else if(nodeJson.contains("line_down_right")){
+                            node = JSON.parseObject(nodeJsonWithout$, DownRightLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_horizon")){
+                            node = JSON.parseObject(nodeJsonWithout$, HorizonLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_left_down")){
+                            node = JSON.parseObject(nodeJsonWithout$, LeftDownLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_right_down")){
+                            node = JSON.parseObject(nodeJsonWithout$, RightDownLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_vertical")){
+                            node = JSON.parseObject(nodeJsonWithout$, VerticalLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_down_left")){
+                            node = JSON.parseObject(nodeJsonWithout$, DownLeftLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
                         }
-                    }
-                }
-                nodeTable = JSON.parseObject(jsonStrings[1], new TypeReference<MyNode[][]>() {
-                });
-                // 遍历nodeTable, 调用draw方法
-                for (int i = 0; i < nodeTable.length; i++) {
-                    for (int j = 0; j < nodeTable[i].length; j++) {
-                        if (nodeTable[i][j] != null) {
+                        if(node!=null){
+                            nodeTable[i][j] = node;
                             nodeTable[i][j].draw(drawingArea);
-                            System.out.println("placeX: " + i + " placeY: " + j +" Class: " + nodeTable[i][j].getClass().getName());
                         }
                     }
                 }
-                varList = JSON.parseObject(jsonStrings[2], new TypeReference<ArrayList<TableVar>>() {
-                });
+                varList = JSON.parseObject(varListJson, new TypeReference<ArrayList<TableVar>>() {});
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * 遍历nodeMap获得整个图所表示的代码的字符串，用于保存到文件
+     * 打开一个文件选择器, 可以选择保存到哪个文件，将上述字符串写入文件
+     */
     public void menuCodeExport(){
         System.out.println("menuCodeExport");
+        StringBuilder code = new StringBuilder();
+        normalNxtCodeExport(nodeMap.get(getStartID()), code);
+        code.append("}");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("选择保存文件");
+        fileChooser.setInitialFileName("code.cpp");
+        File file = fileChooser.showSaveDialog(Main.getPrimaryStage());
+        if(file != null){
+            try {
+                FileWriter fileWriter = new FileWriter(file);
+                fileWriter.write(code.toString());
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 遍历nodeMap获得整个图所表示的代码的字符串，用于保存到文件
+     * @param cur 当前节点
+     * @param code 代码字符串
+     */
+    private void normalNxtCodeExport(MyNode cur, StringBuilder code) {
+        while (!(cur instanceof EndNode)) {
+            if (cur instanceof StartNode) {
+                code.append("#include <bits/stdc++.h>\n\n").append("int main(){\n");
+                cur = nodeMap.get(((StartNode) cur).getNxtID());
+            } else if (cur instanceof PrintNode) {
+                code.append("   cout << ").append(((PrintNode) cur).getText().getText()).append(";\n");
+                cur = nodeMap.get(((PrintNode) cur).getNxtID());
+            } else if (cur instanceof StatementNode) {
+                code.append("   "+((StatementNode) cur).getText().getText()).append(";\n");
+                cur = nodeMap.get(((StatementNode) cur).getNxtID());
+            } else if(cur instanceof BranchNode){
+                code.append("if(").append(((BranchNode) cur).getText().getText()).append("){\n");
+                cur = nodeMap.get(((BranchNode) cur).getBranchTrueID());
+                branchCodeExport((BranchNode)cur, code);
+                code.append("}else{\n");
+                cur = nodeMap.get(((BranchNode) cur).getBranchFalseID());
+                branchCodeExport((BranchNode)cur, code);
+                code.append("}\n");
+            }else if(cur instanceof LoopStNode){
+                code.append("do{\n");
+                cur = loopCodeExport((LoopStNode)cur, code);
+                //code.append("}while(").append((LoopEndNode)cur.getText().getText()).append(");\n");
+            }
+        }
+    }
+
+    private void branchCodeExport(BranchNode branchNode, StringBuilder code) {
+        code.append("if(");
+        code.append(branchNode.getText().getText());
+        code.append("){\n");
+        int nxtID = branchNode.getBranchTrueID();
+        MyNode cur = nodeMap.get(nxtID);
+        while(!(cur instanceof MergeNode)){
+            if(cur instanceof StartNode){
+                cur = nodeMap.get(((StartNode) cur).getNxtID());
+            }else if(cur instanceof BranchNode){
+                branchCodeExport((BranchNode) cur, code);
+            }else if(cur instanceof PrintNode) {
+                code.append("System.out.println(\"").append(((PrintNode) cur).getText()).append("\");\n");
+                cur = nodeMap.get(((PrintNode) cur).getNxtID());
+            }else if(cur instanceof StatementNode) {
+                code.append(((StatementNode) cur).getText()).append(";\n");
+                cur = nodeMap.get(((StatementNode) cur).getNxtID());
+            }else if(cur instanceof LoopStNode) {
+                code.append("do{\n");
+                while(!(cur instanceof LoopEndNode)){
+                    if(cur instanceof BranchNode){
+                        branchCodeExport((BranchNode) cur, code);
+                    }else if(cur instanceof PrintNode) {
+                        code.append("System.out.println(\"").append(((PrintNode) cur).getText()).append("\");\n");
+                        cur = nodeMap.get(((PrintNode) cur).getNxtID());
+                    }else if(cur instanceof StatementNode) {
+                        code.append(((StatementNode) cur).getText()).append(";\n");
+                        cur = nodeMap.get(((StatementNode) cur).getNxtID());
+                    }
+                }
+                code.append("while( ").append(cur ).append(" )");
+            }else if(cur instanceof LoopEndNode) {
+
+            }
+        }
+    }
+
+    private MyNode loopCodeExport(LoopStNode loopStNode, StringBuilder code){
+        //code.append("while(").append(loopStNode.getText().getText()).append("){\n");
+        return null;
     }
 
     public void menuCodeImport(){
         System.out.println("menuCodeImport");
     }
 
+    /**
+     * 打开文件选择器并选择文件
+     * 将drawingArea的图形保存为图片，并保存为png格式
+     */
     public void menuImageSave(){
         System.out.println("menuImageSave");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("保存图片");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("png", "*.png"));
+        File file = fileChooser.showSaveDialog(drawingArea.getScene().getWindow());
+        if(file != null){
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(drawingArea.snapshot(null, null), null), "png", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void run(){
-        System.out.println("run");
+    public void build() {
+        System.out.println("build");
+        if (Run.isRunning()) {
+            outText.appendText("运行已停止");
+            reset();
+        }
+        saveData();
         try {
-            Run.setup(getStartID(), nodeMap, data, outText);
+            Run.setup(
+                    getStartID(),
+                    nodeMap,
+                    data,
+                    outText,
+                    inform,
+                    lock
+            );
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText(e.getMessage());
             alert.show();
-        }
-
-    }
-
-
-    public void stepRun(){
-        System.out.println("stepRun");
-        int next = -2;
-        try {
-            next = Run.stepRun();
-        } catch (Exception e) {
-//            e.printStackTrace();
-            Alert alert =new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText(e.getMessage());
-            alert.show();
+            outText.appendText("构建失败："+e.getMessage()+"\n");
             return;
         }
-        // stepRun success, update run position
-        MyNode node = nodeMap.get(next);
-        int x = (int) (node.getImageView().getX()/viewW);
-        int y = (int) (node.getImageView().getY()/viewH);
-        showRunPosition.clear();
+        outText.appendText("构建成功\n");
+    }
+
+    /*
+    -----------------------------------  多线程 --------------------------------------------
+     */
+    private final Object lock = new Object(); // 继续运行的时候使用lock.notify()通知运算线程，让它继续运行
+    private void continue_() {
+        Run.pauseSig = false;
+        synchronized (lock) {
+            lock.notify();
+        }
+    }
+
+    private void pause() {
+        Run.pauseSig = true;
         try {
-            showRunPosition.draw(x,y);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Thread.sleep(100);
+        } catch (Exception ignored) {}
+        int now = Run.getNow();
+//        Exception exception = Run.getException();
+        updateEveryThing(now, null);
+    }
+
+    /**
+     * inform的作用是，让运算线程通知主线程运算已经告一段落
+     */
+    private final SimpleIntegerProperty inform = new SimpleIntegerProperty(0);
+    private void setInform() {
+        inform.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                int now = Run.getNow();
+                Exception exception = Run.exception;
+                updateEveryThing(now, exception);
+            }
+        });
+    }
+
+    /**
+     * 运算出了结果，调用此函数以更新图形界面；<br/>
+     * 不管是单步运行还是连续运行，都用这个<br/>
+     * @param now   当前运行位置的id
+     * @param exception  如果不为null，说明运行中出现了异常，导致运行终止，于是应该显示这个异常信息
+     */
+    private void updateEveryThing(int now, Exception exception) {
+        // stepRun success, update run position
+        if (now!=-1) {
+            MyNode node = nodeMap.get(now);
+            int x = (int) (node.getImageView().getX()/viewW);
+            int y = (int) (node.getImageView().getY()/viewH);
+            System.out.println(x+" "+y);
+            showRunPosition.clear();
+            try {
+                showRunPosition.draw(x,y);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         // update data table
         Map<String, Object> varMap = Run.varMap;
@@ -1046,23 +1466,90 @@ public class RootLayoutController implements Initializable {
             tVar.setVarValue(varMap.get(name).toString());
         }
         tableView.refresh();
+        if (exception!=null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(exception.getMessage());
+            alert.show();
+        }
     }
-    public void reset(){
-        System.out.println("reset");
+
+    private void continiousRun() {
+        if (Run.isRunning()) {
+            continue_();
+            return;
+        }
+        build();
+        System.out.println("cRun");
+        int next;
+        Run run = new Run();
+        run.start();
+    }
+
+    public void run(){
+        continiousRun();
+//        build();
+//        System.out.println("run");
+//        int next;
+//        try {
+//            next = Run.continuousRun();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Alert alert =new Alert(Alert.AlertType.INFORMATION);
+//            alert.setContentText(e.getMessage());
+//            alert.show();
+//            return;
+//        }
+//        // stepRun success, update run position
+//        MyNode node = nodeMap.get(next);
+//        int x = (int) (node.getImageView().getX()/viewW);
+//        int y = (int) (node.getImageView().getY()/viewH);
+//        showRunPosition.clear();
+//        try {
+//            showRunPosition.draw(x,y);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        // update data table
+//        Map<String, Object> varMap = Run.varMap;
+//        for (TableVar tVar : data) {
+//            String name = tVar.getVarName();
+//            tVar.setVarValue(varMap.get(name).toString());
+//        }
+//        tableView.refresh();
+    }
+
+    public void test(){
+        for(MyNode node : nodeMap.values()){
+            System.out.println(node.getClass().getName());
+        }
+    }
+
+    public void stepRun(){
+        if (!Run.isRunning())
+            build();
+        System.out.println("stepRun");
+        int next = -2;
+        try {
+            next = Run.stepRun();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert =new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(e.getMessage());
+            alert.show();
+            return;
+        }
+        // stepRun success, update run position
+        updateEveryThing(next, null);
+    }
+
+    public void reset() {
+        showRunPosition.clear();
         Run.reset();
+        recoverData();
     }
 
     public void commit(){
         propertyController.sendMessage();
-    }
-
-    public void menuSave(ActionEvent actionEvent) {
-    }
-
-    public void menuOpen(ActionEvent actionEvent) {
-    }
-
-    public void menuExport(ActionEvent actionEvent) {
     }
 }
 

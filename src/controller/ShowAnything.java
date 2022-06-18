@@ -16,6 +16,8 @@ public class ShowAnything {
     int relativeX;
     int relativeY;
 
+    private int drawCount = 0;  // 目前绘制此类图形的数量
+
     private final ImageView[][] table = new ImageView[Constant.tableH][Constant.tableW];
 
     /**
@@ -38,7 +40,7 @@ public class ShowAnything {
      * ImageView的构造函数没有复制功能，这是不得已而为之
      * @return this.imageView的副本
      */
-    ImageView copyImageView() {
+    private ImageView copyImageView() {
         ImageView imageV = new ImageView(imageView.getImage());
         imageV.setId(imageView.getId());
         imageV.setFitHeight(imageView.getFitHeight());
@@ -55,11 +57,16 @@ public class ShowAnything {
     public void draw(int x, int y) throws Exception {
         if (x<0 || x>= Constant.tableW || y<0 || y>=Constant.tableH)
             throw new Exception("x或y错误");
-        if (table[y][x]!=null)
-            erase(x,y);
+        if (table[y][x]!=null) {
+            drawingArea.getChildren().remove(table[y][x]);
+            drawingArea.getChildren().add(table[y][x]);
+            return;
+        }
+
         table[y][x] = copyImageView();
         table[y][x].setX(x*Constant.viewW+relativeX);
         table[y][x].setY(y*Constant.viewH+relativeY);
+        drawCount++;
         drawingArea.getChildren().add(table[y][x]);
     }
 
@@ -72,6 +79,7 @@ public class ShowAnything {
         if (x<0 || x>= Constant.tableW || y<0 || y>=Constant.tableH)
             throw new Exception("x或y错误");
         if (table[y][x]!=null) {
+            drawCount--;
             drawingArea.getChildren().remove(table[y][x]);
             table[y][x] = null;
         }
@@ -84,6 +92,12 @@ public class ShowAnything {
         for (int i=0; i<Constant.tableH; i++) {
             drawingArea.getChildren().removeAll(table[i]);
         }
+        drawCount = 0;
+    }
+
+    public boolean hasDraw() {
+        System.out.println("drawCount:"+drawCount);
+        return drawCount>0;
     }
 
 

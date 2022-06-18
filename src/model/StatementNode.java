@@ -1,6 +1,7 @@
 package model;
 
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,23 +12,23 @@ import static model.Constant.*;
 
 public class StatementNode extends MyNode {
     private Text text;
-    private int preID;
-    private int prePlace;
-    private int nxtID;
-    private int nxtPlace;
+//    private int preID;
+//    private int prePlace;
+//    private int nxtID;
+//    private int nxtPlace;
     private String statementText; // statementText is the text of the statement node
     private ImageView statement;
 
     public StatementNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
-        this.preID = -1;
-        this.prePlace = -1;
-        this.nxtID = -1;
-        this.nxtPlace = -1;
+//        this.preID = -1;
+//        this.prePlace = -1;
+//        this.nxtID = -1;
+//        this.nxtPlace = -1;
         this.statementText = "statement code!";
         this.text = new Text("statement code!");
-        this.text.setX(x);
-        this.text.setY(y + viewH / 2);
+        this.text.setX(x + statementTextRelativeX);
+        this.text.setY(y + statementTextRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.statement = new ImageView(new Image("sources/img/draw_node_statement.png"));
@@ -37,6 +38,41 @@ public class StatementNode extends MyNode {
             this.statement.setFitWidth(viewW);
             this.statement.setId("statement");
         }catch(Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading StatementNode image");
+        }
+    }
+
+    @JSONCreator
+    public StatementNode(@JSONField(name="factoryID") int factoryID,
+                     @JSONField(name = "connectPlace") int[] connectPlace,
+                     @JSONField(name = "connectTo") int[] connectTo,
+                     @JSONField(name = "xIndex") double xIndex,
+                     @JSONField(name = "yIndex") double yIndex,
+//                     @JSONField(name = "preID") int preID,
+//                     @JSONField(name = "prePlace") int prePlace,
+//                     @JSONField(name = "nxtID") int nxtID,
+//                     @JSONField(name = "nxtPlace") int nxtPlace,
+                     @JSONField(name = "statementText") String statementText) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+//        this.preID = preID;
+//        this.prePlace = prePlace;
+//        this.nxtID = nxtID;
+//        this.nxtPlace = nxtPlace;
+//        recoverConnect(connectTo, connectPlace);
+        this.statementText = statementText;
+        this.text = new Text(statementText);
+        this.text.setX(xIndex + statementTextRelativeX);
+        this.text.setY(yIndex + statementTextRelativeY);
+        this.text.setFont(Constant.font);
+        try {
+            this.statement = new ImageView(new Image("sources/img/draw_node_statement.png"));
+            this.statement.setX(xIndex);
+            this.statement.setY(yIndex);
+            this.statement.setFitWidth(viewW);
+            this.statement.setFitHeight(viewH);
+            this.statement.setId("statement");
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("error in loading StatementNode image");
         }
@@ -52,38 +88,44 @@ public class StatementNode extends MyNode {
     }
 
     public int getPreID() {
-        return preID;
+//        return preID;
+        return connectTo[1];
     }
 
+
     public void setPreID(int preID) {
-        this.preID = preID;
+//        this.preID = preID;
         connectTo[1] = preID;
     }
 
     public int getNxtID() {
-        return nxtID;
+//        return nxtID;
+        return connectTo[2];
     }
 
     public void setNxtID(int nxtID) {
-        this.nxtID = nxtID;
+//        this.nxtID = nxtID;
         connectTo[2] = nxtID;
     }
 
     public int getPrePlace() {
-        return prePlace;
+//        return prePlace;
+        return connectTo[2];
     }
 
     public void setPrePlace(int prePlace) {
-        this.prePlace = prePlace;
+//        this.prePlace = prePlace;
         connectPlace[1] = prePlace;
     }
 
     public int getNxtPlace() {
-        return nxtPlace;
+//        return nxtPlace;
+        return connectPlace[1];
     }
 
+
     public void setNxtPlace(int nxtPlace) {
-        this.nxtPlace = nxtPlace;
+//        this.nxtPlace = nxtPlace;
         connectPlace[2] = nxtPlace;
     }
 
@@ -112,8 +154,8 @@ public class StatementNode extends MyNode {
         super.setyIndex(y);
         this.statement.setX(x);
         this.statement.setY(y);
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + statementTextRelativeX);
+        this.text.setY(y + statementTextRelativeY);
         drawingArea.getChildren().add(this.statement);
         drawingArea.getChildren().add(this.text);
     }

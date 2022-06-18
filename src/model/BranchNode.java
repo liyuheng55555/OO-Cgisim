@@ -1,5 +1,6 @@
 package model;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,28 +12,28 @@ import static model.Constant.*;
 
 public class BranchNode extends MyNode {
     private Text text;
-    private int branchPreID;
-    private int branchPrePlace;
-    private int branchTrueID;
-    private int branchTruePlace;
-    private int branchFalseID;
-    private int branchFalsePlace;
+//    private int branchPreID;
+//    private int branchPrePlace;
+//    private int branchTrueID;
+//    private int branchTruePlace;
+//    private int branchFalseID;
+//    private int branchFalsePlace;
     private String branchText; // branchText is the text of the branch node
     private ImageView branch;
 
 
     public BranchNode(int factoryID, int x, int y) {
         super(factoryID,x,y);
-        this.branchPreID = -1;
-        this.branchPrePlace = -1;
-        this.branchTrueID = -1;
-        this.branchTruePlace = -1;
-        this.branchFalseID = -1;
-        this.branchFalsePlace = -1;
+//        this.branchPreID = -1;
+//        this.branchPrePlace = -1;
+//        this.branchTrueID = -1;
+//        this.branchTruePlace = -1;
+//        this.branchFalseID = -1;
+//        this.branchFalsePlace = -1;
         this.branchText = "branch code!";
         this.text = new Text("branch code!");
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + branchTextRelativeX);
+        this.text.setY(y + branchTextRelativeY);
         this.text.setFont(Constant.font);
         try{
             this.branch = new ImageView(new Image("sources/img/draw_node_if.png"));
@@ -57,56 +58,62 @@ public class BranchNode extends MyNode {
     }
 
     public int getBranchPreID() {
-        return branchPreID;
+//        return branchPreID;
+        return connectTo[1];
     }
 
     public void setBranchPreID(int branchPreID) {
-        this.branchPreID = branchPreID;
+//        this.branchPreID = branchPreID;
         connectTo[1] = branchPreID;
     }
 
     public int getBranchTrueID() {
-        return branchTrueID;
+//        return branchTrueID;
+        return connectTo[2];
     }
 
     public void setBranchTrueID(int branchTrueID) {
-        this.branchTrueID = branchTrueID;
+//        this.branchTrueID = branchTrueID;
         connectTo[2] = branchTrueID;
     }
 
     public int getBranchFalseID() {
-        return branchFalseID;
+//        return branchFalseID;
+        return connectTo[4];
     }
 
     public void setBranchFalseID(int branchFalseID) {
-        this.branchFalseID = branchFalseID;
+//        this.branchFalseID = branchFalseID;
         connectTo[4] = branchFalseID;
     }
 
     public int getBranchPrePlace() {
-        return branchPrePlace;
+//        return branchPrePlace;
+        return connectPlace[1];
     }
 
     public void setBranchPrePlace(int branchPrePlace) {
-        this.branchPrePlace = branchPrePlace;
+//        this.branchPrePlace = branchPrePlace;
         connectPlace[1] = branchPrePlace;
     }
 
     public int getBranchTruePlace() {
-        return branchTruePlace;
+//        return branchTruePlace;
+        return connectPlace[2];
     }
 
     public void setBranchTruePlace(int branchTruePlace) {
-        this.branchTruePlace = branchTruePlace;
+//        this.branchTruePlace = branchTruePlace;
         connectPlace[2] = branchTruePlace;
     }
 
     public int getBranchFalsePlace() {
-        return branchFalsePlace;
+//        return branchFalsePlace;
+        return connectPlace[4];
     }
 
     public void setBranchFalsePlace(int branchFalsePlace) {
-        this.branchFalsePlace = branchFalsePlace;
+//        this.branchFalsePlace = branchFalsePlace;
         connectPlace[4] = branchFalsePlace;
     }
 
@@ -135,8 +142,8 @@ public class BranchNode extends MyNode {
         super.setyIndex(y);
         this.branch.setX(x);
         this.branch.setY(y);
-        this.text.setX(x + textRelativeX);
-        this.text.setY(y + textRelativeY);
+        this.text.setX(x + branchTextRelativeX);
+        this.text.setY(y + branchTextRelativeY);
         drawingArea.getChildren().add(this.branch);
         drawingArea.getChildren().add(this.text);
     }
@@ -147,4 +154,40 @@ public class BranchNode extends MyNode {
         drawingArea.getChildren().remove(this.text);
     }
 
+    @JSONCreator
+    public BranchNode(@JSONField(name="factoryID") int factoryID,
+                      @JSONField(name = "connectPlace") int[] connectPlace,
+                      @JSONField(name = "connectTo") int[] connectTo,
+                      @JSONField(name = "xIndex") double xIndex,
+                      @JSONField(name = "yIndex") double yIndex,
+//                      @JSONField(name = "branchPrePlace") int branchPrePlace,
+//                      @JSONField(name = "branchTrueID") int branchTrueID,
+//                      @JSONField(name = "branchTruePlace") int branchTruePlace,
+//                      @JSONField(name = "branchFalseID") int branchFalseID,
+//                      @JSONField(name = "branchFalsePlace") int branchFalsePlace,
+                      @JSONField(name = "branchText") String branchText) {
+        super(factoryID,connectPlace,connectTo,xIndex,yIndex);
+//        this.branchPrePlace = branchPrePlace;
+//        this.branchTrueID = branchTrueID;
+//        this.branchTruePlace = branchTruePlace;
+//        this.branchFalseID = branchFalseID;
+//        this.branchFalsePlace = branchFalsePlace;
+//        recoverConnect(connectTo, connectPlace);
+        this.branchText = branchText;
+        this.text = new Text(branchText);
+        this.text.setX(xIndex + branchTextRelativeX);
+        this.text.setY(yIndex + branchTextRelativeY);
+        this.text.setFont(Constant.font);
+        try {
+            this.branch = new ImageView(new Image("sources/img/draw_node_if.png"));
+            this.branch.setX(xIndex);
+            this.branch.setY(yIndex);
+            this.branch.setFitWidth(viewW);
+            this.branch.setFitHeight(viewH);
+            this.branch.setId("branch");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error in loading IfNode image");
+        }
+    }
 }
