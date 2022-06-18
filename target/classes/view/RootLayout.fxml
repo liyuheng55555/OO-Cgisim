@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
+<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
     <top>
       <SplitPane orientation="VERTICAL" prefHeight="30.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
          <items>
@@ -47,7 +47,14 @@
                         <Cursor fx:constant="S_RESIZE" />
                      </cursor>
                     </MenuBar>
-                  <Pane prefHeight="30.0" prefWidth="43.0" style="-fx-background-color: #ffffff;" />
+                  <Pane prefHeight="30.0" prefWidth="43.0" style="-fx-background-color: #ffffff;">
+                     <children>
+                        <ImageView id="build" fx:id="buildButton" fitHeight="30.0" fitWidth="38.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../sources/img/build.jpg" />
+                           </image>
+                        </ImageView>
+                     </children></Pane>
                   <ImageView id="run" fx:id="runButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../sources/img/run.jpg" />
@@ -150,13 +157,13 @@
                     <padding>
                         <Insets top="10.0" />
                     </padding>
-                    <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="varName" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
+                    <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="变量类型" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
                         <font>
                             <Font name="System Italic" size="13.0" />
                         </font>
                     </TextField>
-                    <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="varType" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
-                    <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="varValue" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
+                    <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="变量名" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
+                    <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="变量值" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
                 </HBox>
                 <HBox minHeight="40.0" prefHeight="60.0" prefWidth="235.0">
                     <Button fx:id="add" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #00BB00; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="add">

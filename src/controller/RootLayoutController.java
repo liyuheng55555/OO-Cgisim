@@ -44,6 +44,8 @@ public class RootLayoutController implements Initializable {
     @FXML
     private TextArea outText;
     @FXML
+    private ImageView buildButton;
+    @FXML
     private ImageView stopButton;
     @FXML
     private ImageView pauseButton;
@@ -882,6 +884,18 @@ public class RootLayoutController implements Initializable {
             alert.setContentText("pause_success");
             alert.show();
             outText.appendText("测试追加输出");
+        });
+        buildButton.setOnMouseClicked(e->{
+            alert.setContentText("build_success");
+            alert.show();
+           ImageView imageView = new ImageView();
+           Image image = new Image("/sources/img/build.jpg");
+           imageView.setImage(image);
+           imageView.setFitWidth(100);
+           imageView.setFitHeight(100);
+           imageView.setX(5);
+           imageView.setY(4);
+           drawingArea.getChildren().add(imageView);
         });
     }
     private int getStartID() {

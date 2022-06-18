@@ -32,6 +32,7 @@ public class ShowAnything {
         this.relativeY = relativeY;
     }
 
+
     /**
      * 生成一个this.imageView的副本；
      * ImageView的构造函数没有复制功能，这是不得已而为之
