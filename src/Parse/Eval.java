@@ -5,7 +5,9 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +33,27 @@ public class Eval extends CgisimBaseVisitor<Object> {
      */
     private String beaut(String s) {
         return s.replace('\n', ' ');
+    }
+
+    /**
+     * 如果o1、o2中有一个float 且另一个是int，就把两个都升格成为float；
+     * 两个float、两个int就原样返回；
+     * 有bool存在就抛出异常；
+     * @param o1
+     * @param o2
+     * @return
+     */
+    private List<Object> intToFloat(Object o1, Object o2) throws RuntimeException {
+        List<Object> result = new ArrayList<>();
+        if (o1 instanceof Boolean || o2 instanceof Boolean)
+            throw new RuntimeException(o1.toString()+"与"+o2.toString()+"无法进行算数运算");
+        if (o1 instanceof Float && o2 instanceof Integer)
+            o2 = Float.valueOf(o2.toString());
+        if (o2 instanceof Float && o1 instanceof Integer)
+            o1 = Float.valueOf(o1.toString());
+        result.add(o1);
+        result.add(o2);
+        return result;
     }
 
     /**
@@ -84,17 +107,31 @@ public class Eval extends CgisimBaseVisitor<Object> {
      * @return
      */
     @Override
-    public Object visitMulDiv(CgisimParser.MulDivContext ctx) {
+    public Object visitMulDiv(CgisimParser.MulDivContext ctx) throws RuntimeException {
         Object left = visit(ctx.expr(0));
         Object right = visit(ctx.expr(1));
-        if (!left.getClass().equals(Integer.class) || !right.getClass().equals(Integer.class))
-            throw new RuntimeException(beaut(ctx.getText())+": 尝试对非数字做算术运算");
-        Integer i1 = (Integer)left;
-        Integer i2 = (Integer)right;
-        switch (ctx.op.getType()) {
-            case CgisimParser.MUL: return i1*i2;
-            case CgisimParser.DIV: return i1/i2;
-            case CgisimParser.MOD: return i1%i2;
+        List<Object> list = intToFloat(left, right);
+        left = list.get(0);
+        right = list.get(1);
+        if (left.getClass().equals(Integer.class)) {
+            Integer i1 = (Integer)left;
+            Integer i2 = (Integer)right;
+            switch (ctx.op.getType()) {
+                case CgisimParser.MUL: return i1*i2;
+                case CgisimParser.DIV: return i1/i2;
+                case CgisimParser.MOD: return i1%i2;
+            }
+            throw new RuntimeException("未知的错误");
+        }
+        else if (left.getClass().equals(Float.class)) {
+            Float i1 = (Float)left;
+            Float i2 = (Float)right;
+            switch (ctx.op.getType()) {
+                case CgisimParser.MUL: return i1*i2;
+                case CgisimParser.DIV: return i1/i2;
+                case CgisimParser.MOD: throw new RuntimeException(beaut(ctx.getText())+": 尝试对浮点数做取余运算");
+            }
+            throw new RuntimeException("未知的错误");
         }
         throw new RuntimeException("未知的错误");
     }
@@ -109,13 +146,26 @@ public class Eval extends CgisimBaseVisitor<Object> {
     public Object visitAddSub(CgisimParser.AddSubContext ctx) {
         Object left = visit(ctx.expr(0));
         Object right = visit(ctx.expr(1));
-        if (!left.getClass().equals(Integer.class) || !right.getClass().equals(Integer.class))
-            throw new RuntimeException(beaut(ctx.getText())+": 尝试对非数字做算术运算");
-        Integer i1 = (Integer)left;
-        Integer i2 = (Integer)right;
-        switch (ctx.op.getType()) {
-            case CgisimParser.ADD: return i1+i2;
-            case CgisimParser.SUB: return i1-i2;
+        List<Object> list = intToFloat(left, right);
+        left = list.get(0);
+        right = list.get(1);
+        if (left.getClass().equals(Integer.class)) {
+            Integer i1 = (Integer)left;
+            Integer i2 = (Integer)right;
+            switch (ctx.op.getType()) {
+                case CgisimParser.ADD: return i1+i2;
+                case CgisimParser.SUB: return i1-i2;
+            }
+            throw new RuntimeException("未知的错误");
+        }
+        else if (left.getClass().equals(Float.class)) {
+            Float i1 = (Float)left;
+            Float i2 = (Float)right;
+            switch (ctx.op.getType()) {
+                case CgisimParser.ADD: return i1+i2;
+                case CgisimParser.SUB: return i1-i2;
+            }
+            throw new RuntimeException("未知的错误");
         }
         throw new RuntimeException("未知的错误");
     }
