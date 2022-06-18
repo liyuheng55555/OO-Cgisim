@@ -11,30 +11,30 @@
 }
 
 .MenuBar {
-    -fx-background-color: #C4E1FF;
-    -fx-background-insets: 0px, 0px;
+    /*-fx-background-color: #C4E1FF;*/
+    /*-fx-background-insets: 0px, 0px;*/
 }
 
 .MenuBar .menu-item {
-    -fx-font-size: 15px;
+    -fx-font-size: 12px;
     -fx-text-alignment: CENTER;
-    -fx-background-color: white;
-    -fx-border-width: 0px;
-    -fx-border-color: #DDDDFF;
-    -fx-end-margin: 0;
-    -fx-padding: 0;
-    -fx-background-insets: 0px, 0px;
+    /*-fx-background-color: white;*/
+    /*-fx-border-width: 0px;*/
+    /*-fx-border-color: #DDDDFF;*/
+    /*-fx-end-margin: 0;*/
+    /*-fx-padding: 0;*/
+    /*-fx-background-insets: 0px, 0px;*/
 }
 
-.MenuBar .menu-item:hover {
-    -fx-background-color: #84C1FF;
-    -fx-background-insets: 0px, 0px;
-}
+/*.MenuBar .menu-item:hover {*/
+/*    -fx-background-color: #84C1FF;*/
+/*    -fx-background-insets: 0px, 0px;*/
+/*}*/
 
-.MenuBar .menu:hover {
-    -fx-background-color: #84C1FF;
-    -fx-background-insets: 0px, 0px;
-}
+/*.MenuBar .menu:hover {*/
+/*    -fx-background-color: #84C1FF;*/
+/*    -fx-background-insets: 0px, 0px;*/
+/*}*/
 
 #scrollPane {
     -fx-background-color: #ECFFFF;

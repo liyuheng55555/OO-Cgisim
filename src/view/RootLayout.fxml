@@ -23,78 +23,73 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
+<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
 <top>
     <SplitPane orientation="VERTICAL" prefHeight="30.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
         <HBox prefHeight="30.0" prefWidth="1196.0">
             <children>
-                <MenuBar prefHeight="30.0" style="-fx-background-radius: 5px;" styleClass="MenuBar"
-                         stylesheets="@../sources/css/style.css">
+                <MenuBar prefHeight="30.0" style="-fx-background-radius: 5px;" styleClass="MenuBar" stylesheets="@../sources/css/style.css">
                     <Menu mnemonicParsing="false" styleClass="menu" text="文件">
-                        <MenuItem mnemonicParsing="false" onAction="#menuNew" text="新建"/>
-                        <MenuItem mnemonicParsing="false" onAction="#menuJsonExport" text="保存"/>
-                        <MenuItem mnemonicParsing="false" onAction="#menuJsonImport" text="打开新文件"/>
-                        <MenuItem mnemonicParsing="false" onAction="#menuCodeExport" text="保存为代码"/>
-                        <MenuItem mnemonicParsing="false" onAction="#menuCodeImport" text="从代码导入"/>
-                        <MenuItem mnemonicParsing="false" onAction="#menuImageSave" text="保存为图片"/>
+                        <MenuItem mnemonicParsing="false" onAction="#menuNew" text="新建" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuJsonExport" text="保存" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuJsonImport" text="打开新文件" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuCodeExport" text="保存为代码" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuCodeImport" text="从代码导入" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuImageSave" text="保存为图片" />
                     </Menu>
                     <Menu mnemonicParsing="false" text="程序">
-                        <MenuItem mnemonicParsing="false" onAction="#run" text="运行"/>
-                        <MenuItem mnemonicParsing="false" onAction="#test" text="暂停"/>
-                        <MenuItem mnemonicParsing="false" text="debug"/>
-                        <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步"/>
-                        <MenuItem mnemonicParsing="false" text="重置"/>
+                        <MenuItem mnemonicParsing="false" onAction="#run" text="运行" />
+                        <MenuItem mnemonicParsing="false" onAction="#test" text="暂停" />
+                        <MenuItem mnemonicParsing="false" text="debug" />
+                        <MenuItem mnemonicParsing="false" onAction="#stepRun" text="下一步" />
+                        <MenuItem mnemonicParsing="false" text="重置" />
                     </Menu>
                     <cursor>
-                        <Cursor fx:constant="S_RESIZE"/>
+                        <Cursor fx:constant="S_RESIZE" />
                     </cursor>
                 </MenuBar>
-                <Pane prefHeight="30.0" prefWidth="43.0" style="-fx-background-color: #ffffff;"/>
-                <ImageView id="build" fx:id="buildButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true"
-                           preserveRatio="true">
+                <Pane prefHeight="30.0" prefWidth="43.0" style="-fx-background-color: #ffffff;" />
+                <ImageView id="build" fx:id="buildButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                    <Image url="@../sources/img/button_build.png"/>
+                    <Image url="@../sources/img/button_build.png" />
                     </image>
                 </ImageView>
-                <ImageView id="run" fx:id="runButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true"
-                           preserveRatio="true">
+                <ImageView id="run" fx:id="runButton" fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../sources/img/run.jpg"/>
+                        <Image url="@../sources/img/run.jpg" />
                     </image>
                     <HBox.margin>
-                        <Insets left="3.0"/>
+                        <Insets left="3.0" />
                     </HBox.margin>
                 </ImageView>
-                <ImageView id="step" fx:id="stepButton" fitHeight="30.0" fitWidth="36.0" pickOnBounds="true"
-                           preserveRatio="true">
+                <ImageView id="step" fx:id="stepButton" fitHeight="30.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../sources/img/step.jpg"/>
+                        <Image url="@../sources/img/step.jpg" />
                     </image>
                     <viewport>
-                        <Rectangle2D/>
+                        <Rectangle2D />
                     </viewport>
                     <HBox.margin>
-                        <Insets left="3.0"/>
+                        <Insets left="3.0" />
                     </HBox.margin>
                 </ImageView>
-                <ImageView id="pause" fx:id="pauseButton" fitHeight="30.0" fitWidth="38.0" pickOnBounds="true"
-                           preserveRatio="true">
+                <ImageView id="pause" fx:id="pauseButton" fitHeight="30.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../sources/img/pause.jpg"/>
+                        <Image url="@../sources/img/pause.jpg" />
                     </image>
                     <HBox.margin>
-                        <Insets left="3.0"/>
+                        <Insets left="3.0" />
                     </HBox.margin>
                 </ImageView>
-                <ImageView id="stop" fx:id="stopButton" fitHeight="30.0" fitWidth="78.0" pickOnBounds="true"
-                           preserveRatio="true">
+                <ImageView id="stop" fx:id="stopButton" fitHeight="30.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../sources/img/stop.jpg"/>
+                        <Image url="@../sources/img/stop.jpg" />
                     </image>
                     <HBox.margin>
-                        <Insets left="3.0"/>
+                        <Insets left="3.0" />
                     </HBox.margin>
                 </ImageView>
+
             </children>
         </HBox>
     </SplitPane>
@@ -161,13 +156,13 @@
                 <padding>
                     <Insets top="10.0" />
                 </padding>
-                <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="varName" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
+                <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="变量类型" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
                     <font>
                         <Font name="System Italic" size="13.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="varType" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
-                <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="varValue" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
+                <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="变量值" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
+                <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="变量名" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
             </HBox>
             <HBox minHeight="40.0" prefHeight="60.0" prefWidth="235.0">
                 <Button fx:id="add" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #00BB00; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="add">
