@@ -3,11 +3,8 @@ package model;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.util.ArrayList;
-
 
 public class TableVar {
-    public static ArrayList<TableVar> varList = new ArrayList<>();
 
     private final StringProperty varName;
     private final StringProperty varType;
@@ -17,7 +14,6 @@ public class TableVar {
         this.varName = new SimpleStringProperty(varName);
         this.varType = new SimpleStringProperty(varType);
         this.varValue = new SimpleStringProperty(varValue);
-        varList.add(this);
     }
 
     public TableVar(TableVar var) {

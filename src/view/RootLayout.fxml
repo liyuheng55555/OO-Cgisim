@@ -33,6 +33,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#menuNew" text="新建" />
                         <MenuItem mnemonicParsing="false" onAction="#menuJsonExport" text="保存" />
                         <MenuItem mnemonicParsing="false" onAction="#menuJsonImport" text="打开新文件" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuOpenFromTemplate" text="从模板打开" />
                         <MenuItem mnemonicParsing="false" onAction="#menuCodeExport" text="保存为代码" />
                         <MenuItem mnemonicParsing="false" onAction="#menuCodeImport" text="从代码导入" />
                         <MenuItem mnemonicParsing="false" onAction="#menuImageSave" text="保存为图片" />
@@ -156,13 +157,13 @@
                 <padding>
                     <Insets top="10.0" />
                 </padding>
-                <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="变量类型" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
+                <TextField fx:id="txtName" prefHeight="30.0" prefWidth="80.0" promptText="变量名" style="-fx-background-radius: 5px; -fx-background-color: #C1FFE4;">
                     <font>
                         <Font name="System Italic" size="13.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="变量值" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
-                <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="变量名" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
+                <TextField fx:id="txtType" prefHeight="30.0" prefWidth="80.0" promptText="变量类型" style="-fx-background-radius: 5px; -fx-background-color: #D2E9FF;" />
+                <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="变量值" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
             </HBox>
             <HBox minHeight="40.0" prefHeight="60.0" prefWidth="235.0">
                <Button fx:id="clear" mnemonicParsing="false" prefHeight="20.0" prefWidth="60.0" style="-fx-background-color: #F75000 #F75000; -fx-background-radius: 10px;" text="clear" textFill="#f8f6f6">

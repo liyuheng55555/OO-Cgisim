@@ -32,7 +32,6 @@ import static model.Constant.tableW;
 import static model.Constant.viewH;
 import static model.Constant.viewW;
 import static model.Constant.connectorSize;
-import static model.TableVar.varList;
 
 import model.Constant.ClickStatus;
 import model.Constant.Status;
@@ -42,9 +41,6 @@ import javax.imageio.ImageIO;
 public class RootLayoutController implements Initializable {
     //创建数据源
     final ObservableList<TableVar> data = FXCollections.observableArrayList(
-            new TableVar("a", "int", "1"),
-            new TableVar("b", "float", "2.3"),
-            new TableVar("c", "bool", "true")
     );
     private List<TableVar> dataBackup = new ArrayList<>();
     private void saveData() {
@@ -1142,7 +1138,8 @@ public class RootLayoutController implements Initializable {
                     }
                 }
                 fileWriter.write("@");
-                String varListJson = JSON.toJSONString(varList, SerializerFeature.IgnoreErrorGetter);
+                saveData();
+                String varListJson = JSON.toJSONString(dataBackup, SerializerFeature.IgnoreErrorGetter);
                 fileWriter.write(varListJson);
                 fileWriter.close();
             } catch (IOException e) {
@@ -1248,9 +1245,8 @@ public class RootLayoutController implements Initializable {
                         }
                     }
                 }
-                varList = JSON.parseObject(varListJson, new TypeReference<ArrayList<TableVar>>() {});
-                data.clear();
-                data.addAll(varList);
+                dataBackup = JSON.parseObject(varListJson, new TypeReference<ArrayList<TableVar>>() {});
+                recoverData();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1458,6 +1454,105 @@ public class RootLayoutController implements Initializable {
         if(file != null){
             try {
                 ImageIO.write(SwingFXUtils.fromFXImage(drawingArea.snapshot(null, null), null), "png", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void menuOpenFromTemplate(){
+        System.out.println("menuOpenFromTemplate");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("从模板创建文件");
+        File defaultDir = new File("Templates");
+        if (!defaultDir.exists())
+            if (defaultDir.mkdir())
+                System.out.println("创建了Templates文件夹");
+        fileChooser.setInitialDirectory(defaultDir);
+        File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
+        if(file != null) {
+            for(int i = 0; i < tableH; i++){
+                for(int j = 0; j < tableW; j++) {
+                    if (nodeTable[i][j] != null) {
+                        nodeTable[i][j].remove(drawingArea);
+                    }
+                    nodeTable[i][j] = null;
+                }
+            }
+            try {
+                FileReader fileReader = new FileReader(file);
+                BufferedReader bufferReader = new BufferedReader(fileReader);
+                String json = bufferReader.readLine();
+                String[] jsonArgs = json.split("@");
+                String[] nodeTableJson = jsonArgs[0].split("\\$");
+                String varListJson = jsonArgs[1];
+                nodeMap.clear();
+                for(int i = 0; i < tableH; i++) {
+                    for (int j = 0; j < tableW; j++) {
+                        String nodeJson = nodeTableJson[i * tableW + j];
+                        MyNode node = null;
+                        String nodeJsonWithout$ = nodeJson.replace("$", "");
+                        if(nodeJson.contains("branchPreID")){
+                            node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
+                            System.out.println("recreate BranchNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("printText")) {
+                            node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
+                            System.out.println("recreate PrintNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("statementText")) {
+                            node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
+                            System.out.println("recreate StatementNode in nodeTable");
+                            System.out.println(nodeJson);
+                            System.out.println("[debug] recreate StatementNode " + Arrays.toString(node.getConnectPlace()));
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("mergeTrueID")){
+                            node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
+                            System.out.println("recreate MergeNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("loop_endPrePlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
+                            System.out.println("recreate LoopEndNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("loop_stPreID")) {
+                            node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
+                            System.out.println("recreate LoopStNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("nxtPlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
+                            System.out.println("recreate start node in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("prePlace")){
+                            node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
+                            System.out.println("recreate end node in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
+                        }else if(nodeJson.contains("line_down_right")){
+                            node = JSON.parseObject(nodeJsonWithout$, DownRightLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_horizon")){
+                            node = JSON.parseObject(nodeJsonWithout$, HorizonLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_left_down")){
+                            node = JSON.parseObject(nodeJsonWithout$, LeftDownLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_right_down")){
+                            node = JSON.parseObject(nodeJsonWithout$, RightDownLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_vertical")){
+                            node = JSON.parseObject(nodeJsonWithout$, VerticalLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }else if(nodeJson.contains("line_down_left")){
+                            node = JSON.parseObject(nodeJsonWithout$, DownLeftLine.class);
+                            System.out.println("recreate DownRightLine in nodeTable");
+                        }
+                        if(node!=null){
+                            nodeTable[i][j] = node;
+                            nodeTable[i][j].draw(drawingArea);
+                        }
+                    }
+                }
+                dataBackup = JSON.parseObject(varListJson, new TypeReference<ArrayList<TableVar>>() {});
+                recoverData();
             } catch (IOException e) {
                 e.printStackTrace();
             }
