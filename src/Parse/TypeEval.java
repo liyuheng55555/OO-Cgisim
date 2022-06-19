@@ -37,7 +37,7 @@ public class TypeEval extends CgisimBaseVisitor<Object>{
     private List<Object> intToFloat(Object o1, Object o2) throws RuntimeException {
         List<Object> result = new ArrayList<>();
         if (o1 instanceof Boolean || o2 instanceof Boolean)
-            throw new RuntimeException();
+            throw new RuntimeException("完蛋");
         if (o1 instanceof Float && o2 instanceof Integer)
             o2 = Float.valueOf(o2.toString());
         if (o2 instanceof Float && o1 instanceof Integer)

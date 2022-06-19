@@ -27,10 +27,11 @@ public class Main {
         CgisimParser.ProgContext pContext = parser.prog();
         TypeEval typeEval = new TypeEval(map);
         Object result = typeEval.visit(pContext);
+        String name = result.getClass().getName().split("\\.")[-1];
         switch (result.getClass().getName()) {
-            case "Integer": return "int";
-            case "Boolean": return "bool";
-            case "Float": return "float";
+            case "java.lang.Integer": return "int";
+            case "java.lang.Boolean": return "bool";
+            case "java.lang.Float": return "float";
         }
         return "未知的类型："+result.getClass().getName();
     }

@@ -165,8 +165,10 @@ public class Check {
                         }
                     }
                 } catch (Exception e) {
-                    appendErrorMessage(i,j,"解析错误："+e.getMessage());
-                    result.add(Arrays.asList(i,j));
+                    if (!e.getMessage().equals("-1")) {
+                        appendErrorMessage(i,j,"解析错误："+e.getMessage());
+                        result.add(Arrays.asList(i,j));
+                    }
                 }
             }
         }
