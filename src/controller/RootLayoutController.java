@@ -123,7 +123,7 @@ public class RootLayoutController implements Initializable {
 
     ShowAnything showSelection;
     ShowAnything showRunPosition;
-
+    ShowAnything showWrong;
     /**
      * 设置所有ShowAnything对象；
      * 因为initialize函数已经太长了，所以单独写一个函数
@@ -141,6 +141,7 @@ public class RootLayoutController implements Initializable {
         runView.setFitHeight(viewH);
         runView.setFitWidth(viewW);
         showRunPosition = new ShowAnything(runView, drawingArea, 0, 0);
+        showWrong = new ShowAnything(null, drawingArea, 0, 0);
         // 结构错误、语法错误等
 
     }
@@ -148,21 +149,35 @@ public class RootLayoutController implements Initializable {
     void buttonInit() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         //    停止，暂停，单步，运行四个按钮点击事件测试
-        buildButton.setOnMouseClicked(e-> build());
+        buildButton.setOnMouseClicked(e-> {
+            try {
+                build();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         stopButton.setOnMouseClicked(e->{
             reset();
         });
         stepButton.setOnMouseClicked(e->{
 //            alert.setContentText("step_success");
 //            alert.show();
-            stepRun();
+            try {
+                stepRun();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         });
         runButton.setOnMouseClicked(e->{
 //            alert.setContentText("run_success");
 //            alert.show();
 //            outText.setText("测试输出");
 //            run();
-            continiousRun();
+            try {
+                continiousRun();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         });
         pauseButton.setOnMouseClicked(e->{
             pause();
@@ -1376,7 +1391,7 @@ public class RootLayoutController implements Initializable {
         }
     }
 
-    public void build() {
+    public void build() throws Exception {
         System.out.println("build");
         if (Run.isRunning()) {
             outText.appendText("运行已停止");
@@ -1400,8 +1415,39 @@ public class RootLayoutController implements Initializable {
             outText.appendText("构建失败："+e.getMessage()+"\n");
             return;
         }
+//        Check check = new Check();
+        boolean startNode = Check.checkStartNode(nodeMap);
+        if(!startNode){
+            outText.appendText("无起始节点\n");
+        }
+        List<List<Integer>> list1 = Check.checkStartNodeNumber(nodeMap);
+        List<List<Integer>> list2 = Check.checkConnectionError(nodeMap);
+        for(List<Integer> value:list1){
+            int x=value.get(0);
+            int y=value.get(1);
+            showWrong.draw_wrong(x, y);
+            //outText.appendText(value.get(0)+" "+value.get(1)+"\n");
+        }
+        for(List<Integer> value:list2){
+            int x=value.get(0);
+            int y=value.get(1);
+            showWrong.draw_wrong(x, y);
+           // outText.appendText(value.get(0)+" "+value.get(1)+"\n");
+        }
+       // lay_pic(10, 10);
         outText.appendText("构建成功\n");
     }
+//    public void lay_pic(int x, int y){
+//        ImageView imageView = new ImageView();
+//        Image image = new Image("/sources/img/wrong.png");
+//        imageView.setImage(image);
+//        imageView.setFitWidth(50);
+//        imageView.setFitHeight(50);
+//        imageView.setX(x);
+//        imageView.setY(y);
+//        drawingArea.getChildren().add(imageView);
+//    }
+
 
     /*
     -----------------------------------  多线程 --------------------------------------------
@@ -1473,7 +1519,7 @@ public class RootLayoutController implements Initializable {
         }
     }
 
-    private void continiousRun() {
+    private void continiousRun() throws Exception {
         if (Run.isRunning()) {
             continue_();
             return;
@@ -1485,7 +1531,7 @@ public class RootLayoutController implements Initializable {
         run.start();
     }
 
-    public void run(){
+    public void run() throws Exception {
         continiousRun();
 //        build();
 //        System.out.println("run");
@@ -1524,7 +1570,7 @@ public class RootLayoutController implements Initializable {
         }
     }
 
-    public void stepRun(){
+    public void stepRun() throws Exception {
         if (!Run.isRunning())
             build();
         System.out.println("stepRun");
