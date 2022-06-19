@@ -50,13 +50,15 @@ public class RootLayoutController implements Initializable {
     private void saveData() {
 //        dataBackup = new ArrayList<>();
         dataBackup.clear();
-        for (TableVar var : data)
+        for (TableVar var : data) {
             dataBackup.add(new TableVar(var));
+        }
     }
     private void recoverData() {
         data.clear();
-        for (TableVar var : dataBackup)
+        for (TableVar var : dataBackup) {
             data.add(new TableVar(var));
+        }
     }
     @FXML
     private Button clear;
@@ -114,10 +116,6 @@ public class RootLayoutController implements Initializable {
     private ImageView choose_print;
     @FXML
     private TextField messageBox;
-//    @FXML
-//    private Button compileButton;
-//    @FXML
-//    private Button stepRunButton;
 
     Status status = Status.normal;
     ClickStatus clickStatus = ClickStatus.choosingStart;
@@ -1137,12 +1135,6 @@ public class RootLayoutController implements Initializable {
         if (file != null) {
             try {
                 FileWriter fileWriter = new FileWriter(file);
-//                for(MyNode node : nodeMap.values()){
-//                    String nodeJson = JSON.toJSONString(node, SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
-//                    fileWriter.write(nodeJson+"$");
-//                }
-//                fileWriter.write("@");
-                // 遍历nodeTable
                 for(int i = 0; i < tableH; i++){
                     for(int j = 0; j < tableW; j++){
                         String nodeJson = JSON.toJSONString(nodeTable[i][j], SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
@@ -1189,34 +1181,9 @@ public class RootLayoutController implements Initializable {
                 BufferedReader bufferReader = new BufferedReader(fileReader);
                 String json = bufferReader.readLine();
                 String[] jsonArgs = json.split("@");
-//                String[] nodeMapJson = jsonArgs[0].split("\\$");
                 String[] nodeTableJson = jsonArgs[0].split("\\$");
                 String varListJson = jsonArgs[1];
                 nodeMap.clear();
-//                for(String nodeJson : nodeMapJson){
-//                    MyNode node = null;
-//                    String nodeJsonWithout$ = nodeJson.replace("$", "");
-//                    if(nodeJson.contains("branchPreID")){
-//                        node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
-//                    }else if(nodeJson.contains("printText")) {
-//                        node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
-//                    }else if(nodeJson.contains("statementText")) {
-//                        node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
-//                    }else if(nodeJson.contains("mergeTrueID")){
-//                        node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
-//                    }else if(nodeJson.contains("loop_endPrePlace")){
-//                        node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
-//                    }else if(nodeJson.contains("loop_stPreID")) {
-//                        node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
-//                    }else if(nodeJson.contains("nxtPlace")){
-//                        node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
-//                    }else if(nodeJson.contains("prePlace")){
-//                        node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
-//                    }
-//                    assert node != null;
-//                    nodeMap.put(node.getFactoryID(), node);
-//                }
-
                 for(int i = 0; i < tableH; i++) {
                     for (int j = 0; j < tableW; j++) {
                         String nodeJson = nodeTableJson[i * tableW + j];
@@ -1282,6 +1249,8 @@ public class RootLayoutController implements Initializable {
                     }
                 }
                 varList = JSON.parseObject(varListJson, new TypeReference<ArrayList<TableVar>>() {});
+                data.clear();
+                data.addAll(varList);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1304,6 +1273,11 @@ public class RootLayoutController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("选择保存文件");
         fileChooser.setInitialFileName("code.cpp");
+        File defaultDir = new File("code");
+        if (!defaultDir.exists())
+            if (defaultDir.mkdir())
+                System.out.println("创建了save文件夹");
+        fileChooser.setInitialDirectory(defaultDir);
         File file = fileChooser.showSaveDialog(Main.getPrimaryStage());
         if(file != null){
             try {
@@ -1322,6 +1296,7 @@ public class RootLayoutController implements Initializable {
      * @param code 代码字符串
      */
     private void normalNxtCodeExport(MyNode cur, StringBuilder code, Integer indent) {
+        boolean err = false;
         while (!(cur instanceof EndNode)) {
             if (cur instanceof StartNode) {
                 code.append("#include <bits/stdc++.h>\n\n").append("int main(){\n");
@@ -1347,10 +1322,13 @@ public class RootLayoutController implements Initializable {
                 cur = nodeMap.get(((LoopEndNode) cur).getLoop_endNxtID());  //  debug
             }else {
                 System.out.println("error in normalNxtCodeExport");
+                err = true;
                 break;
             }
         }
-        code.append("}");
+        if(!err){
+            code.append("}");
+        }
     }
 
     private MergeNode branchCodeExport(BranchNode branchNode, StringBuilder code, Integer indent) {
