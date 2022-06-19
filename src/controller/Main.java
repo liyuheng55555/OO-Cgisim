@@ -6,6 +6,7 @@ import java.net.URL;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -33,6 +34,7 @@ public class Main extends Application {
             loader.setLocation(Main.class.getResource("/view/RootLayout.fxml"));
             rootLayout = loader.load();
             Scene scene = new Scene(rootLayout);
+            primaryStage.getIcons().add(new Image("sources/image/if.png"));
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {

@@ -269,7 +269,7 @@ public class RootLayoutController implements Initializable {
      * @return  费用矩阵cost
      */
     int[][] tableToCost() {
-        int[][] cost = new int[200][200];
+        int[][] cost = new int[tableH * tableW][tableH * tableW];
         for (int i=0; i<tableH; i++) {
             for (int j = 0; j < tableW; j++) {
                 int s = i * tableW + j;
@@ -449,7 +449,6 @@ public class RootLayoutController implements Initializable {
                 }
                 else {
                     showPath(path);
-
                 }
             }
         }

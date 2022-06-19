@@ -7,8 +7,8 @@ import java.awt.*;
 public class Constant {
     public static final int viewW = 161;
     public static final int viewH = 100;
-    public static final int tableH = 20;
-    public static final int tableW = 10;
+    public static final int tableH = 30;
+    public static final int tableW = 15;
     public static final int branchTextRelativeX = 30;
     public static final int branchTextRelativeY = 55;
     public static final int LoopTextRelativeX = 25;
