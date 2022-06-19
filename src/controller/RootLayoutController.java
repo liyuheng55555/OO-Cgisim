@@ -7,9 +7,6 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -171,7 +168,7 @@ public class RootLayoutController implements Initializable {
 //            outText.setText("测试输出");
 //            run();
             try {
-                continiousRun();
+                continuousRun();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -1602,9 +1599,9 @@ public class RootLayoutController implements Initializable {
                     getStartID(),
                     nodeMap,
                     data,
-                    outText,
-                    inform,
-                    lock
+                    outText
+//                    inform,
+//                    lock
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -1629,6 +1626,7 @@ public class RootLayoutController implements Initializable {
         List<List<Integer>> listAll = new ArrayList<>();
         listAll.addAll(list1);
         listAll.addAll(list2);
+//        listAll.addAll(errList);
         //listAll.addAll(errList);
         for (List<Integer> value : listAll) {
             int x = value.get(0);
@@ -1636,11 +1634,15 @@ public class RootLayoutController implements Initializable {
             showWrong.draw_wrong(x, y);
             //outText.appendText(value.get(0)+" "+value.get(1)+"\n");
         }
+        for (List<Integer> value: errList) {
+            showWrong.draw_wrong(value.get(1), value.get(0));
+        }
+        listAll.addAll(errList);
         // lay_pic(10, 10);
 //        outText.appendText("构建成功\n");
 
         //errList.addAll(Check.checkNodeMapError(nodeMap));
-        if (errList.isEmpty())
+        if (listAll.isEmpty())
             outText.appendText("构建成功\n");
         else
             outText.appendText("构建失败，编辑区有"+listAll.size() +"个错误\n");
@@ -1661,37 +1663,37 @@ public class RootLayoutController implements Initializable {
     -----------------------------------  多线程 --------------------------------------------
      */
     private final Object lock = new Object(); // 继续运行的时候使用lock.notify()通知运算线程，让它继续运行
-    private void continue_() {
-        Run.pauseSig = false;
-        synchronized (lock) {
-            lock.notify();
-        }
-    }
+//    private void continue_() {
+//        Run.pauseSig = false;
+//        synchronized (lock) {
+//            lock.notify();
+//        }
+//    }
 
     private void pause() {
-        Run.pauseSig = true;
-        try {
-            Thread.sleep(100);
-        } catch (Exception ignored) {}
-        int now = Run.getNow();
-//        Exception exception = Run.getException();
-        updateEveryThing(now, null);
+//        Run.pauseSig = true;
+//        try {
+//            Thread.sleep(100);
+//        } catch (Exception ignored) {}
+//        int now = Run.getNow();
+////        Exception exception = Run.getException();
+//        updateEveryThing(now, null);
     }
 
     /**
      * inform的作用是，让运算线程通知主线程运算已经告一段落
      */
-    private final SimpleIntegerProperty inform = new SimpleIntegerProperty(0);
-    private void setInform() {
-        inform.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                int now = Run.getNow();
-                Exception exception = Run.exception;
-                updateEveryThing(now, exception);
-            }
-        });
-    }
+//    private final SimpleIntegerProperty inform = new SimpleIntegerProperty(0);
+//    private void setInform() {
+//        inform.addListener(new ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//                int now = Run.getNow();
+//                Exception exception = Run.exception;
+//                updateEveryThing(now, exception);
+//            }
+//        });
+//    }
 
     /**
      * 运算出了结果，调用此函数以更新图形界面；<br/>
@@ -1727,20 +1729,35 @@ public class RootLayoutController implements Initializable {
         }
     }
 
-    private void continiousRun() throws Exception {
-        if (Run.isRunning()) {
-            continue_();
+    private void continuousRun() throws Exception {
+        if (!Run.isRunning())
+            build();
+        System.out.println("stepRun");
+        int next = -2;
+        try {
+            next = Run.continuousRun();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert =new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(e.getMessage());
+            alert.show();
             return;
         }
-        build();
-        System.out.println("cRun");
-        int next;
-        Run run = new Run();
-        run.start();
+        // stepRun success, update run position
+        updateEveryThing(next, null);
+//        if (Run.isRunning()) {
+//            continue_();
+//            return;
+//        }
+//        build();
+//        System.out.println("cRun");
+//        int next;
+//        Run run = new Run();
+//        run.start();
     }
 
     public void run() throws Exception {
-        continiousRun();
+        continuousRun();
 //        build();
 //        System.out.println("run");
 //        int next;

@@ -12,10 +12,10 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 public class Run extends Thread{
-    static volatile boolean pauseSig = false;  // 主线程将此设置为false以暂停运行
-    static volatile Exception exception = null;  // 连续运行过程中出现异常，异常信息存到这里
-    static SimpleIntegerProperty inform = null;  // 连续运行结束或出现异常，修改这玩意儿以通知主线程
-    static Object lock = null;  // 如果连续运行暂停，使用lock.wait()，等待被主线程唤醒
+//    static volatile boolean pauseSig = false;  // 主线程将此设置为false以暂停运行
+//    static volatile Exception exception = null;  // 连续运行过程中出现异常，异常信息存到这里
+//    static SimpleIntegerProperty inform = null;  // 连续运行结束或出现异常，修改这玩意儿以通知主线程
+//    static Object lock = null;  // 如果连续运行暂停，使用lock.wait()，等待被主线程唤醒
     Run() {}
     static int startID = -1;
     static int nowID = -1;
@@ -34,17 +34,17 @@ public class Run extends Thread{
     static public void setup(int sID,
                              Map<Integer, MyNode> nMap,
                              ObservableList<TableVar> data,
-                             TextArea outText,
-                             SimpleIntegerProperty info,
-                             Object lck
+                             TextArea outText
+//                             SimpleIntegerProperty info,
+//                             Object lck
     ) throws Exception {
         loopStack = new Stack<>();
         setStartID(sID);
         setNodeMap(nMap);
         setVarMap(data);
         setTextArea(outText);
-        inform = info;
-        lock = lck;
+//        inform = info;
+//        lock = lck;
     }
 
     static public void setStartID(int sID) {
@@ -222,33 +222,33 @@ public class Run extends Thread{
     }
 
 
-    @Override
-    public void run() {
-        System.out.println("开始多线程运行");
-        int id;
-        do {
-            if (pauseSig) {
-                synchronized (lock) {
-                    try {
-                        System.out.println("暂停多线程运行");
-                        lock.wait();
-                        System.out.println("恢复多线程运行");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            try {
-                id = stepRun();
-            } catch (Exception e) {
-                exception = e;
-                inform.set(inform.get()+1);
-                return;
-            }
-        } while(!(nodeMap.get(id) instanceof EndNode));
-        inform.set(inform.get()+1);
-//        return id;
-    }
+//    @Override
+//    public void run() {
+//        System.out.println("开始多线程运行");
+//        int id;
+//        do {
+//            if (pauseSig) {
+//                synchronized (lock) {
+//                    try {
+//                        System.out.println("暂停多线程运行");
+//                        lock.wait();
+//                        System.out.println("恢复多线程运行");
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            try {
+//                id = stepRun();
+//            } catch (Exception e) {
+//                exception = e;
+//                inform.set(inform.get()+1);
+//                return;
+//            }
+//        } while(!(nodeMap.get(id) instanceof EndNode));
+//        inform.set(inform.get()+1);
+////        return id;
+//    }
 
     static public String getType(String expression) throws Exception {
         if (!expression.endsWith("\n"))
