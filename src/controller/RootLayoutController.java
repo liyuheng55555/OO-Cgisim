@@ -59,6 +59,8 @@ public class RootLayoutController implements Initializable {
             data.add(new TableVar(var));
     }
     @FXML
+    private Button clear;
+    @FXML
     private TextArea outText;
     @FXML
     private ImageView buildButton;
@@ -1090,6 +1092,10 @@ public class RootLayoutController implements Initializable {
             data.remove(moveIndex);
         });
         buttonInit();
+        clear.setOnAction(e->{
+            outText.setText("");
+            showWrong.clear_wrong();
+        });
     }
     private int getStartID() {
         for (MyNode node : nodeMap.values()) {
@@ -1436,18 +1442,22 @@ public class RootLayoutController implements Initializable {
         }
         List<List<Integer>> list1 = Check.checkStartNodeNumber(nodeMap);
         List<List<Integer>> list2 = Check.checkConnectionError(nodeMap);
+//        showWrong.draw_wrong(0, 1);
+//        showWrong.draw_wrong(0, 2);
+//        showWrong.draw_wrong(1, 0);
+//        showWrong.draw_wrong(2, 0);
         for(List<Integer> value:list1){
             int x=value.get(0);
             int y=value.get(1);
             showWrong.draw_wrong(x, y);
             //outText.appendText(value.get(0)+" "+value.get(1)+"\n");
         }
-        for(List<Integer> value:list2){
-            int x=value.get(0);
-            int y=value.get(1);
-            showWrong.draw_wrong(x, y);
-           // outText.appendText(value.get(0)+" "+value.get(1)+"\n");
-        }
+//        for(List<Integer> value:list2){
+//            int x=value.get(0);
+//            int y=value.get(1);
+//            showWrong.draw_wrong(x, y);
+//           // outText.appendText(value.get(0)+" "+value.get(1)+"\n");
+//        }
        // lay_pic(10, 10);
         outText.appendText("构建成功\n");
         List<List<Integer>> errList = Check.checkSyntaxError(nodeTable);

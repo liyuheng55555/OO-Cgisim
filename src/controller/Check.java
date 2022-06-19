@@ -10,7 +10,7 @@ import java.util.*;
 import static controller.RootLayoutController.inConnector;
 import static controller.RootLayoutController.outConnector;
 import static model.Constant.viewW;
-
+import static model.Constant.viewH;
 public class Check {
     static TextArea outText;
 
@@ -55,7 +55,7 @@ public class Check {
                 if (node instanceof StartNode) {
                     List<Integer> list = new ArrayList<>();
                     list.add((int) (node.getImageView().getX() / viewW));
-                    list.add((int) (node.getImageView().getY() / viewW));
+                    list.add((int) (node.getImageView().getY() / viewH));
                     result.add(list);
                 }
             }

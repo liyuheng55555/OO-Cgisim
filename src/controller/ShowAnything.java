@@ -5,6 +5,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import model.Constant;
 
+import java.sql.SQLOutput;
+
 /**
  * 在table的一些位置上，绘制某种特定的图案，而且能擦掉
  */
@@ -83,11 +85,18 @@ public class ShowAnything {
         imageView.setFitHeight(50);
         wrong_table[y][x]=imageView;
         wrong_table[y][x].setX(x*Constant.viewW+relativeX);
+        System.out.println("debug_wrong_pic");
+        System.out.println(x*Constant.viewW+relativeX);
         wrong_table[y][x].setY(y*Constant.viewH+relativeY);
+        System.out.println(y*Constant.viewH+relativeY);
         drawCount++;
         drawingArea.getChildren().add(wrong_table[y][x]);
     }
-
+    public void clear_wrong(){
+        for (int i=0; i<Constant.tableH; i++) {
+            drawingArea.getChildren().removeAll(wrong_table[i]);
+        }
+    }
     /**
      *  擦除table[y][x]
      * @param x     横向索引
