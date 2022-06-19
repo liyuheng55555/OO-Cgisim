@@ -43,7 +43,7 @@ public class Check {
      * otherwise return a list to indicate the place of startNodes
      */
     public static List<List<Integer>> checkStartNodeNumber(Map<Integer, MyNode> nodeMap) {
-        List<List<Integer>> result = null;
+        List<List<Integer>> result = new ArrayList<>();
         int startNodeNumber = 0;
         for (MyNode node : nodeMap.values()) {
             if (node instanceof StartNode) {
@@ -51,7 +51,6 @@ public class Check {
             }
         }
         if (startNodeNumber > 1) {
-            result = new ArrayList<>();
             for (MyNode node : nodeMap.values()) {
                 if (node instanceof StartNode) {
                     List<Integer> list = new ArrayList<>();
@@ -117,9 +116,6 @@ public class Check {
                 modifyList(node, result, "print", outConnector);
             }
         }
-        if(result.size() == 0){
-            result = null;
-        }
         return result;
     }
 
@@ -178,23 +174,13 @@ public class Check {
     }
 
     private static void modifyList(MyNode node, List<List<Integer>> result, String type, Map<String, List<Integer>> connector) {
-        for (Integer temp : connector.get("start")) {
+        for (Integer temp : connector.get(type)) {
             if (node.getConnectTo()[temp] == -1) {
                 List<Integer> list = new ArrayList<>();
                 list.add((int) (node.getImageView().getX() / viewW));
-                list.add((int) (node.getImageView().getY() / viewW));
+                list.add((int) (node.getImageView().getY() / viewH));
                 result.add(list);
             }
         }
-    }
-
-    /**
-     *
-     * @param map
-     * @return
-     */
-    public static List<List<Integer>> checkNodeMapError(HashMap<Integer, MyNode> map){
-        //TODO
-        return null;
     }
 }

@@ -92,11 +92,7 @@ public class ShowAnything {
         drawCount++;
         drawingArea.getChildren().add(wrong_table[y][x]);
     }
-    public void clear_wrong(){
-        for (int i=0; i<Constant.tableH; i++) {
-            drawingArea.getChildren().removeAll(wrong_table[i]);
-        }
-    }
+
     /**
      *  擦除table[y][x]
      * @param x     横向索引
@@ -116,8 +112,17 @@ public class ShowAnything {
      * 清除所有此类图案
      */
     public void clear() {
-        for (int i=0; i<Constant.tableH; i++) {
-            drawingArea.getChildren().removeAll(table[i]);
+        for(int i=0; i<Constant.tableH; i++) {
+            for(int j=0; j<Constant.tableW; j++) {
+                if(table[i][j]!=null) {
+                    drawingArea.getChildren().remove(table[i][j]);
+                    table[i][j] = null;
+                }
+                if(wrong_table[i][j]!=null) {
+                    drawingArea.getChildren().remove(wrong_table[i][j]);
+                    wrong_table[i][j] = null;
+                }
+            }
         }
         drawCount = 0;
     }

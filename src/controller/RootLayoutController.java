@@ -727,6 +727,7 @@ public class RootLayoutController implements Initializable {
         drawingArea.getChildren().addAll(shadow, connector);
 
         drawingArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            showWrong.clear();
             if ((status == Status.normal || status == Status.prepareToDrag) && selectNode==null) {
                 MyNode node = nodeTable[(int) event.getY()/viewH][(int) event.getX()/viewW];
                 if (node!=null) {
@@ -1094,7 +1095,7 @@ public class RootLayoutController implements Initializable {
         buttonInit();
         clear.setOnAction(e->{
             outText.setText("");
-            showWrong.clear_wrong();
+            showWrong.clear();
         });
     }
     private int getStartID() {
@@ -1293,6 +1294,11 @@ public class RootLayoutController implements Initializable {
      */
     public void menuCodeExport(){
         System.out.println("menuCodeExport");
+        try {
+            build();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
         StringBuilder code = new StringBuilder();
         normalNxtCodeExport(nodeMap.get(getStartID()), code, 1);
         FileChooser fileChooser = new FileChooser();
@@ -1514,30 +1520,29 @@ public class RootLayoutController implements Initializable {
         }
         List<List<Integer>> list1 = Check.checkStartNodeNumber(nodeMap);
         List<List<Integer>> list2 = Check.checkConnectionError(nodeMap);
+        List<List<Integer>> errList = Check.checkSyntaxError(nodeTable);
 //        showWrong.draw_wrong(0, 1);
 //        showWrong.draw_wrong(0, 2);
 //        showWrong.draw_wrong(1, 0);
 //        showWrong.draw_wrong(2, 0);
-        for(List<Integer> value:list1){
-            int x=value.get(0);
-            int y=value.get(1);
+        List<List<Integer>> listAll = new ArrayList<>();
+        listAll.addAll(list1);
+        listAll.addAll(list2);
+        //listAll.addAll(errList);
+        for (List<Integer> value : listAll) {
+            int x = value.get(0);
+            int y = value.get(1);
             showWrong.draw_wrong(x, y);
             //outText.appendText(value.get(0)+" "+value.get(1)+"\n");
         }
-//        for(List<Integer> value:list2){
-//            int x=value.get(0);
-//            int y=value.get(1);
-//            showWrong.draw_wrong(x, y);
-//           // outText.appendText(value.get(0)+" "+value.get(1)+"\n");
-//        }
-       // lay_pic(10, 10);
-        outText.appendText("构建成功\n");
-        List<List<Integer>> errList = Check.checkSyntaxError(nodeTable);
+        // lay_pic(10, 10);
+//        outText.appendText("构建成功\n");
+
         //errList.addAll(Check.checkNodeMapError(nodeMap));
         if (errList.isEmpty())
             outText.appendText("构建成功\n");
         else
-            outText.appendText("构建失败，编辑区有"+errList.size()+"个错误\n");
+            outText.appendText("构建失败，编辑区有"+listAll.size() +"个错误\n");
     }
 //    public void lay_pic(int x, int y){
 //        ImageView imageView = new ImageView();
