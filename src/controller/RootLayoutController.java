@@ -1312,52 +1312,88 @@ public class RootLayoutController implements Initializable {
                 code.append(((StatementNode) cur).getText().getText()).append(";\n");
                 cur = nodeMap.get(((StatementNode) cur).getNxtID());
             } else if(cur instanceof BranchNode){
-                for(int i = 0; i < indent; i++){
-                    code.append("\t");
-                }
                 cur = branchCodeExport((BranchNode) cur, code, indent+1);
+                cur = nodeMap.get(((MergeNode) cur).getMergeNxtID());
             }else if(cur instanceof LoopStNode){
-                cur = nodeMap.get(loopCodeExport((LoopStNode)cur, code, indent+1).getLoop_endNxtID());
+                cur = loopCodeExport((LoopStNode)cur, code, indent+1);
+                assert cur != null;
+                cur = nodeMap.get(((LoopEndNode) cur).getLoop_endNxtID());  //  debug
+            }else {
+                System.out.println("error in normalNxtCodeExport");
+                break;
             }
         }
         code.append("}");
     }
 
     private MergeNode branchCodeExport(BranchNode branchNode, StringBuilder code, Integer indent) {
-        code.append("if(");
-        code.append(branchNode.getText().getText());
-        code.append("){\n");
-        int nxtID = branchNode.getBranchTrueID();
-        MyNode cur = nodeMap.get(nxtID);
-        while(!(cur instanceof MergeNode)){
-            if(cur instanceof StartNode){
-                cur = nodeMap.get(((StartNode) cur).getNxtID());
-            }else if(cur instanceof BranchNode){
-                branchCodeExport((BranchNode) cur, code, indent+1);
-            }else if(cur instanceof PrintNode) {
-                code.append("System.out.println(\"").append(((PrintNode) cur).getText()).append("\");\n");
-                cur = nodeMap.get(((PrintNode) cur).getNxtID());
-            }else if(cur instanceof StatementNode) {
-                code.append(((StatementNode) cur).getText()).append(";\n");
-                cur = nodeMap.get(((StatementNode) cur).getNxtID());
-            }else if(cur instanceof LoopStNode) {
-                code.append("do{\n");
-                while(!(cur instanceof LoopEndNode)){
-                    if(cur instanceof BranchNode){
-                        branchCodeExport((BranchNode) cur, code, indent+1);
-                    }else if(cur instanceof PrintNode) {
-                        code.append("System.out.println(\"").append(((PrintNode) cur).getText()).append("\");\n");
-                        cur = nodeMap.get(((PrintNode) cur).getNxtID());
-                    }else if(cur instanceof StatementNode) {
-                        code.append(((StatementNode) cur).getText()).append(";\n");
-                        cur = nodeMap.get(((StatementNode) cur).getNxtID());
-                    }
+        for(int i = 0; i < indent - 1; i++){
+            code.append("\t");
+        }
+        code.append("if(").append(branchNode.getText().getText()).append("){\n");
+        MyNode cur = nodeMap.get(branchNode.getBranchTrueID());
+        while (!(cur instanceof MergeNode)){
+            if(cur instanceof PrintNode) {
+                for (int i = 0; i < indent; i++) {
+                    code.append("\t");
                 }
-                code.append("while( ").append(cur ).append(" )");
-            }else if(cur instanceof LoopEndNode) {
-                code.append("}while(").append(((LoopEndNode) cur).getText().getText()).append(");\n");
+                code.append("cout << ").append(((PrintNode) cur).getText().getText()).append(";\n");
+                cur = nodeMap.get(((PrintNode) cur).getNxtID());
+            }else if(cur instanceof StatementNode){
+                for (int i = 0; i < indent; i++) {
+                    code.append("\t");
+                }
+                code.append(((StatementNode) cur).getText().getText()).append(";\n");
+                cur = nodeMap.get(((StatementNode) cur).getNxtID());
+            }else if(cur instanceof BranchNode){
+                cur = branchCodeExport((BranchNode) cur, code, indent + 1);
+                cur = nodeMap.get(((MergeNode) cur).getMergeNxtID());
+            }else if(cur instanceof LoopStNode) {
+                cur = loopCodeExport((LoopStNode) cur, code, indent + 1);
+                assert cur != null;
+                cur = nodeMap.get(((LoopEndNode) cur).getLoop_endNxtID());
+            }else {
+                System.out.println(cur.getClass().getName());
+                System.out.println("error in branchCodeExport");
+                break;
             }
         }
+        for(int i = 0; i < indent - 1; i++){
+            code.append("\t");
+        }
+        code.append("}else{\n");
+        cur = nodeMap.get(branchNode.getBranchFalseID());
+        while (!(cur instanceof MergeNode)) {
+            if (cur instanceof PrintNode) {
+                for (int i = 0; i < indent; i++) {
+                    code.append("\t");
+                }
+                code.append("cout << ").append(((PrintNode) cur).getText().getText()).append(";\n");
+                cur = nodeMap.get(((PrintNode) cur).getNxtID());
+            } else if (cur instanceof StatementNode) {
+                for (int i = 0; i < indent; i++) {
+                    code.append("\t");
+                }
+                code.append(((StatementNode) cur).getText().getText()).append(";\n");
+                cur = nodeMap.get(((StatementNode) cur).getNxtID());
+            } else if (cur instanceof BranchNode) {
+                cur = branchCodeExport((BranchNode) cur, code, indent + 1);
+                cur = nodeMap.get(((MergeNode) cur).getMergeNxtID());
+            } else if (cur instanceof LoopStNode) {
+                cur = loopCodeExport((LoopStNode) cur, code, indent + 1);
+                assert cur != null;
+                cur = nodeMap.get(((LoopEndNode) cur).getLoop_endNxtID());
+            } else {
+                System.out.println(cur.getClass().getName());
+                System.out.println("error in branchCodeExport");
+                break;
+            }
+        }
+        for(int i = 0; i < indent - 1; i++){
+            code.append("\t");
+        }
+        code.append("}\n");
+        assert cur instanceof MergeNode;
         return (MergeNode) cur;
     }
 
@@ -1368,7 +1404,6 @@ public class RootLayoutController implements Initializable {
         code.append("do{\n");
         MyNode cur = nodeMap.get(loopStNode.getLoop_stNxtID());
         while(!(cur instanceof LoopEndNode)){
-            System.out.println(cur.getClass().getName());
             if(cur instanceof PrintNode) {
                 for(int i = 0; i < indent-1; i++){
                     code.append("\t");
@@ -1387,7 +1422,7 @@ public class RootLayoutController implements Initializable {
                 cur = loopCodeExport((LoopStNode) cur, code, indent+1);
                 cur = nodeMap.get(((LoopEndNode) cur).getLoop_endNxtID());
             }else{
-                System.out.println("error");
+                System.out.println("error in loopCodeExport");
                 break;
             }
         }
