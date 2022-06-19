@@ -696,6 +696,7 @@ public class RootLayoutController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Check.outText = outText;
+        outText.setEditable(false);
         buildButton.setAccessibleText("ok");
         showAnythingInit();
         propertyController = new PropertyController(messageBox);
