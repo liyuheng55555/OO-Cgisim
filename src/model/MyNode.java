@@ -12,10 +12,10 @@ public class MyNode {
     private int factoryID;
     private double xIndex;
     private double yIndex;
-    // connectTo[1] = 100 ÒâË¼ÊÇ±¾½ÚµãµÄÉÏ·½Á¬½Ó×Å100ºÅ½Úµã
-    public int[] connectTo = new int[]{-1, -1, -1, -1, -1};
-    // connectPlace[1] = 2 ÒâË¼ÊÇ±¾½ÚµãµÄÉÏ·½Á¬½Ó×ÅÁíÒ»¸ö½ÚµãµÄÏÂ·½
-    public int[] connectPlace = new int []{-1, -1, -1, -1, -1};
+    // connectTo[1] = 100 æ„æ€æ˜¯æœ¬èŠ‚ç‚¹çš„ä¸Šæ–¹è¿æ¥ç€100å·èŠ‚ç‚¹
+    private int[] connectTo = new int[]{-1, -1, -1, -1, -1};
+    // connectPlace[1] = 2 æ„æ€æ˜¯æœ¬èŠ‚ç‚¹çš„ä¸Šæ–¹è¿æ¥ç€å¦ä¸€ä¸ªèŠ‚ç‚¹çš„ä¸‹æ–¹
+    private int[] connectPlace = new int []{-1, -1, -1, -1, -1};
 
     public MyNode(int factoryID, double x, double y) {
         this.factoryID = factoryID;
@@ -75,6 +75,22 @@ public class MyNode {
 
     public void setyIndex(double yIndex) {
         this.yIndex = yIndex;
+    }
+
+    public int[] getConnectTo() {
+        return connectTo;
+    }
+
+    public void setConnectTo(int[] connectTo) {
+        this.connectTo = connectTo;
+    }
+
+    public int[] getConnectPlace() {
+        return connectPlace;
+    }
+
+    public void setConnectPlace(int[] connectPlace) {
+        this.connectPlace = connectPlace;
     }
 
     @JSONCreator

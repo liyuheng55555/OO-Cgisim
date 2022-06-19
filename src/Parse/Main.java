@@ -7,6 +7,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
+
+    /**
+     * 获得表达式的结果类型，目前可能为int、bool、float；
+     * @param expr  表达式字符串
+     * @param map   变量map
+     * @return      类型名
+     * @throws Exception 如果表达式不合法，比如无法解析或变量有问题，就会抛出异常，详见e.getMessage()
+     */
+    public static String getType(String expr, Map<String,Object> map) throws Exception {
+        CodePointCharStream cpcs = CharStreams.fromString(expr);
+        CgisimLexer lexer = new CgisimLexer(cpcs);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CgisimParser parser = new CgisimParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+        CgisimParser.ProgContext pContext = parser.prog();
+        TypeEval typeEval = new TypeEval(map);
+        Object result = typeEval.visit(pContext);
+        switch (result.getClass().getName()) {
+            case "Integer": return "int";
+            case "Boolean": return "bool";
+            case "Float": return "float";
+        }
+        return "未知的类型："+result.getClass().getName();
+    }
     /**
      * 对给定的表达式和变量表执行运算.
      *

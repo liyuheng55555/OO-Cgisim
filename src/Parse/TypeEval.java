@@ -1,25 +1,16 @@
 package Parse;
 
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Eval类，在语法树上进行运算操作.
- */
-public class Eval extends CgisimBaseVisitor<Object> {
+public class TypeEval extends CgisimBaseVisitor<Object>{
     /**
      * 构造函数.
      * @param map   包含所有变量的map，
      *              运算过程中会从中读取变量，也会修改其中的变量
      */
-    public Eval(Map<String,Object> map) {
+    public TypeEval(Map<String,Object> map) {
         memory = map;
     }
     Map<String, Object> memory;
@@ -46,7 +37,7 @@ public class Eval extends CgisimBaseVisitor<Object> {
     private List<Object> intToFloat(Object o1, Object o2) throws RuntimeException {
         List<Object> result = new ArrayList<>();
         if (o1 instanceof Boolean || o2 instanceof Boolean)
-            throw new RuntimeException(o1.toString()+"与"+o2.toString()+"无法进行算数运算");
+            throw new RuntimeException();
         if (o1 instanceof Float && o2 instanceof Integer)
             o2 = Float.valueOf(o2.toString());
         if (o2 instanceof Float && o1 instanceof Integer)
@@ -70,7 +61,6 @@ public class Eval extends CgisimBaseVisitor<Object> {
         Object value = visit(ctx.expr());
         if (!memory.get(id).getClass().equals(value.getClass()))
             throw new RuntimeException(beaut(ctx.getText())+": 类型错误");
-        memory.put(id, value);
         return value;
     }
 
@@ -110,16 +100,22 @@ public class Eval extends CgisimBaseVisitor<Object> {
     public Object visitMulDiv(CgisimParser.MulDivContext ctx) throws RuntimeException {
         Object left = visit(ctx.expr(0));
         Object right = visit(ctx.expr(1));
-        List<Object> list = intToFloat(left, right);
+        List<Object> list = null;
+        try {
+            list = intToFloat(left, right);
+        } catch (RuntimeException re) {
+            throw new RuntimeException(ctx.getText()+"：类型错误，不能运算");
+        }
         left = list.get(0);
         right = list.get(1);
         if (left.getClass().equals(Integer.class)) {
             Integer i1 = (Integer)left;
             Integer i2 = (Integer)right;
             switch (ctx.op.getType()) {
-                case CgisimParser.MUL: return i1*i2;
-                case CgisimParser.DIV: return i1/i2;
-                case CgisimParser.MOD: return i1%i2;
+                case CgisimParser.MUL:
+                case CgisimParser.MOD:
+                case CgisimParser.DIV:
+                    return i1;
             }
             throw new RuntimeException("未知的错误");
         }
@@ -127,8 +123,9 @@ public class Eval extends CgisimBaseVisitor<Object> {
             Float i1 = (Float)left;
             Float i2 = (Float)right;
             switch (ctx.op.getType()) {
-                case CgisimParser.MUL: return i1*i2;
-                case CgisimParser.DIV: return i1/i2;
+                case CgisimParser.MUL:
+                case CgisimParser.DIV:
+                    return i1;
                 case CgisimParser.MOD: throw new RuntimeException(beaut(ctx.getText())+": 尝试对浮点数做取余运算");
             }
             throw new RuntimeException("未知的错误");
@@ -146,28 +143,35 @@ public class Eval extends CgisimBaseVisitor<Object> {
     public Object visitAddSub(CgisimParser.AddSubContext ctx) {
         Object left = visit(ctx.expr(0));
         Object right = visit(ctx.expr(1));
-        List<Object> list = intToFloat(left, right);
+        List<Object> list = null;
+        try {
+            list = intToFloat(left, right);
+        } catch (RuntimeException re) {
+            throw new RuntimeException(ctx.getText()+"：类型错误，不能运算");
+        }
         left = list.get(0);
         right = list.get(1);
-        if (left.getClass().equals(Integer.class)) {
-            Integer i1 = (Integer)left;
-            Integer i2 = (Integer)right;
-            switch (ctx.op.getType()) {
-                case CgisimParser.ADD: return i1+i2;
-                case CgisimParser.SUB: return i1-i2;
-            }
-            throw new RuntimeException("未知的错误");
-        }
-        else if (left.getClass().equals(Float.class)) {
-            Float i1 = (Float)left;
-            Float i2 = (Float)right;
-            switch (ctx.op.getType()) {
-                case CgisimParser.ADD: return i1+i2;
-                case CgisimParser.SUB: return i1-i2;
-            }
-            throw new RuntimeException("未知的错误");
-        }
-        throw new RuntimeException("未知的错误");
+        return left;
+//        if (left.getClass().equals(Integer.class)) {
+//            Integer i1 = (Integer)left;
+//            Integer i2 = (Integer)right;
+//            switch (ctx.op.getType()) {
+//                case CgisimParser.ADD:
+//                case CgisimParser.SUB:
+//                    return i1;
+//            }
+//            throw new RuntimeException("未知的错误");
+//        }
+//        else if (left.getClass().equals(Float.class)) {
+//            Float i1 = (Float)left;
+//            Float i2 = (Float)right;
+//            switch (ctx.op.getType()) {
+//                case CgisimParser.ADD: return i1+i2;
+//                case CgisimParser.SUB: return i1-i2;
+//            }
+//            throw new RuntimeException("未知的错误");
+//        }
+//        throw new RuntimeException("未知的错误");
     }
 
     @Override
@@ -210,21 +214,15 @@ public class Eval extends CgisimBaseVisitor<Object> {
     public Object visitCompare(CgisimParser.CompareContext ctx) {
         Object left = visit(ctx.expr(0));
         Object right = visit(ctx.expr(1));
-        if (!left.getClass().equals(right.getClass()) || !left.getClass().equals(Integer.class) && !left.getClass().equals(Float.class))
-            throw new RuntimeException(beaut(ctx.getText())+": 尝试对非数字做算术运算");
-        float i1, i2;
-        i1 = Float.parseFloat(left.toString());
-        i2 = Float.parseFloat(right.toString());
-//        Float i1 = (Float) left;
-//        Comparable<?> i2 = (Comparable<?>)right;
-//        i1.compareTo(i2);
-        switch (ctx.op.getType()) {
-            case CgisimParser.L:    return i1 < i2 ;
-            case CgisimParser.G:    return i1 > i2 ;
-            case CgisimParser.LE:   return i1 <= i2;
-            case CgisimParser.GE:   return i1 >= i2;
+        List<Object> list = null;
+        try {
+            list = intToFloat(left, right);
+        } catch (RuntimeException re) {
+            throw new RuntimeException(ctx.getText()+"：类型错误，不能运算");
         }
-        throw new RuntimeException("未知的错误");
+        left = list.get(0);
+        right = list.get(1);
+        return Boolean.TRUE;
     }
 
     @Override
@@ -266,21 +264,3 @@ public class Eval extends CgisimBaseVisitor<Object> {
 
 
 }
-
-/**
- * 自定义的运行时异常监听器.
- * <p>
- *     如果没有它的话，发生异常会只打印异常信息，而无法被外界catch到.
- *     因为是抄的所以不知道该写什么.
- * </p>
- * @author lyh
- * @since 0.1
- */
-class ThrowingErrorListener extends BaseErrorListener {
-    public static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
-    @Override
-    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-        throw new ParseCancellationException("line " + line + ":" + charPositionInLine + " " + msg);
-    }
-}
-

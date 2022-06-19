@@ -307,7 +307,7 @@ public class RootLayoutController implements Initializable {
         int count = 0;
         for(MyNode node: nodeMap.values()){
             for (int c=1; c<=4; c++) {
-                int id = node.connectTo[c];
+                int id = node.getConnectTo()[c];
                 System.out.println(id);
                 if (id!=-1 && checkInOrOut(node, c)==1) {  // 有连接，而且是输出点
                     connectInfo[0][count] = (int)(node.getImageView().getX()/viewW);
@@ -316,7 +316,7 @@ public class RootLayoutController implements Initializable {
                     MyNode toNode = nodeMap.get(id);
                     connectInfo[3][count] = (int)(toNode.getImageView().getX()/viewW);
                     connectInfo[4][count] = (int)(toNode.getImageView().getY()/viewH);
-                    connectInfo[5][count] = node.connectPlace[c];
+                    connectInfo[5][count] = node.getConnectPlace()[c];
                     count++;
                 }
             }
@@ -338,13 +338,13 @@ public class RootLayoutController implements Initializable {
      */
     public void deleteConnection(MyNode node0, MyNode node1) {
         for(int i=1; i<=4; i++) {
-            if (node0.connectTo[i]==node1.getFactoryID()) {
-                node0.connectTo[i] = -1;
-                node0.connectPlace[i] = -1;
+            if (node0.getConnectTo()[i]==node1.getFactoryID()) {
+                node0.getConnectTo()[i] = -1;
+                node0.getConnectPlace()[i] = -1;
             }
-            if (node1.connectTo[i]==node0.getFactoryID()) {
-                node1.connectTo[i] = -1;
-                node1.connectPlace[i] = -1;
+            if (node1.getConnectTo()[i]==node0.getFactoryID()) {
+                node1.getConnectTo()[i] = -1;
+                node1.getConnectPlace()[i] = -1;
             }
         }
     }
@@ -366,7 +366,7 @@ public class RootLayoutController implements Initializable {
         eraseAllPath(node);
         // 删关系
         for (int i=1; i<=4; i++) {
-            int id = node.connectTo[i];
+            int id = node.getConnectTo()[i];
             MyNode node1 = nodeMap.get(id);
             if (node1!=null)
                 deleteConnection(node, node1);
@@ -391,7 +391,7 @@ public class RootLayoutController implements Initializable {
         int x = (int) (node.getImageView().getX()/viewW);
         int y = (int) (node.getImageView().getY()/viewH);
         for (int c=1; c<=4; c++) {
-            if (node.connectTo[c]!=-1) {
+            if (node.getConnectTo()[c]!=-1) {
                 System.out.println("eraseAllPath:"+c);
                 switch (c) {
                     case 1: erasePath(x,y-1); break;
@@ -410,7 +410,7 @@ public class RootLayoutController implements Initializable {
      */
     public void tryCreatePath(MyNode node) throws Exception {
         for (int c=1; c<=4; c++) {
-            int id = node.connectTo[c];
+            int id = node.getConnectTo()[c];
             if (id!=-1) {
                 int inOut = checkInOrOut(node, c);
                 int sx = 0, sy = 0, sc = 0, ex = 0, ey = 0, ec = 0;
@@ -432,12 +432,12 @@ public class RootLayoutController implements Initializable {
                     sc = c;
                     ex = (int)(toNode.getImageView().getX()/viewW);
                     ey = (int)(toNode.getImageView().getY()/viewH);
-                    ec = node.connectPlace[c];
+                    ec = node.getConnectPlace()[c];
                 }
                 else if (inOut==0) { // 输入点
                     sx = (int)(toNode.getImageView().getX()/viewW);
                     sy = (int)(toNode.getImageView().getY()/viewH);
-                    sc = node.connectPlace[c];
+                    sc = node.getConnectPlace()[c];
                     ex = (int)(node.getImageView().getX()/viewW);
                     ey = (int)(node.getImageView().getY()/viewH);
                     ec = c;
@@ -446,11 +446,11 @@ public class RootLayoutController implements Initializable {
                     bad();  // 在不应该有连接存在的地方，却有连接存在
                 path = getPath(sx, sy, sc, ex, ey, ec);
                 if (path==null) { // 绘制失败，清除前驱后继
-                    int toC = node.connectPlace[c];
-                    toNode.connectTo[toC] = -1;
-                    toNode.connectPlace[toC] = -1;
-                    node.connectTo[c] = -1;
-                    node.connectPlace[c] = -1;
+                    int toC = node.getConnectPlace()[c];
+                    toNode.getConnectTo()[toC] = -1;
+                    toNode.getConnectPlace()[toC] = -1;
+                    node.getConnectTo()[c] = -1;
+                    node.getConnectPlace()[c] = -1;
                     System.out.printf("连线(%d,%d,%d,%d,%d,%d)绘制失败，前驱后继关系已清除\n",sx, sy, sc, ex, ey, ec);
                 }
                 else {
@@ -481,17 +481,17 @@ public class RootLayoutController implements Initializable {
         List<Integer> inC1 = inConnector.get(name1);
         List<Integer> outC1 = outConnector.get(name1);
         if (outC0!=null && inC1!=null && y0+1==y1 && outC0.contains(2) && inC1.contains(1)) { // 0->1
-            node0.connectTo[2] = node1.getFactoryID();
-            node0.connectPlace[2] = 1;
-            node1.connectTo[1] = node0.getFactoryID();
-            node1.connectPlace[1] = 2;
+            node0.getConnectTo()[2] = node1.getFactoryID();
+            node0.getConnectPlace()[2] = 1;
+            node1.getConnectTo()[1] = node0.getFactoryID();
+            node1.getConnectPlace()[1] = 2;
             System.out.println("good!");
         }
         if (outC1!=null && inC0!=null && y1+1==y0 && inC0.contains(1) && outC1.contains(2)) { // 0<-1
-            node0.connectTo[1] = node1.getFactoryID();
-            node0.connectPlace[1] = 2;
-            node1.connectTo[2] = node0.getFactoryID();
-            node1.connectPlace[2] = 1;
+            node0.getConnectTo()[1] = node1.getFactoryID();
+            node0.getConnectPlace()[1] = 2;
+            node1.getConnectTo()[2] = node0.getFactoryID();
+            node1.getConnectPlace()[2] = 1;
             System.out.println("very good!");
         }
     }
@@ -701,6 +701,7 @@ public class RootLayoutController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Check.outText = outText;
         buildButton.setAccessibleText("ok");
         showAnythingInit();
         propertyController = new PropertyController(messageBox);
@@ -1129,11 +1130,11 @@ public class RootLayoutController implements Initializable {
         if (file != null) {
             try {
                 FileWriter fileWriter = new FileWriter(file);
-                for(MyNode node : nodeMap.values()){
-                    String nodeJson = JSON.toJSONString(node, SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
-                    fileWriter.write(nodeJson+"$");
-                }
-                fileWriter.write("@");
+//                for(MyNode node : nodeMap.values()){
+//                    String nodeJson = JSON.toJSONString(node, SerializerFeature.IgnoreErrorGetter, SerializerFeature.WriteMapNullValue);
+//                    fileWriter.write(nodeJson+"$");
+//                }
+//                fileWriter.write("@");
                 // 遍历nodeTable
                 for(int i = 0; i < tableH; i++){
                     for(int j = 0; j < tableW; j++){
@@ -1181,33 +1182,33 @@ public class RootLayoutController implements Initializable {
                 BufferedReader bufferReader = new BufferedReader(fileReader);
                 String json = bufferReader.readLine();
                 String[] jsonArgs = json.split("@");
-                String[] nodeMapJson = jsonArgs[0].split("\\$");
-                String[] nodeTableJson = jsonArgs[1].split("\\$");
-                String varListJson = jsonArgs[2];
+//                String[] nodeMapJson = jsonArgs[0].split("\\$");
+                String[] nodeTableJson = jsonArgs[0].split("\\$");
+                String varListJson = jsonArgs[1];
                 nodeMap.clear();
-                for(String nodeJson : nodeMapJson){
-                    MyNode node = null;
-                    String nodeJsonWithout$ = nodeJson.replace("$", "");
-                    if(nodeJson.contains("branchPreID")){
-                        node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
-                    }else if(nodeJson.contains("printText")) {
-                        node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
-                    }else if(nodeJson.contains("statementText")) {
-                        node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
-                    }else if(nodeJson.contains("mergeTrueID")){
-                        node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
-                    }else if(nodeJson.contains("loop_endPrePlace")){
-                        node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
-                    }else if(nodeJson.contains("loop_stPreID")) {
-                        node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
-                    }else if(nodeJson.contains("nxtPlace")){
-                        node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
-                    }else if(nodeJson.contains("prePlace")){
-                        node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
-                    }
-                    assert node != null;
-                    nodeMap.put(node.getFactoryID(), node);
-                }
+//                for(String nodeJson : nodeMapJson){
+//                    MyNode node = null;
+//                    String nodeJsonWithout$ = nodeJson.replace("$", "");
+//                    if(nodeJson.contains("branchPreID")){
+//                        node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
+//                    }else if(nodeJson.contains("printText")) {
+//                        node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
+//                    }else if(nodeJson.contains("statementText")) {
+//                        node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
+//                    }else if(nodeJson.contains("mergeTrueID")){
+//                        node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
+//                    }else if(nodeJson.contains("loop_endPrePlace")){
+//                        node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
+//                    }else if(nodeJson.contains("loop_stPreID")) {
+//                        node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
+//                    }else if(nodeJson.contains("nxtPlace")){
+//                        node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
+//                    }else if(nodeJson.contains("prePlace")){
+//                        node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
+//                    }
+//                    assert node != null;
+//                    nodeMap.put(node.getFactoryID(), node);
+//                }
 
                 for(int i = 0; i < tableH; i++) {
                     for (int j = 0; j < tableW; j++) {
@@ -1217,27 +1218,37 @@ public class RootLayoutController implements Initializable {
                         if(nodeJson.contains("branchPreID")){
                             node = JSON.parseObject(nodeJsonWithout$, BranchNode.class);
                             System.out.println("recreate BranchNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("printText")) {
                             node = JSON.parseObject(nodeJsonWithout$, PrintNode.class);
                             System.out.println("recreate PrintNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("statementText")) {
                             node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
                             System.out.println("recreate StatementNode in nodeTable");
+                            System.out.println(nodeJson);
+                            System.out.println("[debug] recreate StatementNode " + Arrays.toString(node.getConnectPlace()));
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("mergeTrueID")){
                             node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
                             System.out.println("recreate MergeNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("loop_endPrePlace")){
                             node = JSON.parseObject(nodeJsonWithout$, LoopEndNode.class);
                             System.out.println("recreate LoopEndNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("loop_stPreID")) {
                             node = JSON.parseObject(nodeJsonWithout$, LoopStNode.class);
                             System.out.println("recreate LoopStNode in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("nxtPlace")){
                             node = JSON.parseObject(nodeJsonWithout$, StartNode.class);
                             System.out.println("recreate start node in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("prePlace")){
                             node = JSON.parseObject(nodeJsonWithout$, EndNode.class);
                             System.out.println("recreate end node in nodeTable");
+                            nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("line_down_right")){
                             node = JSON.parseObject(nodeJsonWithout$, DownRightLine.class);
                             System.out.println("recreate DownRightLine in nodeTable");
@@ -1391,7 +1402,10 @@ public class RootLayoutController implements Initializable {
         }
     }
 
+
     public void build() throws Exception {
+        Test.printMap(nodeMap);
+
         System.out.println("build");
         if (Run.isRunning()) {
             outText.appendText("运行已停止");
@@ -1436,6 +1450,12 @@ public class RootLayoutController implements Initializable {
         }
        // lay_pic(10, 10);
         outText.appendText("构建成功\n");
+        List<List<Integer>> errList = Check.checkSyntaxError(nodeTable);
+        //errList.addAll(Check.checkNodeMapError(nodeMap));
+        if (errList.isEmpty())
+            outText.appendText("构建成功\n");
+        else
+            outText.appendText("构建失败，编辑区有"+errList.size()+"个错误\n");
     }
 //    public void lay_pic(int x, int y){
 //        ImageView imageView = new ImageView();
