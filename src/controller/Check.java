@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TextArea;
 import model.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static controller.RootLayoutController.inConnector;
 import static controller.RootLayoutController.outConnector;
@@ -16,6 +13,13 @@ import static model.Constant.viewW;
 
 public class Check {
     static TextArea outText;
+
+
+    /**
+     * 初始化输出终端
+     *
+     * @param text 输出文本框
+     */
     void setup(TextArea text) {
         outText = text;
     }
@@ -29,6 +33,7 @@ public class Check {
     static private void appendErrorMessage(int y, int x, String string) {
         outText.appendText("("+y+","+x+") "+string+"\n");
     }
+
     /**
      * check whether the startNode is unique in the list
      *
@@ -161,13 +166,11 @@ public class Check {
                             appendErrorMessage(i,j,"循环语句需要bool类型结果，目前结果为"+type);
                             result.add(Arrays.asList(i,j));
                         }
-
                     }
                 } catch (Exception e) {
                     appendErrorMessage(i,j,"解析错误："+e.getMessage());
                     result.add(Arrays.asList(i,j));
                 }
-
             }
         }
         return result;
@@ -182,5 +185,15 @@ public class Check {
                 result.add(list);
             }
         }
+    }
+
+    /**
+     *
+     * @param map
+     * @return
+     */
+    public static List<List<Integer>> checkNodeMapError(HashMap<Integer, MyNode> map){
+        //TODO
+        return null;
     }
 }
