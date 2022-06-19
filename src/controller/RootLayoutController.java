@@ -25,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.*;
 
 import static model.Constant.tableH;
@@ -1097,7 +1098,33 @@ public class RootLayoutController implements Initializable {
             outText.setText("");
             showWrong.clear();
         });
+
+
     }
+
+    private void makePng() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("打开文件");
+        File defaultDir = new File("example");
+        if (!defaultDir.exists())
+            if (defaultDir.mkdir())
+                System.out.println("创建了example文件夹");
+        fileChooser.setInitialDirectory(defaultDir);
+        File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
+//        File file = new File("example/e2.c");
+        CParse.Main.setFile(file);
+        Stage anotherStage = new Stage();
+        CParse.Main mm = new CParse.Main();
+        try {
+            mm.start(anotherStage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            outText.appendText("生成失败\n");
+            return;
+        }
+        outText.appendText("生成成功\n");
+    }
+
     private int getStartID() {
         for (MyNode node : nodeMap.values()) {
             if (node instanceof StartNode)
@@ -1465,6 +1492,7 @@ public class RootLayoutController implements Initializable {
 
     public void menuCodeImport(){
         System.out.println("menuCodeImport");
+        makePng();
     }
 
     /**
