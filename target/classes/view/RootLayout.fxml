@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
+<BorderPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootLayoutController">
 <top>
     <SplitPane orientation="VERTICAL" prefHeight="30.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
         <HBox prefHeight="30.0" prefWidth="1196.0">
@@ -35,7 +35,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#menuJsonImport" text="打开新文件" />
                         <MenuItem mnemonicParsing="false" onAction="#menuOpenFromTemplate" text="从模板打开" />
                         <MenuItem mnemonicParsing="false" onAction="#menuCodeExport" text="保存为代码" />
-                        <MenuItem mnemonicParsing="false" onAction="#menuCodeImport" text="从代码导入" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuCodeImport" text="代码转Cgisim风格流程图" />
                         <MenuItem mnemonicParsing="false" onAction="#menuImageSave" text="保存为图片" />
                     </Menu>
                     <Menu mnemonicParsing="false" text="程序">

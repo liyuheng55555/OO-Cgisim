@@ -1225,9 +1225,13 @@ public class RootLayoutController implements Initializable {
                             nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("statementText")) {
                             node = JSON.parseObject(nodeJsonWithout$, StatementNode.class);
+                            String connectPlacePre = nodeJson.split("\\[")[1];
+                            String connectPlace = connectPlacePre.split("\\]")[0];
+                            String[] connectPlaceArgs = connectPlace.split(",");
                             System.out.println("recreate StatementNode in nodeTable");
-                            System.out.println(nodeJson);
-                            System.out.println("[debug] recreate StatementNode " + Arrays.toString(node.getConnectPlace()));
+                            for(int t = 0; t < connectPlaceArgs.length; t++) {
+                                node.getConnectPlace()[t] = Integer.parseInt(connectPlaceArgs[t]);
+                            }
                             nodeMap.put(node.getFactoryID(),node);
                         }else if(nodeJson.contains("mergeTrueID")){
                             node = JSON.parseObject(nodeJsonWithout$, MergeNode.class);
