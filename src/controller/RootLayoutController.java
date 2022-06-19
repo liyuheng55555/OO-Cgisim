@@ -1150,6 +1150,8 @@ public class RootLayoutController implements Initializable {
         if (!defaultDir.exists())
             if (defaultDir.mkdir())
                 System.out.println("创建了save文件夹");
+        //设置默认文件格式
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
         fileChooser.setInitialDirectory(defaultDir);
         File file = fileChooser.showSaveDialog(Main.getPrimaryStage());
         if (file != null) {
@@ -1187,6 +1189,8 @@ public class RootLayoutController implements Initializable {
             if (defaultDir.mkdir())
                 System.out.println("创建了save文件夹");
         fileChooser.setInitialDirectory(defaultDir);
+        //设置默认文件格式
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
         File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
         if (file != null) {
             for(int i = 0; i < tableH; i++){
