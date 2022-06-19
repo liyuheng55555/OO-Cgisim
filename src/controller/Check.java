@@ -9,6 +9,7 @@ import java.util.*;
 
 import static controller.RootLayoutController.inConnector;
 import static controller.RootLayoutController.outConnector;
+import static model.Constant.viewH;
 import static model.Constant.viewW;
 
 public class Check {
@@ -55,7 +56,7 @@ public class Check {
                 if (node instanceof StartNode) {
                     List<Integer> list = new ArrayList<>();
                     list.add((int) (node.getImageView().getX() / viewW));
-                    list.add((int) (node.getImageView().getY() / viewW));
+                    list.add((int) (node.getImageView().getY() / viewH));
                     result.add(list);
                 }
             }
