@@ -59,62 +59,62 @@ public class BranchNode extends MyNode {
 
     public int getBranchPreID() {
 //        return branchPreID;
-        return connectTo[1];
+        return super.getConnectTo()[1];
     }
 
     public void setBranchPreID(int branchPreID) {
 //        this.branchPreID = branchPreID;
-        connectTo[1] = branchPreID;
+        super.getConnectTo()[1] = branchPreID;
     }
 
     public int getBranchTrueID() {
 //        return branchTrueID;
-        return connectTo[2];
+        return super.getConnectTo()[2];
     }
 
     public void setBranchTrueID(int branchTrueID) {
 //        this.branchTrueID = branchTrueID;
-        connectTo[2] = branchTrueID;
+        super.getConnectTo()[2] = branchTrueID;
     }
 
     public int getBranchFalseID() {
 //        return branchFalseID;
-        return connectTo[4];
+        return super.getConnectTo()[4];
     }
 
     public void setBranchFalseID(int branchFalseID) {
 //        this.branchFalseID = branchFalseID;
-        connectTo[4] = branchFalseID;
+        super.getConnectTo()[4] = branchFalseID;
     }
 
     public int getBranchPrePlace() {
 //        return branchPrePlace;
-        return connectPlace[1];
+        return super.getConnectPlace()[1];
     }
 
     public void setBranchPrePlace(int branchPrePlace) {
 //        this.branchPrePlace = branchPrePlace;
-        connectPlace[1] = branchPrePlace;
+        super.getConnectPlace()[1] = branchPrePlace;
     }
 
     public int getBranchTruePlace() {
 //        return branchTruePlace;
-        return connectPlace[2];
+        return super.getConnectPlace()[2];
     }
 
     public void setBranchTruePlace(int branchTruePlace) {
 //        this.branchTruePlace = branchTruePlace;
-        connectPlace[2] = branchTruePlace;
+        super.getConnectPlace()[2] = branchTruePlace;
     }
 
     public int getBranchFalsePlace() {
 //        return branchFalsePlace;
-        return connectPlace[4];
+        return super.getConnectPlace()[4];
     }
 
     public void setBranchFalsePlace(int branchFalsePlace) {
 //        this.branchFalsePlace = branchFalsePlace;
-        connectPlace[4] = branchFalsePlace;
+        super.getConnectPlace()[4] = branchFalsePlace;
     }
 
     public String getBranchText() {

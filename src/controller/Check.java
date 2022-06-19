@@ -178,7 +178,7 @@ public class Check {
 
     private static void modifyList(MyNode node, List<List<Integer>> result, String type, Map<String, List<Integer>> connector) {
         for (Integer temp : connector.get("start")) {
-            if (node.connectTo[temp] == -1) {
+            if (node.getConnectTo()[temp] == -1) {
                 List<Integer> list = new ArrayList<>();
                 list.add((int) (node.getImageView().getX() / viewW));
                 list.add((int) (node.getImageView().getY() / viewW));

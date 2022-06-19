@@ -68,41 +68,41 @@ public class LoopStNode extends MyNode {
 
     public int getLoop_stPreID() {
 //        return loop_stPreID;
-        return connectTo[1];
+        return super.getConnectTo()[1];
     }
 
     public void setLoop_stPreID(int loop_stPreID) {
 //        this.loop_stPreID = loop_stPreID;
-        connectTo[1] = loop_stPreID;
+        super.getConnectTo()[1] = loop_stPreID;
     }
 
     public int getLoop_stNxtID() {
-        return connectTo[2];
+        return super.getConnectTo()[2];
     }
 
     public void setLoop_stNxtID(int loop_stNxtID) {
 //        this.loop_stNxtID = loop_stNxtID;
-        connectTo[2] = loop_stNxtID;
+        super.getConnectTo()[2] = loop_stNxtID;
     }
 
     public int getLoop_stPrePlace() {
 //        return loop_stPrePlace;
-        return connectPlace[1];
+        return super.getConnectPlace()[1];
     }
 
     public void setLoop_stPrePlace(int loop_stPrePlace) {
 //        this.loop_stPrePlace = loop_stPrePlace;
-        connectPlace[1] = loop_stPrePlace;
+        super.getConnectPlace()[1] = loop_stPrePlace;
     }
 
     public int getLoop_stNxtPlace() {
 //        return loop_stNxtPlace;
-        return connectPlace[2];
+        return super.getConnectPlace()[2];
     }
 
     public void setLoop_stNxtPlace(int loop_stNxtPlace) {
 //        this.loop_stNxtPlace = loop_stNxtPlace;
-        connectPlace[2] = loop_stNxtPlace;
+        super.getConnectPlace()[2] = loop_stNxtPlace;
     }
 
     @Override @JSONField(serialize=false)

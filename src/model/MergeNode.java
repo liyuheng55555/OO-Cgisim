@@ -74,62 +74,62 @@ public class MergeNode extends MyNode{
 
     public int getMergeTrueID() {
 //        return mergeTrueID;
-        return connectTo[1];
+        return this.getConnectTo()[1];
     }
 
     public void setMergeTrueID(int mergeTrueID) {
 //        this.mergeTrueID = mergeTrueID;
-        connectTo[1] = mergeTrueID;
+        this.getConnectTo()[1] = mergeTrueID;
     }
 
     public int getMergeFalseID() {
 //        return mergeFalseID;
-        return connectTo[4];
+        return this.getConnectTo()[4];
     }
 
     public void setMergeFalseID(int mergeFalseID) {
 //        this.mergeFalseID = mergeFalseID;
-        connectTo[4] = mergeFalseID;
+        this.getConnectTo()[4] = mergeFalseID;
     }
 
     public int getMergeNxtID() {
 //        return mergeNxtID;
-        return connectTo[2];
+        return this.getConnectTo()[2];
     }
 
     public void setMergeNxtID(int mergeNxtID) {
 //        this.mergeNxtID = mergeNxtID;
-        connectTo[2] = mergeNxtID;
+        this.getConnectTo()[2] = mergeNxtID;
     }
 
     public int getMergeTruePlace() {
 //        return mergeTruePlace;
-        return connectPlace[1];
+        return this.getConnectPlace()[1];
     }
 
     public void setMergeTruePlace(int mergeTruePlace) {
 //        this.mergeTruePlace = mergeTruePlace;
-        connectPlace[1] = mergeTruePlace;
+        this.getConnectPlace()[1] = mergeTruePlace;
     }
 
     public int getMergeFalsePlace() {
 //        return mergeFalsePlace;
-        return connectPlace[4];
+        return this.getConnectPlace()[4];
     }
 
     public void setMergeFalsePlace(int mergeFalsePlace) {
 //        this.mergeFalsePlace = mergeFalsePlace;
-        connectPlace[4] = mergeFalsePlace;
+        this.getConnectPlace()[4] = mergeFalsePlace;
     }
 
     public int getMergeNxtPlace() {
 //        return mergeNxtPlace;
-        return connectPlace[2];
+        return this.getConnectPlace()[2];
     }
 
     public void setMergeNxtPlace(int mergeNxtPlace) {
 //        this.mergeNxtPlace = mergeNxtPlace;
-        connectPlace[2] = mergeNxtPlace;
+        this.getConnectPlace()[2] = mergeNxtPlace;
     }
 
     @Override @JSONField(serialize=false)

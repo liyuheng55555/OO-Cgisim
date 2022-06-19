@@ -17,8 +17,8 @@ public class StartNode extends MyNode {
 
     public StartNode(int factoryID,int x,int y) {
         super(factoryID,x,y);
-        this.connectTo[2] = -1;
-        this.connectPlace[2] = -1;
+        this.getConnectTo()[2] = -1;
+        this.getConnectPlace()[2] = -1;
         try{
             this.start = new ImageView(new Image("sources/img/draw_node_start.png"));
             this.start.setX(x);
@@ -33,21 +33,21 @@ public class StartNode extends MyNode {
     }
 
     public int getNxtID() {
-        return connectTo[2];
+        return this.getConnectTo()[2];
     }
 
     public void setNxtID(int nxtID) {
 //        this.connectTo[2] = nxtID;
-        connectTo[2] = nxtID;
+        this.getConnectTo()[2] = nxtID;
     }
 
     public int getNxtPlace() {
-        return connectPlace[2];
+        return this.getConnectPlace()[2];
     }
 
     public void setNxtPlace(int nxtPlace) {
 //        this.nxtPlace = nxtPlace;
-        connectPlace[2] = nxtPlace;
+        this.getConnectPlace()[2] = nxtPlace;
     }
 
     @Override @JSONField(serialize=false)

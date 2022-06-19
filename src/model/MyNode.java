@@ -13,9 +13,9 @@ public class MyNode {
     private double xIndex;
     private double yIndex;
     // connectTo[1] = 100 意思是本节点的上方连接着100号节点
-    public int[] connectTo = new int[]{-1, -1, -1, -1, -1};
+    private int[] connectTo = new int[]{-1, -1, -1, -1, -1};
     // connectPlace[1] = 2 意思是本节点的上方连接着另一个节点的下方
-    public int[] connectPlace = new int []{-1, -1, -1, -1, -1};
+    private int[] connectPlace = new int []{-1, -1, -1, -1, -1};
 
     public MyNode(int factoryID, double x, double y) {
         this.factoryID = factoryID;
@@ -75,6 +75,22 @@ public class MyNode {
 
     public void setyIndex(double yIndex) {
         this.yIndex = yIndex;
+    }
+
+    public int[] getConnectTo() {
+        return connectTo;
+    }
+
+    public void setConnectTo(int[] connectTo) {
+        this.connectTo = connectTo;
+    }
+
+    public int[] getConnectPlace() {
+        return connectPlace;
+    }
+
+    public void setConnectPlace(int[] connectPlace) {
+        this.connectPlace = connectPlace;
     }
 
     @JSONCreator

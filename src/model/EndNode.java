@@ -33,22 +33,22 @@ public class EndNode extends MyNode {
 
     public int getPreID() {
 //        return preID;
-        return connectTo[1];
+        return this.getConnectTo()[1];
     }
 
     public void setPreID(int preID) {
 //        this.preID = preID;
-        connectTo[1] = preID;
+        this.getConnectTo()[1] = preID;
     }
 
     public int getPrePlace() {
 //        return prePlace;
-        return connectPlace[1];
+        return this.getConnectPlace()[1];
     }
 
     public void setPrePlace(int prePlace) {
 //        this.prePlace = prePlace;
-        connectPlace[1] = prePlace;
+        this.getConnectPlace()[1] = prePlace;
     }
 
     @Override @JSONField(serialize=false)

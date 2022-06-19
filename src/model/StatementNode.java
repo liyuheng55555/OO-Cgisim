@@ -89,44 +89,44 @@ public class StatementNode extends MyNode {
 
     public int getPreID() {
 //        return preID;
-        return connectTo[1];
+        return this.getConnectTo()[1];
     }
 
 
     public void setPreID(int preID) {
 //        this.preID = preID;
-        connectTo[1] = preID;
+        this.getConnectTo()[1] = preID;
     }
 
     public int getNxtID() {
 //        return nxtID;
-        return connectTo[2];
+        return this.getConnectTo()[2];
     }
 
     public void setNxtID(int nxtID) {
 //        this.nxtID = nxtID;
-        connectTo[2] = nxtID;
+        this.getConnectTo()[2] = nxtID;
     }
 
     public int getPrePlace() {
 //        return prePlace;
-        return connectTo[2];
+        return this.getConnectTo()[2];
     }
 
     public void setPrePlace(int prePlace) {
 //        this.prePlace = prePlace;
-        connectPlace[1] = prePlace;
+        this.getConnectPlace()[1] = prePlace;
     }
 
     public int getNxtPlace() {
 //        return nxtPlace;
-        return connectPlace[1];
+        return this.getConnectPlace()[1];
     }
 
 
     public void setNxtPlace(int nxtPlace) {
 //        this.nxtPlace = nxtPlace;
-        connectPlace[2] = nxtPlace;
+        this.getConnectPlace()[2] = nxtPlace;
     }
 
     public String getStatementText() {
