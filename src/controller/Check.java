@@ -11,7 +11,7 @@ import static controller.RootLayoutController.inConnector;
 import static controller.RootLayoutController.outConnector;
 import static model.Constant.viewH;
 import static model.Constant.viewW;
-
+import static model.Constant.viewH;
 public class Check {
     static TextArea outText;
 

@@ -165,9 +165,14 @@
                 <TextField fx:id="txtValue" prefHeight="30.0" prefWidth="80.0" promptText="变量名" style="-fx-background-radius: 5px; -fx-background-color: #ECECFF;" />
             </HBox>
             <HBox minHeight="40.0" prefHeight="60.0" prefWidth="235.0">
+               <Button fx:id="clear" mnemonicParsing="false" prefHeight="20.0" prefWidth="60.0" style="-fx-background-color: #F75000 #F75000; -fx-background-radius: 10px;" text="clear" textFill="#f8f6f6">
+                  <HBox.margin>
+                     <Insets left="20.0" top="2.0" />
+                  </HBox.margin>
+               </Button>
                 <Button fx:id="add" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #00BB00; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="add">
                     <HBox.margin>
-                        <Insets left="100.0" top="2.0" />
+                        <Insets left="10.0" top="2.0" />
                     </HBox.margin>
                 </Button>
                 <Button fx:id="delete" minHeight="20.0" minWidth="60.0" mnemonicParsing="false" style="-fx-background-color: #EA0000; -fx-text-fill: #FFFFFF; -fx-background-radius: 10px;" text="delete" textFill="#f5eeee">
