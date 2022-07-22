@@ -1,7 +1,7 @@
 # Cgisim
 
 <div align="center">
-<img src="/assets/界面.jpg" width="50%">
+<a href="https://imgtu.com/i/jOGVun"><img src="https://s1.ax1x.com/2022/07/22/jOGVun.jpg" alt="jOGVun.jpg" border="0" width="50%"/></a>
 </div>
 
 Cgisim是一款主要用于帮助编程的初学者理解代码运行的逻辑的仿真软件。
